@@ -1,9 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// ---  (هذا هو الكود الذي يصلح أيقونات الخريطة) ---
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
+// --- نهاية كود إصلاح الخريطة ---
+
 
 const ExploreSection = ({ exploreRef, isVisible }) => {
-  // State for filters and UI
+  // ... (كل الـ state variables التي لديك تبقى كما هي)
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
   const [selectedDuration, setSelectedDuration] = useState('all');
@@ -21,12 +32,11 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
   const [isLoading, setIsLoading] = useState(false);
   const chatEndRef = useRef(null);
 
-  // Scroll to bottom of chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [history]);
 
-  // Chatbot message handler
+  // --- دالة إرسال الرسائل المُحسّنة ---
   const handleSendMessage = async () => {
     if (input.trim() === "" || isLoading) return;
 
@@ -37,19 +47,25 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
     setInput("");
     setIsLoading(true);
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
+
     try {
-      // !!! IMPORTANT: Replace with your actual Cloudflare Worker URL
-      const cloudflareWorkerUrl = 'https://your-worker-name.your-subdomain.workers.dev'; 
+      // !!! هام جداً: تأكد من وضع رابط الـ Worker الصحيح هنا
+      const cloudflareWorkerUrl = 'https://graceful-mochi-ed99e4.netlify.app'; // <--- استبدل هذا بالرابط الصحيح
 
       const response = await fetch(cloudflareWorkerUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ history: updatedHistory }),
+        signal: controller.signal, //
       });
+      
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`API error: ${response.statusText} - ${errorText}`);
+        throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       const data = await response.json();
@@ -57,16 +73,20 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
       setHistory(prevHistory => [...prevHistory, modelResponse]);
 
     } catch (error) {
+      clearTimeout(timeoutId);
       console.error("Failed to send message:", error);
-      const errorResponse = { role: "model", parts: [{ text: "Sorry, I encountered an error. Please try again." }] };
+      let errorMessage = "Sorry, I encountered an error. Please try again.";
+      if (error.name === 'AbortError') {
+        errorMessage = "The request timed out. Please check your connection or the server status.";
+      }
+      const errorResponse = { role: "model", parts: [{ text: errorMessage }] };
       setHistory(prevHistory => [...prevHistory, errorResponse]);
     } finally {
       setIsLoading(false);
     }
   };
 
-
-  // --- (The rest of your existing data and functions like mockWeatherData, destinations, etc. remain here) ---
+  // --- (بقية بياناتك ودوالك تبقى كما هي) ---
   const mockWeatherData = {
     'petra': { temp: 28, condition: 'Sunny', humidity: 45, windSpeed: 12 },
     'wadi-rum': { temp: 32, condition: 'Clear', humidity: 30, windSpeed: 18 },
@@ -162,37 +182,27 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
       </div>
     );
   };
-
+  
   return (
     <section ref={exploreRef} id="explore" className="py-20 bg-gray-800 relative overflow-hidden">
-      {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-3xl"></div>
       </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
         <div className={`text-center mb-12 transition-all duration-1000 ${isVisible?.explore ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">
-            Explore Jordan's Treasures
-          </h2>
-          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">
-            Discover Jordan's most captivating destinations with real-time insights, personalized recommendations, and expert local guidance
-          </p>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">Explore Jordan's Treasures</h2>
+          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Discover Jordan's most captivating destinations with real-time insights, personalized recommendations, and expert local guidance</p>
         </div>
-
-        {/* --- AI PLANNER & MAP SECTION --- */}
         <div className="mb-16 bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-6 lg:p-8 shadow-2xl">
             <h3 className="text-2xl font-bold text-white mb-6 text-center font-poppins">AI Trip Planner & Interactive Map</h3>
             <div className="flex flex-col lg:flex-row gap-8">
-                {/* AI Chatbot */}
                 <div className="lg:w-1/2 flex flex-col h-[500px] bg-gray-800 rounded-xl border border-gray-700">
                     <div className="flex-1 p-4 space-y-4 overflow-y-auto">
                         {history.map((msg, index) => (
                             <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                                 <div className={`max-w-xs lg:max-w-md p-3 rounded-2xl ${msg.role === 'user' ? 'bg-purple-600 text-white rounded-br-none' : 'bg-gray-700 text-gray-200 rounded-bl-none'}`}>
-                                    <p className="text-sm">{msg.parts[0].text}</p>
+                                    <p className="text-sm" style={{whiteSpace: "pre-wrap"}}>{msg.parts[0].text}</p>
                                 </div>
                             </div>
                         ))}
@@ -227,10 +237,8 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
                         </div>
                     </div>
                 </div>
-
-                {/* Interactive Map */}
                 <div className="lg:w-1/2 h-96 lg:h-auto bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-700">
-                    <MapContainer center={[31.963158, 35.930359]} zoom={7} style={{ height: '100%', width: '100%', backgroundColor: '#1f2937' }}>
+                    <MapContainer center={[31.2, 36.5]} zoom={7} style={{ height: '100%', width: '100%', backgroundColor: '#1f2937' }}>
                         <TileLayer
                             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -253,9 +261,6 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
                 </div>
             </div>
         </div>
-
-
-        {/* --- DESTINATIONS SECTION (Your existing code) --- */}
         <div className="mb-8 space-y-4">
           <div className="relative max-w-md mx-auto">
             <input
@@ -321,8 +326,6 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
             </div>
           )}
         </div>
-
-        {/* The rest of your JSX for destination cards... */}
         <div className="text-center mb-8">
             <p className="text-gray-400">
                 Showing {filteredDestinations.length} of {destinations.length} destinations
@@ -351,7 +354,7 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
                         </div>
                         <div className="grid grid-cols-2 gap-4 mb-4">
                             <div className="bg-gray-800/50 rounded-lg p-3">
-                                <div className="flex items-center justify-between"><span className="text-gray-400 text-sm">Weather</span><span className="text-2xl">{getWeatherIcon(mockWeatherData[destination.id]?.condition)}</span></div>
+                                <div className="flex items-center justify-between"><span className="text-gray-400 text-sm">Weather</span><span className="text-2xl">{getWeatherIcon(mockWeatherData[destination.id]?.condition)}</div>
                                 <div className="text-white font-semibold">{mockWeatherData[destination.id]?.temp}°C</div>
                                 <div className="text-gray-400 text-sm">{mockWeatherData[destination.id]?.condition}</div>
                             </div>
