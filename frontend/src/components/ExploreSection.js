@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 // --- هذا الجزء ضروري لإصلاح أيقونات الخريطة ---
+// يقوم بتحديد مسار صور الأيقونات بشكل يدوي
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -13,7 +14,7 @@ L.Icon.Default.mergeOptions({
 
 
 const ExploreSection = ({ exploreRef, isVisible }) => {
-  // --- كل الـ state variables من الكود الأصلي ---
+  // --- كل الـ state variables من الكود الأصلي الذي أرسلته ---
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
   const [selectedDuration, setSelectedDuration] = useState('all');
@@ -31,11 +32,12 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
   const [isLoading, setIsLoading] = useState(false);
   const chatEndRef = useRef(null);
 
+  // useEffect لتمرير الشات للأسفل عند إضافة رسالة جديدة
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [history]);
     
-  // --- دالة إرسال الرسائل الفعّالة ---
+  // --- دالة إرسال الرسائل الفعّالة مع مهلة زمنية ---
   const handleSendMessage = async () => {
     if (input.trim() === "" || isLoading) return;
     const newUserMessage = { role: "user", parts: [{ text: input }] };
@@ -44,7 +46,7 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
     setInput("");
     setIsLoading(true);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); 
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // مهلة 15 ثانية
 
     try {
       // !!! هام جداً: تأكد من وضع رابط الـ Worker الصحيح هنا
@@ -77,7 +79,7 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
     }
   };
     
-  // --- بياناتك ودوالك الأصلية تبقى كما هي ---
+  // --- كل بياناتك ودوالك الأصلية تبقى كما هي ---
   const mockWeatherData = { 'petra': { temp: 28, condition: 'Sunny', humidity: 45, windSpeed: 12 }, 'wadi-rum': { temp: 32, condition: 'Clear', humidity: 30, windSpeed: 18 }, 'dead-sea': { temp: 35, condition: 'Hot', humidity: 60, windSpeed: 8 }, 'jerash': { temp: 26, condition: 'Partly Cloudy', humidity: 50, windSpeed: 10 }, 'amman': { temp: 24, condition: 'Cloudy', humidity: 55, windSpeed: 15 }, 'aqaba': { temp: 30, condition: 'Sunny', humidity: 65, windSpeed: 20 }, 'mount-nebo': { temp: 22, condition: 'Misty', humidity: 70, windSpeed: 5 }, 'dana-reserve': { temp: 18, condition: 'Cool', humidity: 45, windSpeed: 12 } };
   const mockCrowdData = { 'petra': { level: 'High', percentage: 85, busyHours: ['9AM-11AM', '2PM-4PM'] }, 'wadi-rum': { level: 'Medium', percentage: 60, busyHours: ['6AM-8AM', '6PM-7PM'] }, 'dead-sea': { level: 'High', percentage: 75, busyHours: ['10AM-2PM'] }, 'jerash': { level: 'Low', percentage: 35, busyHours: ['11AM-1PM'] }, 'amman': { level: 'Medium', percentage: 55, busyHours: ['8AM-10AM', '5PM-7PM'] }, 'aqaba': { level: 'Medium', percentage: 50, busyHours: ['10AM-12PM', '3PM-5PM'] }, 'mount-nebo': { level: 'Low', percentage: 25, busyHours: ['10AM-12PM'] }, 'dana-reserve': { level: 'Low', percentage: 20, busyHours: ['8AM-10AM'] } };
   const destinations = [ { id: 'petra', name: 'Petra', category: 'historical', difficulty: 'moderate', duration: '6-8 hours', budget: 'high', accessibility: 'limited', image: 'https://images.unsplash.com/photo-1539650116574-75c0c6d57d8b?w=400&h=250&fit=crop', image360: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop', virtualTour: 'https://petra-virtual-tour.com', shortDescription: 'Ancient rose-red city carved into cliffs', fullDescription: 'Petra is an archaeological wonder and UNESCO World Heritage Site. This ancient city, carved directly into vibrant red, white, pink, and sandstone cliff faces, was the capital of the Nabataean Kingdom from around the 6th century BC to the 1st century AD.', highlights: ['Treasury (Al-Khazneh)', 'Monastery (Ad-Deir)', 'Royal Tombs', 'Siq Canyon'], bestTimeToVisit: { months: ['October', 'November', 'March', 'April'], hours: 'Early morning (6AM-9AM) or late afternoon (4PM-6PM)', season: 'Spring and Fall for comfortable temperatures' }, transportation: { from_amman: 'Private car (3 hours), Tourist bus (3.5 hours)', from_aqaba: 'Private car (2 hours), Taxi (2 hours)', parking: 'Available at visitor center', local_transport: 'Horse rides and donkey rides available inside' }, averageRating: 4.7, tips: [ 'Wear comfortable hiking shoes', 'Bring plenty of water and sun protection', 'Consider hiring a local guide for deeper insights', 'Visit during golden hour for best photography' ] }, { id: 'wadi-rum', name: 'Wadi Rum', category: 'nature', difficulty: 'easy', duration: '4-6 hours', budget: 'medium', accessibility: 'moderate', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop', image360: 'https://images.unsplash.com/photo-1539650116574-75c0c6d57d8b?w=400&h=250&fit=crop', virtualTour: 'https://wadi-rum-virtual-tour.com', shortDescription: 'Valley of the Moon desert landscape', fullDescription: 'Wadi Rum, also known as the Valley of the Moon, is a protected desert wilderness featuring dramatic sandstone mountains, narrow canyons, and ancient inscriptions. This UNESCO World Heritage Site offers otherworldly landscapes that have served as the backdrop for numerous films.', highlights: ['Lawrence\'s Spring', 'Khazali Canyon', 'Sand Dunes', 'Rock Bridges'], bestTimeToVisit: { months: ['October', 'November', 'December', 'January', 'February', 'March', 'April'], hours: 'Early morning (sunrise) or late afternoon (sunset)', season: 'Winter months for comfortable temperatures' }, transportation: { from_amman: 'Private car (4 hours), Bus to Aqaba then taxi (5 hours total)', from_aqaba: 'Private car (1 hour), Taxi (1 hour)', parking: 'Available at visitor center', local_transport: '4WD jeep tours, camel rides, hot air balloon rides' }, averageRating: 4.8, tips: [ 'Book overnight camping for the full experience', 'Bring warm clothes for desert nights', 'Don\'t miss the sunrise and sunset', 'Try traditional Bedouin cuisine' ] }, { id: 'dead-sea', name: 'Dead Sea', category: 'nature', difficulty: 'easy', duration: '2-4 hours', budget: 'medium', accessibility: 'good', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop', image360: 'https://images.unsplash.com/photo-1539650116574-75c0c6d57d8b?w=400&h=250&fit=crop', virtualTour: 'https://dead-sea-virtual-tour.com', shortDescription: 'Lowest point on Earth with healing waters', fullDescription: 'The Dead Sea is a salt lake bordered by Jordan to the east and Israel to the west. At 430 meters below sea level, it\'s the lowest point on Earth\'s surface. The hypersaline water makes floating effortless and is renowned for its therapeutic properties.', highlights: ['Effortless floating', 'Mud therapy', 'Salt formations', 'Spa treatments'], bestTimeToVisit: { months: ['October', 'November', 'December', 'January', 'February', 'March', 'April'], hours: 'Morning (8AM-11AM) or late afternoon (4PM-6PM)', season: 'Cooler months to avoid extreme heat' }, transportation: { from_amman: 'Private car (1 hour), Bus (1.5 hours)', from_petra: 'Private car (2.5 hours), Tour bus (3 hours)', parking: 'Available at resorts and public beaches', local_transport: 'Resort shuttles, private taxis' }, averageRating: 4.6, tips: [ 'Don\'t shave before visiting', 'Avoid getting water in eyes or mouth', 'Bring fresh water for rinsing', 'Try the therapeutic mud treatments' ] }, { id: 'jerash', name: 'Jerash', category: 'historical', difficulty: 'easy', duration: '3-4 hours', budget: 'low', accessibility: 'good', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop', image360: 'https://images.unsplash.com/photo-1539650116574-75c0c6d57d8b?w=400&h=250&fit=crop', virtualTour: 'https://jerash-virtual-tour.com', shortDescription: 'Best-preserved Roman ruins outside Italy', fullDescription: 'Jerash is home to one of the best-preserved Roman provincial towns in the world. Hidden for centuries under sand, the city has been excavated and restored over 70 years, revealing a remarkable Roman urban planning example.', highlights: ['Hadrian\'s Arch', 'Oval Plaza', 'Roman Theatre', 'Colonnaded Street'], bestTimeToVisit: { months: ['October', 'November', 'December', 'January', 'February', 'March', 'April'], hours: 'Morning (8AM-11AM) or late afternoon (3PM-5PM)', season: 'Spring and fall for comfortable walking' }, transportation: { from_amman: 'Private car (1 hour), Bus (1.5 hours)', from_petra: 'Private car (4 hours), Tour bus (4.5 hours)', parking: 'Available at site entrance', local_transport: 'Walking tour, horse-drawn carriages' }, averageRating: 4.7, tips: [ 'Hire a guide for detailed historical context', 'Comfortable walking shoes essential', 'Visit during the annual festival if possible', 'Don\'t miss the sound and light show' ] }, { id: 'amman', name: 'Amman', category: 'urban', difficulty: 'easy', duration: '6-8 hours', budget: 'medium', accessibility: 'excellent', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop', image360: 'https://images.unsplash.com/photo-1539650116574-75c0c6d57d8b?w=400&h=250&fit=crop', virtualTour: 'https://amman-virtual-tour.com', shortDescription: 'Modern capital with ancient history', fullDescription: 'Amman is a fascinating city of contrasts – a unique blend of old and new, where ancient traditions meet modern life. The city is built on seven hills and offers a mix of ancient ruins, traditional markets, and modern amenities.', highlights: ['Citadel', 'Roman Theatre', 'Rainbow Street', 'King Abdullah Mosque'], bestTimeToVisit: { months: ['March', 'April', 'May', 'September', 'October', 'November'], hours: 'All day - city activities', season: 'Spring and fall for pleasant weather' }, transportation: { from_petra: 'Private car (3 hours), Bus (3.5 hours)', from_aqaba: 'Private car (4 hours), Flight (1 hour)', parking: 'Available in city center and malls', local_transport: 'Taxis, buses, ride-sharing apps' }, averageRating: 4.4, tips: [ 'Try traditional Jordanian cuisine', 'Visit local markets for authentic shopping', 'Explore both modern and old parts of the city', 'Use official taxis or ride-sharing apps' ] }, { id: 'aqaba', name: 'Aqaba', category: 'nature', difficulty: 'easy', duration: '4-6 hours', budget: 'medium', accessibility: 'good', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop', image360: 'https://images.unsplash.com/photo-1539650116574-75c0c6d57d8b?w=400&h=250&fit=crop', virtualTour: 'https://aqaba-virtual-tour.com', shortDescription: 'Red Sea diving and coral reef paradise', fullDescription: 'Aqaba is Jordan\'s window to the sea, offering world-class diving and snorkeling in the Red Sea. The city combines beach relaxation with water sports and serves as the gateway to Wadi Rum desert.', highlights: ['Coral reefs', 'Diving spots', 'Beach resorts', 'Marine life'], bestTimeToVisit: { months: ['October', 'November', 'December', 'January', 'February', 'March', 'April'], hours: 'Morning dives (8AM-11AM) or afternoon (2PM-5PM)', season: 'Winter months for comfortable temperatures' }, transportation: { from_amman: 'Private car (4 hours), Flight (1 hour), Bus (4.5 hours)', from_petra: 'Private car (2 hours), Bus (2.5 hours)', parking: 'Available at hotels and diving centers', 'local_transport': 'Taxis, hotel shuttles, boat trips' }, averageRating: 4.7, tips: [ 'Book diving trips in advance', 'Bring reef-safe sunscreen', 'Try fresh seafood at local restaurants', 'Consider combining with Wadi Rum visit' ] }, { id: 'mount-nebo', name: 'Mount Nebo', category: 'religious', difficulty: 'easy', duration: '2-3 hours', budget: 'low', accessibility: 'good', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop', image360: 'https://images.unsplash.com/photo-1539650116574-75c0c6d57d8b?w=400&h=250&fit=crop', virtualTour: 'https://mount-nebo-virtual-tour.com', shortDescription: 'Sacred biblical site with panoramic views', fullDescription: 'Mount Nebo is a biblical and spiritual site where Moses is said to have viewed the Promised Land before his death. The site offers panoramic views of the Jordan Valley, Dead Sea, and on clear days, Jerusalem.', highlights: ['Moses Memorial', 'Byzantine mosaics', 'Panoramic views', 'Serpentine Cross'], bestTimeToVisit: { months: ['March', 'April', 'May', 'September', 'October', 'November'], hours: 'Morning (8AM-11AM) or late afternoon (4PM-6PM)', season: 'Spring and fall for clear visibility' }, transportation: { from_amman: 'Private car (1 hour), Tour bus (1.5 hours)', from_dead_sea: 'Private car (30 minutes), Tour bus (45 minutes)', parking: 'Available at site entrance', local_transport: 'Walking paths, guided tours' }, averageRating: 4.6, tips: [ 'Visit during clear weather for best views', 'Respect the religious significance of the site', 'Combine with Madaba mosaic visits', 'Bring a camera for the stunning vistas' ] }, { id: 'dana-reserve', name: 'Dana Biosphere Reserve', category: 'nature', difficulty: 'moderate', duration: '4-8 hours', budget: 'medium', accessibility: 'limited', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=250&fit=crop', image360: 'https://images.unsplash.com/photo-1539650116574-75c0c6d57d8b?w=400&h=250&fit=crop', virtualTour: 'https://dana-reserve-virtual-tour.com', shortDescription: 'Jordan\'s largest nature reserve', fullDescription: 'Dana Biosphere Reserve is Jordan\'s largest nature reserve, spanning four bio-geographical zones. It\'s home to diverse wildlife and plant species, offering excellent hiking trails and eco-tourism experiences.', highlights: ['Hiking trails', 'Wildlife viewing', 'Ancient copper mines', 'Traditional villages'], bestTimeToVisit: { months: ['March', 'April', 'May', 'September', 'October', 'November'], hours: 'Early morning (6AM-10AM) or late afternoon (3PM-6PM)', season: 'Spring and fall for wildlife activity' }, transportation: { from_amman: 'Private car (3 hours), Bus to Tafila then taxi (4 hours total)', from_petra: 'Private car (1.5 hours), Tour bus (2 hours)', parking: 'Available at visitor center', local_transport: 'Hiking trails, guided nature walks' }, averageRating: 4.8, tips: [ 'Book eco-lodge accommodation in advance', 'Bring sturdy hiking boots', 'Hire local guides for best experience', 'Respect wildlife and stay on marked trails' ] } ];
@@ -91,6 +93,7 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
   
   return (
     <section ref={exploreRef} id="explore" className="py-20 bg-gray-800 relative overflow-hidden">
+      {/* --- هذا هو الهيكل العام الذي حافظت عليه --- */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-3xl"></div>
@@ -102,31 +105,13 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
           <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Discover Jordan's most captivating destinations with real-time insights, personalized recommendations, and expert local guidance</p>
         </div>
         
-        {/* --- قسم الخريطة والشات بوت --- */}
-        {/* --- قمت بفصلهم إلى قسمين بدلاً من دمجهم معاً للحفاظ على تصميمك الأصلي --- */}
-
-        {/* --- 1. قسم الخريطة --- */}
-        <div className="mb-12 bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-4 shadow-2xl">
-            <h3 className="text-2xl font-bold text-white mb-4 text-center font-poppins">Interactive Map of Jordan</h3>
-            <div className="h-96 w-full rounded-xl overflow-hidden border border-gray-700">
-                <MapContainer center={[31.2, 36.5]} zoom={7} style={{ height: '100%', width: '100%' }}>
-                     <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    />
-                    {destinations.map(dest => {
-                        const position = {'petra': [30.3285, 35.4444],'wadi-rum': [29.5732, 35.4211],'dead-sea': [31.5592, 35.5869],'jerash': [32.2736, 35.8931],'amman': [31.9454, 35.9284],'aqaba': [29.5266, 35.0076],'mount-nebo': [31.7686, 35.7256],'dana-reserve': [30.6789, 35.6111]}[dest.id];
-                        return position ? (<Marker key={dest.id} position={position}><Popup><b>{dest.name}</b><br/>{dest.shortDescription}</Popup></Marker>) : null;
-                    })}
-                </MapContainer>
-            </div>
-        </div>
-
-        {/* --- 2. قسم الشات بوت --- */}
+        {/* --- قمت بدمج الخريطة والشات بوت هنا --- */}
+        {/* --- هذا القسم الجديد تم وضعه قبل قسم الفلاتر والبطاقات --- */}
         <div className="mb-16 bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-6 lg:p-8 shadow-2xl">
-            <h3 className="text-2xl font-bold text-white mb-6 text-center font-poppins">AI Trip Planner</h3>
-            <div className="max-w-2xl mx-auto">
-                <div className="flex flex-col h-[500px] bg-gray-800 rounded-xl border border-gray-700">
+            <h3 className="text-2xl font-bold text-white mb-6 text-center font-poppins">AI Trip Planner & Interactive Map</h3>
+            <div className="flex flex-col lg:flex-row gap-8">
+                {/* --- 1. الشات بوت الوظيفي --- */}
+                <div className="lg:w-1/2 flex flex-col h-[500px] bg-gray-800 rounded-xl border border-gray-700">
                     <div className="flex-1 p-4 space-y-4 overflow-y-auto">
                         {history.map((msg, index) => (
                             <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -151,10 +136,23 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
                         </div>
                     </div>
                 </div>
+                {/* --- 2. الخريطة الوظيفية --- */}
+                <div className="lg:w-1/2 h-96 lg:h-auto bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-700">
+                    <MapContainer center={[31.2, 36.5]} zoom={7} style={{ height: '100%', width: '100%' }}>
+                         <TileLayer
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        />
+                        {destinations.map(dest => {
+                            const position = {'petra': [30.3285, 35.4444],'wadi-rum': [29.5732, 35.4211],'dead-sea': [31.5592, 35.5869],'jerash': [32.2736, 35.8931],'amman': [31.9454, 35.9284],'aqaba': [29.5266, 35.0076],'mount-nebo': [31.7686, 35.7256],'dana-reserve': [30.6789, 35.6111]}[dest.id];
+                            return position ? (<Marker key={dest.id} position={position}><Popup><b>{dest.name}</b><br/>{dest.shortDescription}</Popup></Marker>) : null;
+                        })}
+                    </MapContainer>
+                </div>
             </div>
         </div>
-
-        {/* --- قسم الفلاتر والبطاقات --- */}
+        
+        {/* --- بقية الكود الخاص بك (الفلاتر والبطاقات) يبقى كما هو بدون تغيير --- */}
         <div className="mb-8 space-y-4">
           <div className="relative max-w-md mx-auto">
             <input type="text" placeholder="Search destinations..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"/>
