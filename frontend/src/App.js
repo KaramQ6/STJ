@@ -274,7 +274,7 @@ const App = () => {
             <main>
                 <section ref={heroRef} id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/40 to-indigo-900/60 z-10 animate-pulse"></div>
-                    <div className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-1000 parallax" style={{ backgroundImage: `url('https://images.pexels.com/photos/1712323028707-6e59c3d2271a')`, transform: `translateY(${scrollProgress * 0.5}px) scale(1.1)`}}></div>
+                    <div className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-1000 parallax" style={{ backgroundImage: `url('public/petra.webp')`, transform: `translateY(${scrollProgress * 0.5}px) scale(1.1)`}}></div>
                     <div className="absolute inset-0 z-15">
                         <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full blur-xl animate-float"></div>
                         <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-full blur-lg animate-float" style={{animationDelay: '1s'}}></div>
@@ -284,14 +284,6 @@ const App = () => {
                         <div className="relative w-64 h-64 opacity-30 hover:opacity-50 transition-opacity duration-500 group">
                             <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-2xl backdrop-blur-sm border border-white/10 p-6 group-hover:scale-105 transition-transform duration-500">
                                 <div className="text-white/80 text-center">
-                                    <div className="text-4xl mb-2">🗺️</div>
-                                    <div className="text-sm font-inter">Interactive Jordan Map</div>
-                                    <div className="mt-4 space-y-2">
-                                        <div className="flex items-center justify-between text-xs"><span>📍 Petra</span><div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div></div>
-                                        <div className="flex items-center justify-between text-xs"><span>🏛️ Jerash</span><div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div></div>
-                                        <div className="flex items-center justify-between text-xs"><span>🌊 Dead Sea</span><div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" style={{animationDelay: '1s'}}></div></div>
-                                        <div className="flex items-center justify-between text-xs"><span>🏜️ Wadi Rum</span><div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" style={{animationDelay: '1.5s'}}></div></div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
