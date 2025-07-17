@@ -235,7 +235,7 @@ const App = () => {
                          <div className="flex items-center">
                              <h1 className="text-xl font-bold text-white hover:text-purple-400 transition-all duration-300 cursor-pointer font-poppins tracking-tight transform hover:scale-105" onClick={() => scrollToSection('home')}>
                                  <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent animate-glow">Smart</span>
-                                 <span className="text-white ml-1">Jordan</span>
+                                 <span className="text-white ml-1">Tour.jo</span>
                              </h1>
                          </div>
                          <div className="hidden md:block">
