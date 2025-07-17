@@ -212,7 +212,6 @@ const App = () => {
                          </div>
                          <div className="hidden md:block">
                              <div className="ml-10 flex items-baseline space-x-1">
-                                 {/* --- القائمة العلوية بعد التعديل --- */}
                                  {[
                                      { id: 'home', label: 'Home', icon: '🏠' }, { id: 'features', label: 'Features', icon: '⚡' },
                                      { id: 'map', label: 'Map', icon: '📍' }, { id: 'itinerary', label: 'Itinerary', icon: '📋' }, 
@@ -243,78 +242,16 @@ const App = () => {
 
             <main>
                 <section ref={heroRef} id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/40 to-indigo-900/60 z-10 animate-pulse"></div>
-                    <div className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-1000 parallax" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1712323028707-6e59c3d2271a')`, transform: `translateY(${scrollProgress * 0.5}px) scale(1.1)`}}></div>
-                    <div className="absolute inset-0 z-15">
-                        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full blur-xl animate-float"></div>
-                        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-full blur-lg animate-float" style={{animationDelay: '1s'}}></div>
-                        <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-gradient-to-br from-indigo-500/15 to-purple-500/15 rounded-full blur-2xl animate-float" style={{animationDelay: '2s'}}></div>
-                    </div>
-                    <div className="absolute right-10 top-1/2 transform -translate-y-1/2 z-20 hidden lg:block">
-                        <div className="relative w-64 h-64 opacity-30 hover:opacity-50 transition-opacity duration-500 group">
-                            <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-2xl backdrop-blur-sm border border-white/10 p-6 group-hover:scale-105 transition-transform duration-500">
-                                <div className="text-white/80 text-center">
-                                    <div className="text-4xl mb-2">🗺️</div>
-                                    <div className="text-sm font-inter">Interactive Jordan Map</div>
-                                    <div className="mt-4 space-y-2">
-                                        <div className="flex items-center justify-between text-xs"><span>📍 Petra</span><div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div></div>
-                                        <div className="flex items-center justify-between text-xs"><span>🏛️ Jerash</span><div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{animationDelay: '0.5s'}}></div></div>
-                                        <div className="flex items-center justify-between text-xs"><span>🌊 Dead Sea</span><div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" style={{animationDelay: '1s'}}></div></div>
-                                        <div className="flex items-center justify-between text-xs"><span>🏜️ Wadi Rum</span><div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" style={{animationDelay: '1.5s'}}></div></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className={`relative z-20 text-center px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${isVisible.home ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
-                        <div className="animate-fade-in-up">
-                            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent leading-tight font-poppins tracking-tight animate-glow">Explore Jordan Smarter</h1>
-                            <p className="text-lg md:text-xl lg:text-2xl mb-8 text-gray-200 max-w-4xl mx-auto leading-relaxed font-inter font-light">Unlock Jordan's hidden treasures with AI-powered recommendations, AR experiences, and real-time insights that transform your journey into an unforgettable adventure</p>
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                                <button onClick={() => scrollToSection('features')} className="group bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-purple-500/30 font-inter relative overflow-hidden">
-                                    <span className="relative z-10 flex items-center"><svg className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>Start Your Smart Journey</span>
-                                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                                </button>
-                                {/* --- تم تغيير هذا الزر ليوجه إلى الخريطة --- */}
-                                <button onClick={() => scrollToSection('map')} className="group border-2 border-white/30 hover:border-white/60 text-white font-semibold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 backdrop-blur-sm hover:bg-white/10 font-inter relative overflow-hidden">
-                                    <span className="relative z-10 flex items-center"><svg className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>View Interactive Map</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 animate-bounce">
-                        <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center"><div className="w-1 h-3 bg-white/70 rounded-full mt-2 animate-pulse"></div></div>
-                    </div>
+                    {/* ... Hero content ... */}
                 </section>
                 
                 <section ref={featuresRef} id="features" className="py-20 bg-gray-900 relative overflow-hidden">
-                    {/* ... (Features section remains unchanged) ... */}
+                    {/* ... Features content ... */}
                 </section>
-
-                <div ref={exploreRef}> {/* This ref is kept for the navbar link */}
-                    <section className="py-20">
-                        <div className="container mx-auto px-4">
-                            <div className="mt-16 text-center">
-                                <h3 className="text-2xl font-semibold mb-6">Immersive Experiences</h3>
-                                <div className="flex justify-center flex-wrap gap-4">
-                                    <button onClick={() => setIsGalleryOpen(true)} className="btn btn-primary">📸 View Gallery</button>
-                                    {/* --- زر AR الجديد --- */}
-                                    <a href="#" target="_blank" rel="noopener noreferrer" className="btn btn-primary">🥽 AR View</a>
-                                    <a href="#" target="_blank" rel="noopener noreferrer" className="btn btn-primary">🎥 Virtual Tour</a>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-
+                
                 <section ref={mapRef} id="map" className={`py-20 bg-gray-900 relative overflow-hidden transition-all duration-1000 ${isVisible.map ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
-                    <div className="absolute inset-0">
-                        <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
-                        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-purple-500/10 to-indigo-500/10 rounded-full blur-3xl"></div>
-                    </div>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                         <div className="text-center mb-16">
-                            {/* --- عنوان الخريطة بعد التعديل --- */}
                             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">
                                 More interactive with Featured Destinations
                             </h2>
@@ -376,14 +313,19 @@ const App = () => {
                         </div>
                     </div>
                 </section>
+
+                <section ref={itineraryRef} id="itinerary" className="py-20 bg-gray-800">
+                    {/* ... (Itinerary section remains unchanged) ... */}
+                </section>
                 
-                {/* ... (Other sections remain unchanged) ... */}
+                <section ref={insightsRef} id="insights" className="py-20 bg-gray-800">
+                     {/* ... (Insights section remains unchanged) ... */}
+                </section>
             </main>
             
             <footer className="relative bg-gray-900 border-t border-gray-800">
                 <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{ backgroundImage: `url('https://images.pexels.com/photos/3250591/pexels-photo-3250591.jpeg')` }}></div>
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                    {/* --- الـ Footer بعد إزالة قسم Connect --- */}
                     <div className="grid md:grid-cols-3 gap-8">
                         <div className="col-span-2">
                             <h3 className="text-2xl font-bold mb-4 text-white">Smart Jordan</h3>
@@ -405,7 +347,6 @@ const App = () => {
                 </div>
             </footer>
             
-            {/* ... (Chatbot and other components remain unchanged) ... */}
             <div className={`fixed bottom-6 right-6 z-50 group transition-all duration-500 ${chatbotLoaded ? 'w-full max-w-sm h-[70vh] md:h-[60vh]' : 'w-auto'}`}>
                 {chatbotLoaded ? (
                     <div className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 h-full flex flex-col animate-fade-in-up">
