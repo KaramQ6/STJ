@@ -12,7 +12,6 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
-// Custom component to handle map view changes
 function ChangeView({ center, zoom }) {
     const map = useMap();
     if (center) {
@@ -21,7 +20,6 @@ function ChangeView({ center, zoom }) {
     return null;
 }
 
-// Gallery Modal Component
 const GalleryModal = ({ isOpen, onClose, images }) => {
     if (!isOpen) return null;
     return (
@@ -40,7 +38,6 @@ const GalleryModal = ({ isOpen, onClose, images }) => {
 };
 
 const App = () => {
-    // --- STATE MANAGEMENT ---
     const [activeSection, setActiveSection] = useState('home');
     const [showBackToTop, setShowBackToTop] = useState(false);
     const [insights, setInsights] = useState({ temp: '--', humidity: '--', crowd: '...', air: '...' });
@@ -50,7 +47,6 @@ const App = () => {
     const [userLocation, setUserLocation] = useState(null);
     const chatEndRef = useRef(null);
     
-    // --- REFS FOR SCROLLING ---
     const sectionRefs = {
         home: useRef(null),
         features: useRef(null),
@@ -59,7 +55,6 @@ const App = () => {
         explore: useRef(null),
     };
 
-    // --- DATA ---
     const touristSites = [
         { id: 1, name: "البتراء", coords: [30.3285, 35.4444] },
         { id: 2, name: "جرش", coords: [32.2730, 35.8911] },
@@ -77,11 +72,9 @@ const App = () => {
         { src: 'https://images.pexels.com/photos/14986348/pexels-photo-14986348.jpeg', alt: 'Baptism Site' },
     ];
 
-    // --- MAP ICONS ---
     const redIcon = new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
     const blueIcon = new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
 
-    // --- EFFECTS ---
     useEffect(() => {
         const handleScroll = () => {
             setShowBackToTop(window.scrollY > 300);
@@ -140,7 +133,7 @@ const App = () => {
         return () => clearInterval(interval);
     }, []);
 
-     useEffect(() => {
+    useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
                 setUserLocation([pos.coords.latitude, pos.coords.longitude]);
@@ -148,7 +141,6 @@ const App = () => {
         }
     }, []);
 
-    // --- HANDLERS ---
     const scrollToSection = (id) => {
         sectionRefs[id]?.current?.scrollIntoView({ behavior: 'smooth' });
     };
@@ -237,6 +229,7 @@ const App = () => {
                         <h2 className="section-title">الخريطة التفاعلية</h2>
                         <div className="map-container">
                              <MapContainer center={userLocation || [31.95, 35.93]} zoom={userLocation ? 13 : 7} style={{ height: '500px', width: '100%' }}>
+                                <ChangeView center={userLocation || [31.95, 35.93]} zoom={userLocation ? 13 : 7} />
                                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                                 {userLocation && (
                                     <Marker position={userLocation} icon={redIcon}>
