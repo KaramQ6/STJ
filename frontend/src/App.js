@@ -3,9 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import "./App.css";
 import 'leaflet/dist/leaflet.css';
-// لم نعد بحاجة لمكون ExploreSection المنفصل، فقد تم حذفه
 
-// GalleryModal يبقى كما هو
+// GalleryModal and other helper components remain the same
 const GalleryModal = ({ isOpen, onClose, images }) => {
     if (!isOpen) return null;
     return (
@@ -30,7 +29,6 @@ const GalleryModal = ({ isOpen, onClose, images }) => {
     );
 };
 
-
 const App = () => {
     // ======== STATE MANAGEMENT ========
     const [sensorData, setSensorData] = useState({ temperature: 28, humidity: 45, crowdLevel: 'Medium', airQuality: 'Good' });
@@ -48,8 +46,8 @@ const App = () => {
     // ======== REFS FOR SCROLLING ========
     const heroRef = useRef(null);
     const featuresRef = useRef(null);
+    const exploreRef = useRef(null);
     const mapRef = useRef(null);
-    // Itinerary ref removed
     const insightsRef = useRef(null);
     const chatEndRef = useRef(null);
 
@@ -82,6 +80,13 @@ const App = () => {
         { src: 'https://images.pexels.com/photos/73910/jordan-petra-travel-73910.jpeg', alt: 'Jerash Colonnaded Street' },
         { src: 'https://images.pexels.com/photos/7989333/pexels-photo-7989333.jpeg', alt: 'Wadi Mujib Canyon' },
         { src: 'https://images.pexels.com/photos/14986348/pexels-photo-14986348.jpeg', alt: 'Baptism Site' },
+    ];
+    
+    const exploreData = [
+        { title: '🏛️ Petra: The Rose City', description: 'Explore the Treasury, the Monastery, and the ancient tombs of this UNESCO World Heritage wonder.', image: 'https://images.pexels.com/photos/1587747/pexels-photo-1587747.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
+        { title: '🏜️ Wadi Rum: The Martian Desert', description: 'Experience Bedouin culture, stunning sunsets, and Jeep tours in this vast desert landscape.', image: 'https://images.pexels.com/photos/2440339/pexels-photo-2440339.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
+        { title: '🌊 Dead Sea: The Lowest Point on Earth', description: 'Float effortlessly in its hypersaline waters and benefit from its therapeutic mineral-rich mud.', image: 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
+        { title: '🧗 Adventure in Canyons', description: 'Experience thrilling adventures like Canyoning in Wadi Mujib and diving in the Red Sea at Aqaba.', image: 'https://images.pexels.com/photos/7989333/pexels-photo-7989333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' }
     ];
     
     // ======== CUSTOM MARKER ICONS ========
@@ -130,27 +135,54 @@ const App = () => {
         }
     };
     
-    // ======== SCROLL EFFECTS & SENSOR SIMULATION ========
+    // ======== SCROLL & INSIGHTS LOGIC ========
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
-    
+
+    const updateInsights = async () => {
+        const apiKey = '91859b46e4ef01b5415a2f8b1ddbfac1';
+        const updateUI = (data) => {
+            setSensorData(prev => ({...prev, temperature: Math.round(data.main.temp), humidity: data.main.humidity}));
+        };
+        try {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) throw new Error('Weather API error');
+                    const data = await response.json();
+                    updateUI(data);
+                },
+                async () => { // Fallback to Amman
+                    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=Amman&appid=${apiKey}&units=metric`;
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) throw new Error('Default weather API error');
+                    const data = await response.json();
+                    updateUI(data);
+                }
+            );
+        } catch (error) { console.error('Fetch weather error:', error); }
+    };
+
     useEffect(() => {
+        updateInsights(); // Initial call
         const interval = setInterval(() => {
             setIsDataUpdating(true);
             setPreviousSensorData(sensorData);
             setTimeout(() => {
-                setSensorData({
-                    temperature: Math.round(25 + Math.random() * 10),
-                    humidity: Math.round(40 + Math.random() * 20),
+                updateInsights();
+                setSensorData(prev => ({
+                    ...prev,
                     crowdLevel: ['Low', 'Medium', 'High'][Math.floor(Math.random() * 3)],
                     airQuality: ['Good', 'Moderate', 'Excellent'][Math.floor(Math.random() * 3)]
-                });
+                }));
                 setIsDataUpdating(false);
             }, 300);
-        }, 5000);
+        }, 300000); // Update every 5 minutes
         return () => clearInterval(interval);
-    }, [sensorData]);
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -164,8 +196,8 @@ const App = () => {
 
             const sections = [
                 { id: 'home', ref: heroRef }, { id: 'features', ref: featuresRef },
-                { id: 'map', ref: mapRef }, 
-                { id: 'insights', ref: insightsRef }
+                { id: 'map', ref: mapRef }, { id: 'insights', ref: insightsRef },
+                { id: 'explore', ref: exploreRef}
             ];
 
             for (let section of sections) {
@@ -185,7 +217,7 @@ const App = () => {
     }, []);
 
     const scrollToSection = (sectionId) => {
-        const refs = { home: heroRef, features: featuresRef, map: mapRef, insights: insightsRef };
+        const refs = { home: heroRef, features: featuresRef, map: mapRef, insights: insightsRef, explore: exploreRef };
         if (refs[sectionId]?.current) {
             refs[sectionId].current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -210,7 +242,8 @@ const App = () => {
                                  {[
                                      { id: 'home', label: 'Home', icon: '🏠' }, 
                                      { id: 'features', label: 'Features', icon: '⚡' },
-                                     { id: 'map', label: 'Map', icon: '📍' }, 
+                                     { id: 'map', label: 'Map', icon: '📍' },
+                                     { id: 'explore', label: 'Explore', icon: '🗺️' },
                                      { id: 'insights', label: 'Insights', icon: '📊' }
                                  ].map((item) => (
                                      <button key={item.id} onClick={() => scrollToSection(item.id)}
@@ -241,12 +274,7 @@ const App = () => {
                     {/* ... Hero content ... */}
                 </section>
                 
-                {/* --- قسم المميزات (مُعاد إضافته) --- */}
                 <section ref={featuresRef} id="features" className="py-20 bg-gray-900 relative overflow-hidden">
-                     <div className="absolute inset-0">
-                         <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-full blur-3xl"></div>
-                         <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-3xl"></div>
-                     </div>
                      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                          <div className={`text-center mb-16 transition-all duration-1000 ${isVisible.features ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
                              <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">Smart Features for Smart Travelers</h2>
@@ -270,15 +298,40 @@ const App = () => {
                      </div>
                 </section>
                 
+                {/* --- Explore Section with detailed info --- */}
+                <section ref={exploreRef} id="explore" className="py-20">
+                    <div className="container mx-auto px-4">
+                        <div className="text-center mb-12">
+                            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">Discover Jordan Your Way</h2>
+                            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Find experiences that match your interests, from ancient wonders to breathtaking nature.</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {exploreData.map((item, index) => (
+                                <div key={index} className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10">
+                                    <img src={item.image} alt={item.title} className="w-full h-48 object-cover"/>
+                                    <div className="p-6">
+                                        <h3 className="text-xl font-semibold text-white mb-2 font-poppins">{item.title}</h3>
+                                        <p className="text-gray-300 text-sm mb-4 font-inter">{item.description}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="mt-16 text-center">
+                            <h3 className="text-2xl font-semibold mb-6">Immersive Experiences</h3>
+                            <div className="flex justify-center flex-wrap gap-4">
+                                <button onClick={() => setIsGalleryOpen(true)} className="btn btn-primary">📸 View Gallery</button>
+                                <a href="ar.html" target="_blank" rel="noopener noreferrer" className="btn btn-primary">🥽 AR View</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" className="btn btn-primary">🎥 Virtual Tour</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <section ref={mapRef} id="map" className={`py-20 bg-gray-900 relative overflow-hidden transition-all duration-1000 ${isVisible.map ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                         <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">
-                                More interactive with Featured Destinations
-                            </h2>
-                            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">
-                                Discover Jordan's magnificent destinations with our interactive map featuring all major tourist attractions
-                            </p>
+                            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">More interactive with Featured Destinations</h2>
+                            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Discover Jordan's magnificent destinations with our interactive map featuring all major tourist attractions</p>
                         </div>
                         <div className="grid lg:grid-cols-3 gap-8">
                             <div className="lg:col-span-2">
@@ -336,15 +389,35 @@ const App = () => {
                 </section>
                 
                 <section ref={insightsRef} id="insights" className="py-20 bg-gray-800">
-                     {/* ... (Insights section remains unchanged) ... */}
+                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                         <div className="text-center mb-16">
+                             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Live Smart Insights</h2>
+                             <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">Real-time data to help you plan the perfect visit</p>
+                         </div>
+                         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                             {[ { label: 'Temperature', value: `${sensorData.temperature}°C`, icon: '🌡️', color: 'text-red-400', bgColor: 'from-red-500/20 to-orange-500/20', borderColor: 'border-red-500/30', unit: '°C', rawValue: sensorData.temperature, previousValue: previousSensorData.temperature }, { label: 'Humidity', value: `${sensorData.humidity}%`, icon: '💧', color: 'text-blue-400', bgColor: 'from-blue-500/20 to-cyan-500/20', borderColor: 'border-blue-500/30', unit: '%', rawValue: sensorData.humidity, previousValue: previousSensorData.humidity }, { label: 'Crowd Level', value: sensorData.crowdLevel, icon: '👥', color: 'text-yellow-400', bgColor: 'from-yellow-500/20 to-orange-500/20', borderColor: 'border-yellow-500/30', unit: '', rawValue: sensorData.crowdLevel, previousValue: previousSensorData.crowdLevel }, { label: 'Air Quality', value: sensorData.airQuality, icon: '🌬️', color: 'text-green-400', bgColor: 'from-green-500/20 to-emerald-500/20', borderColor: 'border-green-500/30', unit: '', rawValue: sensorData.airQuality, previousValue: previousSensorData.airQuality } ].map((insight, index) => (
+                                 <div key={index} className={`bg-gradient-to-br ${insight.bgColor} backdrop-blur-sm rounded-2xl p-6 text-center border ${insight.borderColor} hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10 relative overflow-hidden group`}>
+                                     <div className={`absolute inset-0 bg-gradient-to-r ${insight.bgColor} opacity-0 group-hover:opacity-30 transition-opacity duration-500`}></div>
+                                     {isDataUpdating && (<div className="absolute top-2 right-2 w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>)}
+                                     <div className="relative z-10">
+                                         <div className={`text-4xl mb-4 transform hover:scale-110 transition-transform duration-300 ${isDataUpdating ? 'animate-pulse' : ''}`}>{insight.icon}</div>
+                                         <div className={`text-2xl font-bold mb-2 ${insight.color} transition-all duration-500 ${isDataUpdating ? 'transform scale-110 animate-pulse' : ''} ${insight.rawValue !== insight.previousValue ? 'animate-bounce' : ''}`}><span className="font-mono tracking-wider">{insight.value}</span></div>
+                                         <div className="text-gray-300 text-sm font-medium tracking-wide uppercase">{insight.label}</div>
+                                         {typeof insight.rawValue === 'number' && (<div className="mt-3 w-full bg-gray-700 rounded-full h-1.5 overflow-hidden"><div className={`h-full bg-gradient-to-r ${insight.bgColor} transition-all duration-1000 ease-out`} style={{ width: insight.label === 'Temperature' ? `${Math.min((insight.rawValue / 40) * 100, 100)}%` : `${Math.min((insight.rawValue / 100) * 100, 100)}%` }}></div></div>)}
+                                         {typeof insight.rawValue === 'string' && (<div className="mt-3 flex justify-center"><div className={`w-2 h-2 rounded-full ${insight.rawValue === 'Good' || insight.rawValue === 'Excellent' || insight.rawValue === 'Low' ? 'bg-green-400' : insight.rawValue === 'Medium' || insight.rawValue === 'Moderate' ? 'bg-yellow-400' : 'bg-red-400'} animate-pulse`}></div></div>)}
+                                     </div>
+                                 </div>
+                             ))}
+                         </div>
+                     </div>
                 </section>
             </main>
             
             <footer className="relative bg-gray-900 border-t border-gray-800">
                 <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{ backgroundImage: `url('https://images.pexels.com/photos/3250591/pexels-photo-3250591.jpeg')` }}></div>
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                    <div className="grid md:grid-cols-3 gap-8">
-                        <div className="col-span-2">
+                    <div className="grid md:grid-cols-2 gap-8">
+                        <div className="col-span-1">
                             <h3 className="text-2xl font-bold mb-4 text-white">Smart Jordan</h3>
                             <p className="text-gray-300 mb-6 max-w-md">Your intelligent companion for exploring Jordan's wonders. Experience the future of travel with AI-powered insights and real-time data.</p>
                             <button onClick={() => scrollToSection('home')} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105">Start Your Smart Journey</button>
@@ -364,6 +437,7 @@ const App = () => {
                 </div>
             </footer>
             
+            {/* --- Floating Chatbot (FUNCTIONAL) --- */}
             <div className={`fixed bottom-6 right-6 z-50 group transition-all duration-500 ${chatbotLoaded ? 'w-full max-w-sm h-[70vh] md:h-[60vh]' : 'w-auto'}`}>
                 {chatbotLoaded ? (
                     <div className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 h-full flex flex-col animate-fade-in-up">
