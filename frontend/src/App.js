@@ -3,7 +3,34 @@ import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import "./App.css";
 import 'leaflet/dist/leaflet.css';
-import ExploreSection from './components/ExploreSection';
+// لم نعد بحاجة لمكون ExploreSection المنفصل
+// import ExploreSection from './components/ExploreSection';
+
+// GalleryModal يبقى كما هو
+const GalleryModal = ({ isOpen, onClose, images }) => {
+    if (!isOpen) return null;
+    return (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
+            <div className="bg-gray-900/80 border border-purple-500/30 rounded-2xl p-6 w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold text-white font-poppins">Jordan's Wonders Gallery</h2>
+                    <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors text-3xl">&times;</button>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {images.map((img, index) => (
+                        <div key={index} className="rounded-lg overflow-hidden group relative">
+                            <img src={img.src} alt={img.alt} className="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-300" />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2">
+                                <p className="text-white text-sm font-semibold">{img.alt}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
 
 const App = () => {
     // ======== STATE MANAGEMENT ========
@@ -15,15 +42,14 @@ const App = () => {
     const [chatbotLoaded, setChatbotLoaded] = useState(false);
     const [scrollProgress, setScrollProgress] = useState(0);
     const [isVisible, setIsVisible] = useState({});
-    
-    // --- State for Chatbot ---
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
+    const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
     // ======== REFS FOR SCROLLING ========
     const heroRef = useRef(null);
     const featuresRef = useRef(null);
-    const exploreRef = useRef(null);
+    const exploreRef = useRef(null); // لا يزال موجوداً للربط بالقائمة العلوية
     const mapRef = useRef(null);
     const itineraryRef = useRef(null);
     const insightsRef = useRef(null);
@@ -51,6 +77,15 @@ const App = () => {
         { id: 'dana-reserve', name: 'Dana Biosphere Reserve', position: [30.6774, 35.6270], description: 'Jordan\'s largest nature reserve...', type: 'nature', icon: '🌿', details: 'Rare wildlife...' }
     ];
 
+    const galleryImages = [
+        { src: 'https://images.pexels.com/photos/1587747/pexels-photo-1587747.jpeg', alt: 'Petra Treasury' },
+        { src: 'https://images.pexels.com/photos/2440339/pexels-photo-2440339.jpeg', alt: 'Wadi Rum Desert' },
+        { src: 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg', alt: 'Dead Sea Salt Formations' },
+        { src: 'https://images.pexels.com/photos/73910/jordan-petra-travel-73910.jpeg', alt: 'Jerash Colonnaded Street' },
+        { src: 'https://images.pexels.com/photos/7989333/pexels-photo-7989333.jpeg', alt: 'Wadi Mujib Canyon' },
+        { src: 'https://images.pexels.com/photos/14986348/pexels-photo-14986348.jpeg', alt: 'Baptism Site' },
+    ];
+    
     // ======== CUSTOM MARKER ICONS ========
     const createCustomIcon = (type, emoji) => {
         const iconHtml = `<div style="background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); width: 40px; height: 40px; border-radius: 50% 50% 50% 0; border: 3px solid white; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); display: flex; align-items: center; justify-content: center; font-size: 18px; transform: rotate(-45deg); position: relative;"><span style="transform: rotate(45deg); filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">${emoji}</span></div>`;
@@ -60,17 +95,16 @@ const App = () => {
     // ======== CHATBOT LOGIC (FUNCTIONAL) ========
     const sendMessage = async (e) => {
         e.preventDefault();
-        const input = e.target.elements.message;
-        const userInput = input.value.trim();
+        const inputElement = e.target.elements.message;
+        const userInput = inputElement.value.trim();
         if (!userInput) return;
 
         const newMessages = [...messages, { sender: 'user', text: userInput }];
         setMessages(newMessages);
-        input.value = '';
+        inputElement.value = '';
         setIsTyping(true);
 
-        // !!! IMPORTANT: Use your actual worker URL here !!!
-        const workerUrl = "https://your-worker-name.your-subdomain.workers.dev/"; 
+        const workerUrl = "https://white-frost-8014.karam200566.workers.dev/";
 
         try {
             const response = await fetch(workerUrl, {
@@ -92,17 +126,17 @@ const App = () => {
             setMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
         } catch (error) {
             console.error("Chat API Error:", error);
-            setMessages(prev => [...prev, { sender: 'bot', text: `❌ Sorry, connection failed. Please check the worker URL.` }]);
+            setMessages(prev => [...prev, { sender: 'bot', text: `❌ Sorry, connection failed. ${error.message}` }]);
         } finally {
             setIsTyping(false);
         }
     };
-    
-    // ======== SCROLL EFFECTS & SENSOR SIMULATION ========
+
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
-    
+
+    // Other useEffects and functions remain the same...
     useEffect(() => {
         const interval = setInterval(() => {
             setIsDataUpdating(true);
@@ -167,7 +201,6 @@ const App = () => {
         { time: '07:00 PM', title: 'Night Food Market', description: 'Traditional Jordanian cuisine experience...', icon: '🍽️' }
     ];
 
-    // ... (The rest of your JSX remains exactly the same)
     return (
         <div className="min-h-screen bg-gray-900 text-white">
             <nav className="fixed top-0 w-full bg-black/95 backdrop-blur-xl z-50 border-b border-gray-800/50 transition-all duration-300 shadow-xl">
@@ -254,7 +287,9 @@ const App = () => {
                         <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center"><div className="w-1 h-3 bg-white/70 rounded-full mt-2 animate-pulse"></div></div>
                     </div>
                 </section>
-
+                
+                {/* --- تم حذف قسم ExploreSection من هنا --- */}
+                
                 <section ref={featuresRef} id="features" className="py-20 bg-gray-900 relative overflow-hidden">
                     <div className="absolute inset-0">
                         <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-full blur-3xl"></div>
@@ -282,9 +317,7 @@ const App = () => {
                         </div>
                     </div>
                 </section>
-
-                <ExploreSection exploreRef={exploreRef} isVisible={isVisible} />
-
+                
                 {/* --- Interactive Map Section (FUNCTIONAL) --- */}
                 <section ref={mapRef} id="map" className={`py-20 bg-gray-900 relative overflow-hidden transition-all duration-1000 ${isVisible.map ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
                     <div className="absolute inset-0">
@@ -359,36 +392,36 @@ const App = () => {
                         </div>
                     </div>
                 </section>
-
+                
                 <section ref={itineraryRef} id="itinerary" className="py-20 bg-gray-800">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Suggested Smart Tour Plan</h2>
-                            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">A perfectly curated day in Jordan powered by AI recommendations</p>
-                        </div>
-                        <div className="max-w-4xl mx-auto">
-                            <div className="relative">
-                                <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-600 to-blue-600"></div>
-                                {itinerarySteps.map((step, index) => (
-                                    <div key={index} className="relative flex items-start mb-12 last:mb-0">
-                                        <div className="absolute left-6 w-4 h-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full border-4 border-gray-800 shadow-lg"></div>
-                                        <div className="ml-20 bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
-                                            <div className="flex items-center mb-4">
-                                                <span className="text-3xl mr-4">{step.icon}</span>
-                                                <div>
-                                                    <span className="text-purple-400 font-semibold">{step.time}</span>
-                                                    <h3 className="text-xl font-semibold text-white">{step.title}</h3>
-                                                </div>
-                                            </div>
-                                            <p className="text-gray-300 leading-relaxed">{step.description}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                         <div className="text-center mb-16">
+                             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Suggested Smart Tour Plan</h2>
+                             <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">A perfectly curated day in Jordan powered by AI recommendations</p>
+                         </div>
+                         <div className="max-w-4xl mx-auto">
+                             <div className="relative">
+                                 <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-600 to-blue-600"></div>
+                                 {itinerarySteps.map((step, index) => (
+                                     <div key={index} className="relative flex items-start mb-12 last:mb-0">
+                                         <div className="absolute left-6 w-4 h-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full border-4 border-gray-800 shadow-lg"></div>
+                                         <div className="ml-20 bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+                                             <div className="flex items-center mb-4">
+                                                 <span className="text-3xl mr-4">{step.icon}</span>
+                                                 <div>
+                                                     <span className="text-purple-400 font-semibold">{step.time}</span>
+                                                     <h3 className="text-xl font-semibold text-white">{step.title}</h3>
+                                                 </div>
+                                             </div>
+                                             <p className="text-gray-300 leading-relaxed">{step.description}</p>
+                                         </div>
+                                     </div>
+                                 ))}
+                             </div>
+                         </div>
+                     </div>
                 </section>
-
+                
                 <section ref={insightsRef} id="insights" className="py-20 bg-gray-800">
                      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                          <div className="text-center mb-16">
@@ -413,7 +446,7 @@ const App = () => {
                      </div>
                 </section>
             </main>
-            
+
             <footer className="relative bg-gray-900 border-t border-gray-800">
                 <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{ backgroundImage: `url('https://images.pexels.com/photos/3250591/pexels-photo-3250591.jpeg')` }}></div>
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -445,7 +478,53 @@ const App = () => {
                     </div>
                 </div>
             </footer>
-
+            
+            {/* --- Floating Chatbot (FUNCTIONAL) --- */}
+            <div className={`fixed bottom-6 right-6 z-50 group transition-all duration-500 ${chatbotLoaded ? 'w-full max-w-sm h-[70vh] md:h-[60vh]' : 'w-auto'}`}>
+                {chatbotLoaded ? (
+                    <div className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 h-full flex flex-col animate-fade-in-up">
+                        <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-blue-600 p-4 flex items-center justify-between rounded-t-3xl">
+                             <h3 className="text-white font-semibold text-lg">Smart Jordan AI</h3>
+                             <button onClick={() => setChatbotLoaded(false)} className="text-white text-2xl leading-none">&times;</button>
+                        </div>
+                        <div className="flex-1 p-4 space-y-4 overflow-y-auto custom-scrollbar">
+                            {messages.map((msg, index) => (
+                                <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${msg.sender === 'user' ? 'bg-purple-600' : 'bg-gray-700'}`}>
+                                        {msg.text}
+                                    </div>
+                                </div>
+                            ))}
+                            {isTyping && (
+                                <div className="flex justify-start">
+                                    <div className="bg-gray-700 px-4 py-2 rounded-2xl">
+                                        <span className="animate-pulse">●</span><span className="animate-pulse" style={{animationDelay: '0.2s'}}>●</span><span className="animate-pulse" style={{animationDelay: '0.4s'}}>●</span>
+                                    </div>
+                                </div>
+                            )}
+                            <div ref={chatEndRef} />
+                        </div>
+                        <form onSubmit={sendMessage} className="p-4 bg-gray-800/80 border-t border-white/10 rounded-b-3xl">
+                            <div className="flex items-center">
+                                <input name="message" type="text" placeholder="Ask me anything..." className="w-full bg-white/10 border-white/20 rounded-full px-4 py-2 text-white focus:ring-purple-500"/>
+                                <button type="submit" className="ml-2 bg-purple-600 hover:bg-purple-700 p-2 rounded-full transition-colors">
+                                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                ) : (
+                    <div onClick={() => setChatbotLoaded(true)} className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-full shadow-2xl h-20 flex items-center justify-center p-4 cursor-pointer hover:scale-105 transition-transform">
+                        <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
+                             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                        </div>
+                        <h3 className="text-white font-semibold text-lg">Ask our AI Guide!</h3>
+                    </div>
+                )}
+            </div>
+            
+            <GalleryModal isOpen={isGalleryOpen} onClose={() => setIsGalleryOpen(false)} images={galleryImages} />
+            
             {showBackToTop && (
                 <button onClick={scrollToTop} className="fixed bottom-6 left-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white p-3 rounded-full shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-110 z-40 animate-fade-in">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
