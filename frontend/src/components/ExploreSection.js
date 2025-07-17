@@ -26,7 +26,7 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
 
   // --- الـ state variables الجديدة الخاصة بالشات بوت ---
   const [history, setHistory] = useState([
-    { role: "model", parts: [{ text: "Hello! I am your Jordan travel assistant. How can I help you plan your trip?" }] }
+    { role: "model", parts: [{ text: "Hello! I am Smart Jordan AI. How can I help you plan your trip today?" }] }
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -104,10 +104,10 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
           <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Discover Jordan's most captivating destinations with real-time insights, personalized recommendations, and expert local guidance</p>
         </div>
         
-        {/* --- قسم الخريطة والشات بوت المدمج --- */}
+        {/* --- هذا هو القسم الجديد الذي يحتوي على الخريطة والشات بوت --- */}
         <div className="mb-16 flex flex-col lg:flex-row gap-8">
-            {/* --- 1. الشات بوت (مخطط الرحلات الذكي) --- */}
-            <div className="lg:w-1/2 flex flex-col h-[500px] bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-4 shadow-2xl">
+            {/* --- 1. الشات بوت (Smart Jordan AI) --- */}
+            <div className="lg:w-1/2 flex flex-col h-[564px] bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-4 shadow-2xl">
                 <h3 className="text-2xl font-bold text-white mb-4 text-center font-poppins">Smart Jordan AI</h3>
                 <div className="flex-1 p-4 space-y-4 overflow-y-auto bg-gray-800 rounded-xl">
                     {history.map((msg, index) => (
