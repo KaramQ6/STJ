@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
-        /* All your original CSS is preserved */
+        /* All your original CSS is preserved here */
         html[lang="ar"] body { font-family: 'Cairo', sans-serif; }
         html[lang="en"] body { font-family: 'Poppins', sans-serif; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -50,16 +50,15 @@
         #chatInput { flex-grow: 1; padding: 1rem; border-radius: 8px; border: 1px solid #4b5563; background-color: #1f2937; color: white; font-size: 1rem; }
         #sendButton { padding: 1rem 1.5rem; }
         #sendButton:disabled { background-color: #583c9c; cursor: not-allowed; }
-        .insights-grid, .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
-        .insight-card, .feature-card { background: rgba(31, 41, 55, 0.5); border-radius: 1rem; padding: 1.5rem; text-align: center; border: 1px solid rgba(75, 85, 99, 0.3); transition: all 0.3s ease; }
-        .insight-card:hover, .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1); }
-        .insight-icon, .feature-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+        .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .insight-card { background: rgba(31, 41, 55, 0.5); border-radius: 1rem; padding: 1.5rem; text-align: center; border: 1px solid rgba(75, 85, 99, 0.3); transition: all 0.3s ease; }
+        .insight-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1); }
+        .insight-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
         .insight-value { font-size: 1.8rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.5rem; }
-        .insight-label, .feature-title { font-size: 1.2rem; font-weight: 600; color: #ffffff; margin-bottom: 0.5rem; }
-        .feature-description { color: #9ca3af; font-size: 0.9rem; }
+        .insight-label { color: #9ca3af; font-size: 0.9rem; }
         #map { height: 500px; border-radius: 0.5rem; z-index: 1; }
         .categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
-        .category-card { background: rgba(31, 41, 55, 0.5); border-radius: 1rem; overflow: hidden; border: 1px solid rgba(75, 85, 99, 0.3); transition: all 0.3s ease; }
+        .category-card { background: rgba(31, 41, 55, 0.5); border-radius: 1rem; overflow: hidden; border: 1px solid rgba(75, 85, 99, 0.3); transition: all 0.3s ease; cursor: pointer; }
         .category-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2); border-color: rgba(139, 92, 246, 0.5); }
         .category-image { height: 200px; background-size: cover; background-position: center; }
         .category-content { padding: 1.5rem; }
@@ -72,23 +71,96 @@
     </style>
 </head>
 <body>
-    <nav class="navbar"><div class="nav-container container"><a class="logo" href="#hero" data-translate="siteTitle"></a><ul class="nav-menu"><li><a class="nav-link active" href="#hero" data-translate="navHome"></a></li><li><a class="nav-link" href="#features" data-translate="navFeatures"></a></li><li><a class="nav-link" href="#chatbot" data-translate="navAIGuide"></a></li><li><a class="nav-link" href="#insights" data-translate="navInsights"></a></li><li><a class="nav-link" href="#map-section" data-translate="navMap"></a></li><li><a class="nav-link" href="#categories" data-translate="navExplore"></a></li><li class="lang-switcher"><button id="lang-ar">العربية</button><button id="lang-en">English</button></li></ul></div></nav>
-    
+    <nav class="navbar">
+        <div class="nav-container container">
+            <a class="logo" href="#hero" data-translate="siteTitle"></a>
+            <ul class="nav-menu">
+                <li><a class="nav-link active" href="#hero" data-translate="navHome"></a></li>
+                <li><a class="nav-link" href="#features" data-translate="navFeatures"></a></li>
+                <li><a class="nav-link" href="#chatbot" data-translate="navAIGuide"></a></li>
+                <li><a class="nav-link" href="#insights" data-translate="navInsights"></a></li>
+                <li><a class="nav-link" href="#map-section" data-translate="navMap"></a></li>
+                <li><a class="nav-link" href="#categories" data-translate="navExplore"></a></li>
+                <li class="lang-switcher">
+                    <button id="lang-ar">العربية</button>
+                    <button id="lang-en">English</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <main>
-        <section class="hero" id="hero"><div class="hero-content"><h1 data-translate="heroTitle"></h1><p data-translate="heroSubtitle"></p><div class="hero-buttons"><a class="btn btn-primary" href="#chatbot" data-translate="heroBtnStart"></a></div></div></section>
+        <section class="hero" id="hero">
+            <div class="hero-content">
+                <h1 data-translate="heroTitle"></h1>
+                <p data-translate="heroSubtitle"></p>
+                <div class="hero-buttons">
+                    <a class="btn btn-primary" href="#chatbot" data-translate="heroBtnStart"></a>
+                </div>
+            </div>
+        </section>
         
-        <section class="section" id="features"><div class="container"><h2 class="section-title" data-translate="featuresTitle"></h2><p class="section-subtitle" data-translate="featuresSubtitle"></p><div class="features-grid"></div></div></section>
-        
-        <section class="section" id="chatbot"><div class="container"><h2 class="section-title" data-translate="chatbotTitle"></h2><p class="section-subtitle" data-translate="chatbotSubtitle"></p><div class="chatbot-container"><div id="chatWindow"></div><div class="chat-input-area"><input id="chatInput" type="text" data-translate-placeholder="chatPlaceholder" /><button id="sendButton" class="btn btn-primary" data-translate="chatSend"></button></div></div></div></section>
+        <section class="section" id="features">
+            <div class="container">
+                <h2 class="section-title" data-translate="featuresTitle"></h2>
+                <p class="section-subtitle" data-translate="featuresSubtitle"></p>
+                <div class="features-grid"></div>
+            </div>
+        </section>
 
-        <section class="section" id="insights"><div class="container"><h2 class="section-title" data-translate="insightsTitle"></h2><p class="section-subtitle" data-translate="insightsSubtitle"></p><div class="insights-grid"><div class="insight-card"><span class="insight-icon">🌡️</span><div class="insight-value" id="temp">--°C</div><div class="insight-label" data-translate="insightTemp"></div></div><div class="insight-card"><span class="insight-icon">👥</span><div class="insight-value" id="crowd">--</div><div class="insight-label" data-translate="insightCrowd"></div></div><div class="insight-card"><span class="insight-icon">💧</span><div class="insight-value" id="humidity">--%</div><div class="insight-label" data-translate="insightHumidity"></div></div><div class="insight-card"><span class="insight-icon">🌬️</span><div class="insight-value" id="air-quality">--</div><div class="insight-label" data-translate="insightAir"></div></div></div></div></section>
+        <section class="section" id="chatbot">
+            <div class="container">
+                <h2 class="section-title" data-translate="chatbotTitle"></h2>
+                <p class="section-subtitle" data-translate="chatbotSubtitle"></p>
+                <div class="chatbot-container">
+                    <div id="chatWindow"></div>
+                    <div class="chat-input-area">
+                        <input id="chatInput" type="text" data-translate-placeholder="chatPlaceholder" />
+                        <button id="sendButton" class="btn btn-primary" data-translate="chatSend"></button>
+                    </div>
+                </div>
+            </div>
+        </section>
         
-        <section class="section" id="map-section"><div class="container"><h2 class="section-title" data-translate="mapTitle"></h2><p class="section-subtitle" data-translate="mapSubtitle"></p><div class="map-container"><div id="map"></div></div></div></section>
+        <section class="section" id="insights">
+            <div class="container">
+                <h2 class="section-title" data-translate="insightsTitle"></h2>
+                <p class="section-subtitle" data-translate="insightsSubtitle"></p>
+                <div class="insights-grid">
+                    <div class="insight-card"><span class="insight-icon">🌡️</span><div class="insight-value" id="temp">--°C</div><div class="insight-label" data-translate="insightTemp"></div></div>
+                    <div class="insight-card"><span class="insight-icon">👥</span><div class="insight-value" id="crowd">--</div><div class="insight-label" data-translate="insightCrowd"></div></div>
+                    <div class="insight-card"><span class="insight-icon">💧</span><div class="insight-value" id="humidity">--%</div><div class="insight-label" data-translate="insightHumidity"></div></div>
+                    <div class="insight-card"><span class="insight-icon">🌬️</span><div class="insight-value" id="air-quality">--</div><div class="insight-label" data-translate="insightAir"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="map-section">
+            <div class="container">
+                <h2 class="section-title" data-translate="mapTitle"></h2>
+                <p class="section-subtitle" data-translate="mapSubtitle"></p>
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </section>
         
-        <section class="section" id="categories"><div class="container"><h2 class="section-title" data-translate="categoriesTitle"></h2><p class="section-subtitle" data-translate="categoriesSubtitle"></p><div class="categories-grid"></div><div style="text-align: center; margin-top: 3rem;"><a href="ar.html" class="btn btn-primary" data-translate="arBtn"></a></div></div></section>
+        <section class="section" id="categories">
+            <div class="container">
+                <h2 class="section-title" data-translate="categoriesTitle"></h2>
+                <p class="section-subtitle" data-translate="categoriesSubtitle"></p>
+                <div class="categories-grid"></div>
+                <div style="text-align: center; margin-top: 3rem;">
+                    <a href="ar.html" class="btn btn-primary" data-translate="arBtn"></a>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer class="section" style="background: #0a0a0a; padding-top: 0; padding-bottom: 2rem;"><div class="container" style="text-align: center;"><p style="color: #6b7280; margin-top: 2rem; font-size: 0.9rem;" data-translate="footerRights"></p></div></footer>
+    <footer class="section" style="background: #0a0a0a; padding-top: 0; padding-bottom: 2rem;">
+        <div class="container" style="text-align: center;">
+            <p style="color: #6b7280; margin-top: 2rem; font-size: 0.9rem;" data-translate="footerRights"></p>
+        </div>
+    </footer>
     
     <button class="back-to-top" id="backToTop">↑</button>
 
