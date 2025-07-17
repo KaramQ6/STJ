@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
-        /* All your original CSS is preserved here */
+        /* Your original CSS styles are preserved here */
         html[lang="ar"] body { font-family: 'Cairo', sans-serif; }
         html[lang="en"] body { font-family: 'Poppins', sans-serif; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -49,30 +49,26 @@
         .chat-input-area { display: flex; gap: 1rem; }
         #chatInput { flex-grow: 1; padding: 1rem; border-radius: 8px; border: 1px solid #4b5563; background-color: #1f2937; color: white; font-size: 1rem; }
         #sendButton { padding: 1rem 1.5rem; }
-        #sendButton:disabled { background-color: #583c9c; cursor: not-allowed; }
+        #sendButton:disabled { background: #583c9c; cursor: not-allowed; }
         .insights-grid, .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
         .insight-card, .feature-card { background: rgba(31, 41, 55, 0.5); border-radius: 1rem; padding: 1.5rem; text-align: center; border: 1px solid rgba(75, 85, 99, 0.3); transition: all 0.3s ease; }
         .insight-card:hover, .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1); }
         .insight-icon, .feature-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
         .insight-value { font-size: 1.8rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.5rem; }
-        .insight-label, .feature-title { font-size: 1.2rem; font-weight: 600; color: #ffffff; margin-bottom: 0.5rem; }
+        .insight-label { font-size: 0.9rem; color: #9ca3af; }
+        .feature-title { font-size: 1.2rem; font-weight: 600; color: #ffffff; margin-bottom: 0.5rem; }
         .feature-description { color: #9ca3af; font-size: 0.9rem; }
         #map { height: 500px; border-radius: 0.5rem; z-index: 1; }
         .categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
-        .category-card { background: rgba(31, 41, 55, 0.5); border-radius: 1rem; overflow: hidden; border: 1px solid rgba(75, 85, 99, 0.3); transition: all 0.3s ease; cursor: pointer; }
+        .category-card { background: rgba(31, 41, 55, 0.5); border-radius: 1rem; overflow: hidden; border: 1px solid rgba(75, 85, 99, 0.3); transition: all 0.3s ease; }
         .category-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2); border-color: rgba(139, 92, 246, 0.5); }
         .category-image { height: 200px; background-size: cover; background-position: center; }
         .category-content { padding: 1.5rem; }
         .category-title { font-size: 1.3rem; font-weight: 600; color: #ffffff; margin-bottom: 0.5rem; }
         .category-description { color: #9ca3af; font-size: 0.9rem; line-height: 1.5; }
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; }
-        .modal-content { background: #1f2937; padding: 2rem; border-radius: 1rem; width: 90%; max-width: 600px; position: relative; animation: modalSlideIn 0.3s ease; }
-        .modal-close { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; cursor: pointer; color: #9ca3af; transition: color 0.3s ease; }
-        html[lang="ar"] .modal-close { right: auto; left: 1rem; }
         .back-to-top { position: fixed; bottom: 2rem; right: 2rem; background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 1000; }
         html[lang="ar"] .back-to-top { right: auto; left: 2rem; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes modalSlideIn { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
         @media (max-width: 768px) { .nav-menu { display: none; } }
     </style>
 </head>
@@ -167,8 +163,6 @@
             <p style="color: #6b7280; margin-top: 2rem; font-size: 0.9rem;" data-translate="footerRights"></p>
         </div>
     </footer>
-    
-    <div id="natureModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 class="modal-title" data-translate="modalNatureTitle"></h2><p class="modal-text" data-translate="modalNatureText"></p></div></div><div id="cultureModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 class="modal-title" data-translate="modalCultureTitle"></h2><p class="modal-text" data-translate="modalCultureText"></p></div></div><div id="religiousModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 class="modal-title" data-translate="modalReligiousTitle"></h2><p class="modal-text" data-translate="modalReligiousText"></p></div></div><div id="adventureModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 class="modal-title" data-translate="modalAdventureTitle"></h2><p class="modal-text" data-translate="modalAdventureText"></p></div></div>
     
     <button class="back-to-top" id="backToTop">↑</button>
 
@@ -290,10 +284,10 @@
             setTimeout(() => { map.invalidateSize() }, 400);
 
             // ======== CHATBOT LOGIC (FIXED) ========
-            const chatWindow = document.getElementById('chatWindow');
-            const chatForm = document.getElementById('chatForm'); //
+            const chatForm = document.getElementById('chatForm');
             const inputElement = document.getElementById('chatInput');
             const sendButton = document.getElementById('sendButton');
+            const chatWindow = document.getElementById('chatWindow');
             let chatHistory = [];
             const systemPrompt = "You are 'SmartTour.JO AI Assistant', an expert tour guide for Jordan. Your job is to help tourists. Be friendly and focus on tourism in Jordan ONLY. If asked about something else, politely decline. Use a clear and welcoming Arabic dialect.";
             
@@ -305,8 +299,8 @@
                 chatWindow.scrollTop = chatWindow.scrollHeight;
             }
             
-            async function sendMessage(event) {
-                event.preventDefault(); // <-- The most important fix!
+            async function handleFormSubmit(event) {
+                event.preventDefault(); // This is the crucial fix!
                 const userInput = inputElement.value.trim();
                 if (!userInput) return;
                 appendMessage(userInput, 'user');
@@ -353,7 +347,7 @@
             }
 
             // ======== EVENT LISTENERS ========
-            chatForm.addEventListener('submit', sendMessage); // <-- Changed listener to the form
+            chatForm.addEventListener('submit', handleFormSubmit);
 
             const backToTopBtn = document.getElementById('backToTop');
             window.addEventListener('scroll', () => { backToTopBtn.style.display = (window.scrollY > 300) ? 'flex' : 'none'; });
