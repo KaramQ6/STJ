@@ -29,7 +29,6 @@ const GalleryModal = ({ isOpen, onClose, images }) => {
     );
 };
 
-
 const App = () => {
     // ======== STATE MANAGEMENT ========
     const [sensorData, setSensorData] = useState({ temperature: 28, humidity: 45, crowdLevel: 'Medium', airQuality: 'Good' });
@@ -47,6 +46,7 @@ const App = () => {
     // ======== REFS FOR SCROLLING ========
     const heroRef = useRef(null);
     const featuresRef = useRef(null);
+    const exploreRef = useRef(null); 
     const mapRef = useRef(null);
     const insightsRef = useRef(null);
     const chatEndRef = useRef(null);
@@ -82,6 +82,13 @@ const App = () => {
         { src: 'https://images.pexels.com/photos/14986348/pexels-photo-14986348.jpeg', alt: 'Baptism Site' },
     ];
     
+    const exploreData = [
+        { title: '🏛️ Petra: The Rose City', description: 'Explore the Treasury, the Monastery, and the ancient tombs of this UNESCO World Heritage wonder.', image: 'https://images.pexels.com/photos/1587747/pexels-photo-1587747.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
+        { title: '🏜️ Wadi Rum: The Martian Desert', description: 'Experience Bedouin culture, stunning sunsets, and Jeep tours in this vast desert landscape.', image: 'https://images.pexels.com/photos/2440339/pexels-photo-2440339.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
+        { title: '🌊 Dead Sea: The Lowest Point on Earth', description: 'Float effortlessly in its hypersaline waters and benefit from its therapeutic mineral-rich mud.', image: 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
+        { title: '🧗 Adventure in Canyons', description: 'Experience thrilling adventures like Canyoning in Wadi Mujib and diving in the Red Sea at Aqaba.', image: 'https://images.pexels.com/photos/7989333/pexels-photo-7989333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' }
+    ];
+
     // ======== CUSTOM MARKER ICONS ========
     const createCustomIcon = (type, emoji) => {
         const iconHtml = `<div style="background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); width: 40px; height: 40px; border-radius: 50% 50% 50% 0; border: 3px solid white; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); display: flex; align-items: center; justify-content: center; font-size: 18px; transform: rotate(-45deg); position: relative;"><span style="transform: rotate(45deg); filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">${emoji}</span></div>`;
@@ -90,7 +97,7 @@ const App = () => {
 
     // ======== CHATBOT LOGIC (FUNCTIONAL & FIXED) ========
     const sendMessage = async (e) => {
-        e.preventDefault(); // This is the crucial fix
+        e.preventDefault();
         const inputElement = e.target.elements.message;
         const userInput = inputElement.value.trim();
         if (!userInput) return;
@@ -133,22 +140,49 @@ const App = () => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
     
+    const updateInsights = async () => {
+        const apiKey = '91859b46e4ef01b5415a2f8b1ddbfac1'; // Replace with your OpenWeatherMap API key
+        const updateUI = (data) => {
+            setSensorData(prev => ({...prev, temperature: Math.round(data.main.temp), humidity: data.main.humidity}));
+        };
+        try {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) throw new Error('Weather API error');
+                    const data = await response.json();
+                    updateUI(data);
+                },
+                async () => { // Fallback to Amman
+                    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=Amman&appid=${apiKey}&units=metric`;
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) throw new Error('Default weather API error');
+                    const data = await response.json();
+                    updateUI(data);
+                }
+            );
+        } catch (error) { console.error('Fetch weather error:', error); }
+    };
+    
     useEffect(() => {
+        updateInsights(); // Initial call
         const interval = setInterval(() => {
             setIsDataUpdating(true);
             setPreviousSensorData(sensorData);
             setTimeout(() => {
-                setSensorData({
-                    temperature: Math.round(25 + Math.random() * 10),
-                    humidity: Math.round(40 + Math.random() * 20),
+                updateInsights();
+                setSensorData(prev => ({
+                    ...prev,
                     crowdLevel: ['Low', 'Medium', 'High'][Math.floor(Math.random() * 3)],
                     airQuality: ['Good', 'Moderate', 'Excellent'][Math.floor(Math.random() * 3)]
-                });
+                }));
                 setIsDataUpdating(false);
             }, 300);
-        }, 5000);
+        }, 300000); 
         return () => clearInterval(interval);
-    }, [sensorData]);
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -162,7 +196,8 @@ const App = () => {
 
             const sections = [
                 { id: 'home', ref: heroRef }, { id: 'features', ref: featuresRef },
-                { id: 'map', ref: mapRef }, { id: 'insights', ref: insightsRef }
+                { id: 'explore', ref: exploreRef }, { id: 'map', ref: mapRef },
+                { id: 'insights', ref: insightsRef }
             ];
 
             for (let section of sections) {
@@ -182,7 +217,7 @@ const App = () => {
     }, []);
 
     const scrollToSection = (sectionId) => {
-        const refs = { home: heroRef, features: featuresRef, map: mapRef, insights: insightsRef };
+        const refs = { home: heroRef, features: featuresRef, explore: exploreRef, map: mapRef, insights: insightsRef };
         if (refs[sectionId]?.current) {
             refs[sectionId].current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -207,6 +242,7 @@ const App = () => {
                                  {[
                                      { id: 'home', label: 'Home', icon: '🏠' }, 
                                      { id: 'features', label: 'Features', icon: '⚡' },
+                                     { id: 'explore', label: 'Explore', icon: '🗺️' },
                                      { id: 'map', label: 'Map', icon: '📍' }, 
                                      { id: 'insights', label: 'Insights', icon: '📊' }
                                  ].map((item) => (
@@ -279,18 +315,14 @@ const App = () => {
                 </section>
                 
                 <section ref={featuresRef} id="features" className="py-20 bg-gray-900 relative overflow-hidden">
-                    {/* ... Features content ... */}
+                    {/* ... Features content remains unchanged ... */}
                 </section>
 
                 <section ref={mapRef} id="map" className={`py-20 bg-gray-900 relative overflow-hidden transition-all duration-1000 ${isVisible.map ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                         <div className="text-center mb-16">
-                            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">
-                                More interactive with Featured Destinations
-                            </h2>
-                            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">
-                                Discover Jordan's magnificent destinations with our interactive map featuring all major tourist attractions
-                            </p>
+                            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">More interactive with Featured Destinations</h2>
+                            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Discover Jordan's magnificent destinations with our interactive map featuring all major tourist attractions</p>
                         </div>
                         <div className="grid lg:grid-cols-3 gap-8">
                             <div className="lg:col-span-2">
