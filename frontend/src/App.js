@@ -76,11 +76,11 @@ const App = () => {
     ];
 
     const galleryImages = [
-        { src: 'https://images.pexels.com/photos/1587747/pexels-photo-1587747.jpeg', alt: 'Petra Treasury' },
+        { src: 'https://images.pexels.com/photos/4388167/pexels-photo-4388167.jpeg', alt: 'Petra Treasury' },
         { src: 'https://images.pexels.com/photos/2440339/pexels-photo-2440339.jpeg', alt: 'Wadi Rum Desert' },
-        { src: 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg', alt: 'Dead Sea Salt Formations' },
-        { src: 'https://images.pexels.com/photos/73910/jordan-petra-travel-73910.jpeg', alt: 'Jerash Colonnaded Street' },
-        { src: 'https://images.pexels.com/photos/7989333/pexels-photo-7989333.jpeg', alt: 'Wadi Mujib Canyon' },
+        { src: 'https://images.pexels.com/photos/30129079/pexels-photo-30129079.png', alt: 'Dead Sea Salt Formations' },
+        { src: 'https://images.pexels.com/photos/18717602/pexels-photo-18717602.jpeg', alt: 'Jerash Colonnaded Street' },
+        { src: 'https://images.pexels.com/photos/31159570/pexels-photo-31159570.jpeg', alt: 'Wadi Mujib Canyon' },
         { src: 'https://images.pexels.com/photos/14986348/pexels-photo-14986348.jpeg', alt: 'Baptism Site' },
     ];
     
