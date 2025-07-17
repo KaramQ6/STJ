@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>360° View of Petra</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <style>
+        body { margin: 0; }
+        #panorama { width: 100vw; height: 100vh; }
+    </style>
+</head>
+<body>
+    <div id="panorama"></div>
+    <script>
+    pannellum.viewer('panorama', {
+        "type": "equirectangular",
+        "panorama": "https://images.pexels.com/photos/1587747/pexels-photo-1587747.jpeg?auto=compress&cs=tinysrgb&w=4000",
+        "autoLoad": true,
+        "autoRotate": -2
+    });
+    </script>
+</body>
+</html>

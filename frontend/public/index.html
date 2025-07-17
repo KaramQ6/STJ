@@ -36,7 +36,7 @@
         .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); text-decoration: none; }
         .nav-menu { display: flex; list-style: none; margin: 0; padding: 0; gap: 1.5rem; align-items: center; }
-        .nav-link { color: var(--text-dark); text-decoration: none; font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.3s ease; position: relative; }
+        .nav-link { color: var(--text-dark); text-decoration: none; font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.3s ease; position: relative; cursor: pointer; }
         .nav-link:hover, .nav-link.active { color: white; background: rgba(139, 92, 246, 0.2); transform: translateY(-2px); }
         .lang-switcher { display: flex; gap: 10px; align-items: center; }
         .lang-switcher button { background: none; border: 1px solid #4b5563; color: var(--text-dark); padding: 5px 10px; border-radius: 6px; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s ease; }
@@ -72,18 +72,17 @@
         .category-content { padding: 1.5rem; }
         .category-title { font-size: 1.3rem; font-weight: 600; color: #ffffff; margin-bottom: 0.5rem; }
         .category-description { color: var(--text-dark); font-size: 0.9rem; line-height: 1.5; }
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); align-items: center; justify-content: center; animation: fadeIn 0.3s ease; }
-        .modal-content { background: #1f2937; padding: 2rem; border-radius: 1rem; width: 90%; max-width: 800px; position: relative; }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; }
+        .modal-content { background: #1f2937; padding: 2rem; border-radius: 1rem; width: 90%; max-width: 800px; position: relative; animation: modalSlideIn 0.3s ease; }
         .modal-close { position: absolute; top: 1rem; right: 1.5rem; font-size: 2rem; font-weight: bold; color: var(--text-dark); cursor: pointer; transition: color 0.2s; }
         html[lang="ar"] .modal-close { right: auto; left: 1.5rem; }
-        .modal-close:hover { color: white; }
         .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
         .gallery-grid img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; cursor: pointer; transition: transform 0.2s ease; }
         .gallery-grid img:hover { transform: scale(1.05); }
         .back-to-top { position: fixed; bottom: 2rem; right: 2rem; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 1000; }
         html[lang="ar"] .back-to-top { right: auto; left: 2rem; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes modalSlideIn { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
         @media (max-width: 768px) { .nav-menu { display: none; } }
     </style>
 </head>
@@ -93,9 +92,9 @@
         <section class="hero" id="hero"><div class="hero-content"><h1 data-translate="heroTitle"></h1><p data-translate="heroSubtitle"></p><div class="hero-buttons"><a class="btn btn-primary" href="#chatbot" data-translate="heroBtnStart"></a></div></div></section>
         <section class="section" id="chatbot"><div class="container"><h2 class="section-title" data-translate="chatbotTitle"></h2><p class="section-subtitle" data-translate="chatbotSubtitle"></p><div class="chatbot-container"><div id="chatWindow"></div><form class="chat-input-area" id="chatForm"><input id="chatInput" name="message" type="text" data-translate-placeholder="chatPlaceholder" /><button type="submit" id="sendButton" class="btn btn-primary" data-translate="chatSend"></button></form></div></div></section>
         <section class="section" id="insights"><div class="container"><h2 class="section-title" data-translate="insightsTitle"></h2><p class="section-subtitle" data-translate="insightsSubtitle"></p><div class="insights-grid"><div class="insight-card"><span class="insight-icon">🌡️</span><div class="insight-value" id="temp">--°C</div><div class="insight-label" data-translate="insightTemp"></div></div><div class="insight-card"><span class="insight-icon">👥</span><div class="insight-value" id="crowd">--</div><div class="insight-label" data-translate="insightCrowd"></div></div><div class="insight-card"><span class="insight-icon">💧</span><div class="insight-value" id="humidity">--%</div><div class="insight-label" data-translate="insightHumidity"></div></div><div class="insight-card"><span class="insight-icon">🌬️</span><div class="insight-value" id="air-quality">--</div><div class="insight-label" data-translate="insightAir"></div></div></div></div></section>
-        <section class="section" id="ar-experience"><div class="container ar-container" style="text-align:center;"><h2 class="section-title" data-translate="arTitle"></h2><p class="section-subtitle" data-translate="arSubtitle"></p><a href="/ar.html" target="_blank" class="btn btn-primary" data-translate="arBtn"></a></div></section>
+        <section class="section" id="ar-experience"><div class="container ar-container" style="text-align:center;"><h2 class="section-title" data-translate="arTitle"></h2><p class="section-subtitle" data-translate="arSubtitle"></p><a href="ar.html" class="btn btn-primary" data-translate="arBtn"></a></div></section>
         <section class="section" id="map-section"><div class="container"><h2 class="section-title" data-translate="mapTitle"></h2><p class="section-subtitle" data-translate="mapSubtitle"></p><div class="map-container"><div id="map"></div></div></div></section>
-        <section class="section" id="categories"><div class="container"><h2 class="section-title" data-translate="categoriesTitle"></h2><p class="section-subtitle" data-translate="categoriesSubtitle"></p><div class="categories-grid"></div><div class="gallery-container" style="margin-top: 2rem; text-align: center;"><h3 data-translate="newFeaturesTitle" style="margin-bottom: 1.5rem; font-size: 1.5rem;"></h3><div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;"><button id="galleryBtn" class="btn btn-primary" data-translate="galleryBtn"></button><a href="/360-view.html" target="_blank" class="btn btn-primary" data-translate="view360Btn"></a><a href="/virtual-tour.html" target="_blank" class="btn btn-primary" data-translate="virtualTourBtn"></a></div></div></div></section>
+        <section class="section" id="categories"><div class="container"><h2 class="section-title" data-translate="categoriesTitle"></h2><p class="section-subtitle" data-translate="categoriesSubtitle"></p><div class="categories-grid"></div><div class="gallery-container" style="margin-top: 2rem; text-align: center;"><h3 data-translate="newFeaturesTitle" style="margin-bottom: 1.5rem; font-size: 1.5rem;"></h3><div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;"><button id="galleryBtn" class="btn btn-primary" data-translate="galleryBtn"></button><a href="360-view.html" target="_blank" class="btn btn-primary" data-translate="view360Btn"></a><a href="virtual-tour.html" target="_blank" class="btn btn-primary" data-translate="virtualTourBtn"></a></div></div></div></section>
     </main>
     <footer class="section" style="background: #0a0a0a; padding-top: 0; padding-bottom: 2rem;"><div class="container" style="text-align: center;"><p style="color: #6b7280; margin-top: 2rem; font-size: 0.9rem;" data-translate="footerRights"></p></div></footer>
     <div id="galleryModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 class="section-title" data-translate="galleryModalTitle"></h2><div class="gallery-grid"></div></div></div>
@@ -104,7 +103,6 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Data Objects
             const translations = {
                 en: { siteTitle: "SmartTour.JO", navHome: "Home", navAIGuide: "AI Guide", navInsights: "Insights", navAR: "AR View", navMap: "Map", navExplore: "Explore", arTitle: "Augmented Reality", arSubtitle: "Bring Jordan's history to life.", arBtn: "Launch AR Experience", heroTitle: "Explore Jordan Smarter", heroSubtitle: "Discover hidden treasures with AI recommendations.", heroBtnStart: "Start Your Journey", chatbotTitle: "Ask Our Smart AI Guide", chatbotSubtitle: "Get instant answers about Jordan.", chatPlaceholder: "Request a tour plan...", chatSend: "Send", insightsTitle: "Live Environment Insights", insightsSubtitle: "Real-time data from your location.", insightTemp: "Temperature", insightCrowd: "Crowd Level", insightHumidity: "Humidity", insightAir: "Air Quality", mapTitle: "Interactive Jordan Map", mapSubtitle: "Explore Jordan's attractions.", categoriesTitle: "Discover Jordan Your Way", categoriesSubtitle: "Find experiences that match your interests.", newFeaturesTitle: "New Immersive Experiences", galleryBtn: "📸 View Gallery", view360Btn: "🌍 360° View", virtualTourBtn: "🎥 Virtual Tour", footerRights: "© 2024 SmartTour.JO. All rights reserved.", galleryModalTitle: "Jordan's Wonders Gallery", yourLocationPopup: "<b>Your Location</b>", petraPopup:"Petra", jerashPopup:"Jerash", wadiRumPopup:"Wadi Rum" },
                 ar: { siteTitle: "SmartTour.JO", navHome: "الرئيسية", navAIGuide: "المرشد الذكي", navInsights: "مؤشرات حيوية", navAR: "الواقع المعزز", navMap: "الخريطة", navExplore: "اكتشف", arTitle: "تجربة الواقع المعزز", arSubtitle: "أعد تاريخ الأردن إلى الحياة.", arBtn: "شغّل التجربة", heroTitle: "اكتشف الأردن بذكاء", heroSubtitle: "اكتشف كنوز الأردن الخفية مع توصيات الذكاء الاصطناعي.", heroBtnStart: "ابدأ رحلتك", chatbotTitle: "اسأل مرشدنا الذكي", chatbotSubtitle: "احصل على إجابات فورية حول معالم الأردن.", chatPlaceholder: "اطلب خطة سياحية...", chatSend: "أرسل", insightsTitle: "مؤشرات بيئية حية", insightsSubtitle: "بيانات لحظية وحقيقية من موقعك الحالي.", insightTemp: "درجة الحرارة", insightCrowd: "مستوى الازدحام", insightHumidity: "الرطوبة", insightAir: "جودة الهواء", mapTitle: "خريطة الأردن التفاعلية", mapSubtitle: "استكشف معالم الأردن وخطط مسارك.", categoriesTitle: "اكتشف الأردن على طريقتك", categoriesSubtitle: "اختر من فئاتنا المنسقة لتجد ما يناسبك.", newFeaturesTitle: "تجارب تفاعلية جديدة", galleryBtn: "📸 معرض الصور", view360Btn: "🌍 عرض 360°", virtualTourBtn: "🎥 جولة افتراضية", footerRights: "© 2024 SmartTour.JO. جميع الحقوق محفوظة.", galleryModalTitle: "معرض عجائب الأردن", yourLocationPopup: "<b>موقعك الحالي</b>", petraPopup:"البتراء", jerashPopup:"جرش", wadiRumPopup:"وادي رم" }
@@ -115,8 +113,7 @@
             };
             const galleryImages = [ { src: 'https://images.pexels.com/photos/1587747/pexels-photo-1587747.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Petra' }, { src: 'https://images.pexels.com/photos/2440339/pexels-photo-2440339.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Wadi Rum' }, { src: 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Dead Sea' }, { src: 'https://images.pexels.com/photos/73910/jordan-petra-travel-73910.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Jerash' }, { src: 'https://images.pexels.com/photos/7989333/pexels-photo-7989333.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Wadi Mujib' }, { src: 'https://images.pexels.com/photos/14986348/pexels-photo-14986348.jpeg?auto=compress&cs=tinysrgb&w=800', alt: 'Baptism Site' } ];
             
-            let map; 
-
+            let map;
             const setLanguage = (lang) => {
                 document.documentElement.lang = lang;
                 document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
@@ -153,13 +150,10 @@
                 if (document.getElementById('map') && !map) {
                     map = L.map('map').setView([31.95, 35.93], 7); 
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
-                    
                     const redIcon = new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
                     const blueIcon = new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
-                    
                     const touristSites = { petra: { coords: [30.3285, 35.4444], name: "petraPopup" }, jerash: { coords: [32.2730, 35.8911], name: "jerashPopup" }, wadiRum: { coords: [29.5732, 35.4194], name: "wadiRumPopup" }, };
                     for (const site in touristSites) { L.marker(touristSites[site].coords, { icon: blueIcon }).addTo(map).bindPopup(translations[document.documentElement.lang || 'ar'][touristSites[site].name]); }
-                    
                     if (navigator.geolocation) {
                         navigator.geolocation.getCurrentPosition(pos => {
                             const userLoc = [pos.coords.latitude, pos.coords.longitude];
@@ -177,7 +171,6 @@
                 galleryImages.forEach(img => { galleryGrid.innerHTML += `<img src="${img.src}" alt="${img.alt}">`; });
                 galleryModal.style.display = 'flex';
             }
-
             const backToTopBtn = document.getElementById('backToTop');
             window.addEventListener('scroll', () => { backToTopBtn.style.display = (window.scrollY > 300) ? 'flex' : 'none'; });
             backToTopBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
@@ -186,7 +179,6 @@
             document.querySelectorAll('.modal-close').forEach(btn => { btn.addEventListener('click', e => { e.target.closest('.modal').style.display = 'none'; }); });
             window.addEventListener('click', e => { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; });
             document.getElementById('galleryBtn').addEventListener('click', openGallery);
-            
             setLanguage(localStorage.getItem('language') || 'ar');
             initMap(); 
             setInterval(updateInsights, 300000); 
