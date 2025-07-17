@@ -10,4 +10,4 @@ root.render(
   </React.StrictMode>,
 );
 
-console.log("Smart Jordan React app loaded successfully!");
+console.log(" React app loaded successfully!");

@@ -448,7 +448,7 @@ const App = () => {
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <div className="grid md:grid-cols-2 gap-8">
                         <div className="col-span-1">
-                            <h3 className="text-2xl font-bold mb-4 text-white">Smart Jordan</h3>
+                            <h3 className="text-2xl font-bold mb-4 text-white">SmartTour.jo </h3>
                             <p className="text-gray-300 mb-6 max-w-md">Your intelligent companion for exploring Jordan's wonders. Experience the future of travel with AI-powered insights and real-time data.</p>
                             <button onClick={() => scrollToSection('home')} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105">Start Your Smart Journey</button>
                         </div>
@@ -462,7 +462,7 @@ const App = () => {
                         </div>
                     </div>
                     <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-                        <p className="text-gray-400">&copy; 2025 Smart Jordan. All rights reserved. | Privacy Policy | Terms of Service</p>
+                        <p className="text-gray-400">&copy; 2025 SmartTour.jo. All rights reserved. | Privacy Policy | Terms of Service</p>
                     </div>
                 </div>
             </footer>
@@ -471,7 +471,7 @@ const App = () => {
                 {chatbotLoaded ? (
                     <div className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 h-full flex flex-col animate-fade-in-up">
                         <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-blue-600 p-4 flex items-center justify-between rounded-t-3xl">
-                             <h3 className="text-white font-semibold text-lg">Smart Jordan AI</h3>
+                             <h3 className="text-white font-semibold text-lg">SmartTour.jo AI</h3>
                              <button onClick={() => setChatbotLoaded(false)} className="text-white text-2xl leading-none">&times;</button>
                         </div>
                         <div className="flex-1 p-4 space-y-4 overflow-y-auto custom-scrollbar">

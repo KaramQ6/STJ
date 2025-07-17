@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Jordan - Explore Jordan Smarter</title>
+    <title>SmartTour.jo - Explore Jordan Smarter</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * {
@@ -613,6 +614,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -624,6 +626,7 @@
                 opacity: 0;
                 transform: translateY(-50px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -703,11 +706,12 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Fixed Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#hero" class="logo">Smart Jordan</a>
+            <a href="#hero" class="logo">SmartTour.jo</a>
             <ul class="nav-menu">
                 <li><a href="#hero" class="nav-link active">Home</a></li>
                 <li><a href="#chatbot" class="nav-link">AI Guide</a></li>
@@ -729,7 +733,8 @@
     <section id="hero" class="hero">
         <div class="hero-content">
             <h1>Explore Jordan Smarter</h1>
-            <p>Discover Jordan's hidden treasures with AI-powered recommendations, real-time insights, and interactive experiences that transform your journey into an unforgettable adventure.</p>
+            <p>Discover Jordan's hidden treasures with AI-powered recommendations, real-time insights, and interactive
+                experiences that transform your journey into an unforgettable adventure.</p>
             <div class="hero-buttons">
                 <a href="#chatbot" class="btn btn-primary">Start Your Journey</a>
                 <a href="#categories" class="btn btn-secondary">Explore Categories</a>
@@ -741,13 +746,15 @@
     <section id="chatbot" class="section">
         <div class="container">
             <h2 class="section-title">Ask Our Smart AI Guide</h2>
-            <p class="section-subtitle">Get instant answers about Jordan's attractions, best travel times, local customs, and personalized recommendations from our intelligent travel assistant.</p>
+            <p class="section-subtitle">Get instant answers about Jordan's attractions, best travel times, local
+                customs, and personalized recommendations from our intelligent travel assistant.</p>
             <div class="chatbot-container">
                 <div class="chatbot-header">
-                    <h3>🤖 Smart Jordan AI Assistant</h3>
+                    <h3>🤖 SmartTour.jo AI Assistant</h3>
                     <p>Your personal travel companion for exploring Jordan</p>
                 </div>
-                <iframe src="https://www.chatbase.co/chatbot-iframe/65d67f69-4f4d-4bd7-a2b8-d9bd1de06dd3" width="100%" style="height: 500px; border-radius: 12px; border: none;"></iframe>
+                <iframe src="https://www.chatbase.co/chatbot-iframe/65d67f69-4f4d-4bd7-a2b8-d9bd1de06dd3" width="100%"
+                    style="height: 500px; border-radius: 12px; border: none;"></iframe>
             </div>
         </div>
     </section>
@@ -756,7 +763,8 @@
     <section id="insights" class="section">
         <div class="container">
             <h2 class="section-title">Live Environment Insights</h2>
-            <p class="section-subtitle">Real-time data from IoT sensors across Jordan's popular destinations to help you plan the perfect visit.</p>
+            <p class="section-subtitle">Real-time data from IoT sensors across Jordan's popular destinations to help you
+                plan the perfect visit.</p>
             <div class="insights-grid">
                 <div class="insight-card">
                     <span class="insight-icon">🌡️</span>
@@ -786,7 +794,8 @@
     <section id="map" class="section">
         <div class="container">
             <h2 class="section-title">Interactive Jordan Map</h2>
-            <p class="section-subtitle">Explore Jordan's attractions and plan your route with our interactive map featuring real-time location data.</p>
+            <p class="section-subtitle">Explore Jordan's attractions and plan your route with our interactive map
+                featuring real-time location data.</p>
             <div class="map-container">
                 <div id="map" style="height: 400px; border-radius: 12px;"></div>
             </div>
@@ -797,50 +806,59 @@
     <section id="categories" class="section">
         <div class="container">
             <h2 class="section-title">Discover Jordan Your Way</h2>
-            <p class="section-subtitle">Choose from our curated categories to find experiences that match your interests and travel style.</p>
+            <p class="section-subtitle">Choose from our curated categories to find experiences that match your interests
+                and travel style.</p>
             <div class="categories-grid">
                 <div class="category-card" data-category="nature">
-                    <div class="category-image" style="background-image: url('https://images.pexels.com/photos/17645580/pexels-photo-17645580.jpeg');">
+                    <div class="category-image"
+                        style="background-image: url('https://images.pexels.com/photos/17645580/pexels-photo-17645580.jpeg');">
                         <div class="category-overlay">
                             <span style="color: white; font-weight: bold; font-size: 1.2rem;">Explore Nature</span>
                         </div>
                     </div>
                     <div class="category-content">
                         <h3 class="category-title">🌿 Nature Adventures</h3>
-                        <p class="category-description">Discover Jordan's breathtaking natural landscapes from the otherworldly Wadi Rum desert to the therapeutic Dead Sea waters.</p>
+                        <p class="category-description">Discover Jordan's breathtaking natural landscapes from the
+                            otherworldly Wadi Rum desert to the therapeutic Dead Sea waters.</p>
                     </div>
                 </div>
                 <div class="category-card" data-category="culture">
-                    <div class="category-image" style="background-image: url('https://images.pexels.com/photos/3214958/pexels-photo-3214958.jpeg');">
+                    <div class="category-image"
+                        style="background-image: url('https://images.pexels.com/photos/3214958/pexels-photo-3214958.jpeg');">
                         <div class="category-overlay">
                             <span style="color: white; font-weight: bold; font-size: 1.2rem;">Discover Culture</span>
                         </div>
                     </div>
                     <div class="category-content">
                         <h3 class="category-title">🏛️ Cultural Heritage</h3>
-                        <p class="category-description">Explore ancient Petra, Roman ruins of Jerash, and experience authentic Bedouin culture in Jordan's historical sites.</p>
+                        <p class="category-description">Explore ancient Petra, Roman ruins of Jerash, and experience
+                            authentic Bedouin culture in Jordan's historical sites.</p>
                     </div>
                 </div>
                 <div class="category-card" data-category="religious">
-                    <div class="category-image" style="background-image: url('https://images.unsplash.com/photo-1750357445390-264bfe3b6db2');">
+                    <div class="category-image"
+                        style="background-image: url('https://images.unsplash.com/photo-1750357445390-264bfe3b6db2');">
                         <div class="category-overlay">
                             <span style="color: white; font-weight: bold; font-size: 1.2rem;">Sacred Sites</span>
                         </div>
                     </div>
                     <div class="category-content">
                         <h3 class="category-title">⛪ Religious Sites</h3>
-                        <p class="category-description">Follow biblical paths to Mount Nebo, Bethany Beyond Jordan, and other sacred sites of spiritual significance.</p>
+                        <p class="category-description">Follow biblical paths to Mount Nebo, Bethany Beyond Jordan, and
+                            other sacred sites of spiritual significance.</p>
                     </div>
                 </div>
                 <div class="category-card" data-category="adventure">
-                    <div class="category-image" style="background-image: url('https://images.unsplash.com/photo-1750357437870-5b4ef7f03df8');">
+                    <div class="category-image"
+                        style="background-image: url('https://images.unsplash.com/photo-1750357437870-5b4ef7f03df8');">
                         <div class="category-overlay">
                             <span style="color: white; font-weight: bold; font-size: 1.2rem;">Adventure Awaits</span>
                         </div>
                     </div>
                     <div class="category-content">
                         <h3 class="category-title">🏔️ Adventure Sports</h3>
-                        <p class="category-description">Experience thrilling adventures from hot air balloon rides over Wadi Rum to diving in the Red Sea at Aqaba.</p>
+                        <p class="category-description">Experience thrilling adventures from hot air balloon rides over
+                            Wadi Rum to diving in the Red Sea at Aqaba.</p>
                     </div>
                 </div>
             </div>
@@ -851,7 +869,8 @@
     <section id="itinerary" class="section">
         <div class="container">
             <h2 class="section-title">Smart Tour Itinerary</h2>
-            <p class="section-subtitle">A perfectly planned day in Jordan optimized by AI for the best travel experience.</p>
+            <p class="section-subtitle">A perfectly planned day in Jordan optimized by AI for the best travel
+                experience.</p>
             <div class="timeline-container">
                 <div class="timeline-line"></div>
                 <div class="timeline-item">
@@ -859,7 +878,8 @@
                     <div class="timeline-content">
                         <div class="timeline-time">9:00 AM</div>
                         <h4 class="timeline-title">🏨 Arrive at Hotel</h4>
-                        <p class="timeline-description">Check into your smart hotel and receive your personalized Jordan travel kit with IoT sensors and AR devices for enhanced exploration.</p>
+                        <p class="timeline-description">Check into your smart hotel and receive your personalized Jordan
+                            travel kit with IoT sensors and AR devices for enhanced exploration.</p>
                     </div>
                 </div>
                 <div class="timeline-item">
@@ -867,7 +887,8 @@
                     <div class="timeline-content">
                         <div class="timeline-time">10:30 AM</div>
                         <h4 class="timeline-title">🏙️ Explore Downtown Amman</h4>
-                        <p class="timeline-description">Discover Amman's vibrant downtown with our AI-guided walking tour, featuring the Roman Theatre, Citadel, and bustling souks.</p>
+                        <p class="timeline-description">Discover Amman's vibrant downtown with our AI-guided walking
+                            tour, featuring the Roman Theatre, Citadel, and bustling souks.</p>
                     </div>
                 </div>
                 <div class="timeline-item">
@@ -875,7 +896,8 @@
                     <div class="timeline-content">
                         <div class="timeline-time">2:00 PM</div>
                         <h4 class="timeline-title">🏛️ Visit Archaeological Ruins</h4>
-                        <p class="timeline-description">Experience Petra's magnificence with AR visualization showing how the ancient city looked 2000 years ago, complete with virtual guides.</p>
+                        <p class="timeline-description">Experience Petra's magnificence with AR visualization showing
+                            how the ancient city looked 2000 years ago, complete with virtual guides.</p>
                     </div>
                 </div>
                 <div class="timeline-item">
@@ -883,7 +905,8 @@
                     <div class="timeline-content">
                         <div class="timeline-time">7:00 PM</div>
                         <h4 class="timeline-title">🍽️ Night Food Market</h4>
-                        <p class="timeline-description">Savor authentic Jordanian cuisine at local food markets with AI-powered recommendations based on your dietary preferences.</p>
+                        <p class="timeline-description">Savor authentic Jordanian cuisine at local food markets with
+                            AI-powered recommendations based on your dietary preferences.</p>
                     </div>
                 </div>
             </div>
@@ -894,11 +917,13 @@
     <section id="testimonials" class="section">
         <div class="container">
             <h2 class="section-title">What Travelers Say</h2>
-            <p class="section-subtitle">Real experiences from smart travelers who explored Jordan with our AI-powered platform.</p>
+            <p class="section-subtitle">Real experiences from smart travelers who explored Jordan with our AI-powered
+                platform.</p>
             <div class="testimonials-grid">
                 <div class="testimonial-card">
                     <div class="testimonial-header">
-                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b494?w=150&h=150&fit=crop&crop=face" alt="Sarah Johnson" class="testimonial-avatar">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b494?w=150&h=150&fit=crop&crop=face"
+                            alt="Sarah Johnson" class="testimonial-avatar">
                         <div class="testimonial-info">
                             <h4>Sarah Johnson</h4>
                             <p>Travel Blogger, USA</p>
@@ -907,11 +932,14 @@
                     <div class="testimonial-rating">
                         <span class="star">★★★★★</span>
                     </div>
-                    <p class="testimonial-text">"The Smart Jordan AI guide was incredible! It led us to hidden gems in Petra that we never would have found. The real-time crowd data helped us avoid busy times and made our visit so much more enjoyable."</p>
+                    <p class="testimonial-text">"The SmartTour.jo AI guide was incredible! It led us to hidden gems in
+                        Petra that we never would have found. The real-time crowd data helped us avoid busy times and
+                        made our visit so much more enjoyable."</p>
                 </div>
                 <div class="testimonial-card">
                     <div class="testimonial-header">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" alt="Marco Rodriguez" class="testimonial-avatar">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+                            alt="Marco Rodriguez" class="testimonial-avatar">
                         <div class="testimonial-info">
                             <h4>Marco Rodriguez</h4>
                             <p>Photographer, Spain</p>
@@ -920,11 +948,14 @@
                     <div class="testimonial-rating">
                         <span class="star">★★★★★</span>
                     </div>
-                    <p class="testimonial-text">"The AR experiences at historical sites were mind-blowing! Seeing how ancient Jordan looked through the AR glasses was like time travel. The interactive map helped me find the perfect photography spots."</p>
+                    <p class="testimonial-text">"The AR experiences at historical sites were mind-blowing! Seeing how
+                        ancient Jordan looked through the AR glasses was like time travel. The interactive map helped me
+                        find the perfect photography spots."</p>
                 </div>
                 <div class="testimonial-card">
                     <div class="testimonial-header">
-                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face" alt="Emma Chen" class="testimonial-avatar">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+                            alt="Emma Chen" class="testimonial-avatar">
                         <div class="testimonial-info">
                             <h4>Emma Chen</h4>
                             <p>Adventure Traveler, Australia</p>
@@ -933,7 +964,9 @@
                     <div class="testimonial-rating">
                         <span class="star">★★★★★</span>
                     </div>
-                    <p class="testimonial-text">"The smart itinerary was perfectly planned! The AI recommendations for restaurants and activities were spot-on. The live environment data helped us prepare for weather changes during our Wadi Rum camping trip."</p>
+                    <p class="testimonial-text">"The smart itinerary was perfectly planned! The AI recommendations for
+                        restaurants and activities were spot-on. The live environment data helped us prepare for weather
+                        changes during our Wadi Rum camping trip."</p>
                 </div>
             </div>
         </div>
@@ -943,14 +976,16 @@
     <footer class="section" style="background: #0a0a0a;">
         <div class="container">
             <div style="text-align: center; padding: 2rem 0;">
-                <h3 style="color: #8b5cf6; font-size: 1.5rem; margin-bottom: 1rem;">Smart Jordan</h3>
-                <p style="color: #9ca3af; margin-bottom: 2rem;">Your intelligent companion for exploring Jordan's wonders</p>
+                <h3 style="color: #8b5cf6; font-size: 1.5rem; margin-bottom: 1rem;">SmartTour.jo</h3>
+                <p style="color: #9ca3af; margin-bottom: 2rem;">Your intelligent companion for exploring Jordan's
+                    wonders</p>
                 <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
                     <a href="#" style="color: #9ca3af; text-decoration: none;">Privacy Policy</a>
                     <a href="#" style="color: #9ca3af; text-decoration: none;">Terms of Service</a>
                     <a href="#" style="color: #9ca3af; text-decoration: none;">Contact Us</a>
                 </div>
-                <p style="color: #6b7280; margin-top: 2rem; font-size: 0.9rem;">&copy; 2024 Smart Jordan. All rights reserved.</p>
+                <p style="color: #6b7280; margin-top: 2rem; font-size: 0.9rem;">&copy; 2024 SmartTour.jo. All rights
+                    reserved.</p>
             </div>
         </div>
     </footer>
@@ -960,7 +995,8 @@
         <div class="modal-content">
             <span class="modal-close">&times;</span>
             <h2 class="modal-title">🌿 Nature Adventures</h2>
-            <p class="modal-text">Jordan's natural landscapes offer some of the world's most breathtaking experiences. From the otherworldly red sands of Wadi Rum to the therapeutic waters of the Dead Sea.</p>
+            <p class="modal-text">Jordan's natural landscapes offer some of the world's most breathtaking experiences.
+                From the otherworldly red sands of Wadi Rum to the therapeutic waters of the Dead Sea.</p>
             <ul class="modal-highlights">
                 <li>Stargazing in Wadi Rum's pristine desert skies</li>
                 <li>Floating in the mineral-rich Dead Sea waters</li>
@@ -975,7 +1011,8 @@
         <div class="modal-content">
             <span class="modal-close">&times;</span>
             <h2 class="modal-title">🏛️ Cultural Heritage</h2>
-            <p class="modal-text">Jordan's cultural treasures span millennia, from the rose-red city of Petra to the remarkably preserved Roman ruins of Jerash.</p>
+            <p class="modal-text">Jordan's cultural treasures span millennia, from the rose-red city of Petra to the
+                remarkably preserved Roman ruins of Jerash.</p>
             <ul class="modal-highlights">
                 <li>Walk through Petra's Treasury and Monastery</li>
                 <li>Explore the colonnaded streets of Jerash</li>
@@ -990,7 +1027,8 @@
         <div class="modal-content">
             <span class="modal-close">&times;</span>
             <h2 class="modal-title">⛪ Religious Sites</h2>
-            <p class="modal-text">Jordan holds deep spiritual significance for three major world religions. Experience profound spiritual journeys in breathtaking natural settings.</p>
+            <p class="modal-text">Jordan holds deep spiritual significance for three major world religions. Experience
+                profound spiritual journeys in breathtaking natural settings.</p>
             <ul class="modal-highlights">
                 <li>Stand at Mount Nebo where Moses viewed the Promised Land</li>
                 <li>Visit the baptism site of Jesus Christ</li>
@@ -1005,7 +1043,8 @@
         <div class="modal-content">
             <span class="modal-close">&times;</span>
             <h2 class="modal-title">🏔️ Adventure Sports</h2>
-            <p class="modal-text">Jordan offers world-class adventure experiences for thrill-seekers. From soaring over Martian landscapes to diving in coral-rich waters.</p>
+            <p class="modal-text">Jordan offers world-class adventure experiences for thrill-seekers. From soaring over
+                Martian landscapes to diving in coral-rich waters.</p>
             <ul class="modal-highlights">
                 <li>Hot air balloon flights over Wadi Rum at sunrise</li>
                 <li>Overnight desert camping with Bedouin guides</li>
@@ -1026,18 +1065,18 @@
         window.addEventListener('scroll', () => {
             const sections = document.querySelectorAll('section[id]');
             const navLinks = document.querySelectorAll('.nav-link');
-            
+
             let current = '';
-            
+
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
                 const sectionHeight = section.clientHeight;
-                
+
                 if (scrollY >= sectionTop - 200) {
                     current = section.getAttribute('id');
                 }
             });
-            
+
             navLinks.forEach(link => {
                 link.classList.remove('active');
                 if (link.getAttribute('href') === `#${current}`) {
@@ -1050,41 +1089,41 @@
         const crowdLevels = ["Low", "Medium", "High"];
         const humidityLevels = ["35%", "42%", "48%", "55%"];
         const airQualityLevels = ["Good", "Moderate", "Excellent"];
-        
+
         function updateInsights() {
             const temp = Math.floor(Math.random() * 12) + 22;
             const crowd = crowdLevels[Math.floor(Math.random() * crowdLevels.length)];
             const humidity = humidityLevels[Math.floor(Math.random() * humidityLevels.length)];
             const airQuality = airQualityLevels[Math.floor(Math.random() * airQualityLevels.length)];
-            
+
             document.getElementById("temp").innerText = `${temp}°C`;
             document.getElementById("crowd").innerText = crowd;
             document.getElementById("humidity").innerText = humidity;
             document.getElementById("air-quality").innerText = airQuality;
         }
-        
+
         // Initialize insights
         updateInsights();
         setInterval(updateInsights, 5000);
 
         // Interactive Map
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const map = L.map("map").setView([31.9516, 35.9239], 13);
             L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
-            
+
             // Add markers for popular destinations
             L.marker([31.9516, 35.9239]).addTo(map)
-                .bindPopup("Welcome to Smart Jordan!")
+                .bindPopup("Welcome to SmartTour.jo!")
                 .openPopup();
-            
+
             L.marker([30.3285, 35.4444]).addTo(map)
                 .bindPopup("Petra - The Rose City");
-            
+
             L.marker([32.2811, 35.8467]).addTo(map)
                 .bindPopup("Jerash - Ancient Roman City");
-            
+
             L.marker([29.5792, 35.0097]).addTo(map)
                 .bindPopup("Wadi Rum - Valley of the Moon");
         });
@@ -1093,7 +1132,7 @@
         const categoryCards = document.querySelectorAll('.category-card');
         const modals = document.querySelectorAll('.modal');
         const modalCloses = document.querySelectorAll('.modal-close');
-        
+
         categoryCards.forEach(card => {
             card.addEventListener('click', () => {
                 const category = card.getAttribute('data-category');
@@ -1103,13 +1142,13 @@
                 }
             });
         });
-        
+
         modalCloses.forEach(close => {
             close.addEventListener('click', (e) => {
                 e.target.closest('.modal').style.display = 'none';
             });
         });
-        
+
         window.addEventListener('click', (e) => {
             if (e.target.classList.contains('modal')) {
                 e.target.style.display = 'none';
@@ -1118,7 +1157,7 @@
 
         // Back to Top Button
         const backToTopBtn = document.getElementById('backToTop');
-        
+
         window.addEventListener('scroll', () => {
             if (window.scrollY > 300) {
                 backToTopBtn.style.display = 'flex';
@@ -1126,7 +1165,7 @@
                 backToTopBtn.style.display = 'none';
             }
         });
-        
+
         backToTopBtn.addEventListener('click', () => {
             window.scrollTo({
                 top: 0,
@@ -1149,4 +1188,5 @@
         });
     </script>
 </body>
+
 </html>
