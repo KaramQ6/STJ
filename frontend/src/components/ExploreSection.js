@@ -3,18 +3,16 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// ---  (هذا هو الكود الذي يصلح أيقونات الخريطة) ---
+// --- Fix for Leaflet's default icon issue ---
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
   iconUrl: require('leaflet/dist/images/marker-icon.png'),
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
-// --- نهاية كود إصلاح الخريطة ---
-
 
 const ExploreSection = ({ exploreRef, isVisible }) => {
-  // ... (كل الـ state variables التي لديك تبقى كما هي)
+  // --- All your state and data remains the same ---
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
   const [selectedDuration, setSelectedDuration] = useState('all');
@@ -23,8 +21,6 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
   const [expandedCard, setExpandedCard] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-
-  // State for AI Chatbot
   const [history, setHistory] = useState([
     { role: "model", parts: [{ text: "Hello! I am your Jordan travel assistant. How can I help you plan your trip?" }] }
   ]);
@@ -35,43 +31,35 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [history]);
-
-  // --- دالة إرسال الرسائل المُحسّنة ---
+    
+  // Chatbot message handler
   const handleSendMessage = async () => {
     if (input.trim() === "" || isLoading) return;
-
     const newUserMessage = { role: "user", parts: [{ text: input }] };
     const updatedHistory = [...history, newUserMessage];
-
     setHistory(updatedHistory);
     setInput("");
     setIsLoading(true);
-
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
-      // !!! هام جداً: تأكد من وضع رابط الـ Worker الصحيح هنا
-      const cloudflareWorkerUrl = 'https://graceful-mochi-ed99e4.netlify.app'; // <--- استبدل هذا بالرابط الصحيح
-
+      // !!! IMPORTANT: Replace with your actual Cloudflare Worker URL
+      const cloudflareWorkerUrl = 'https://your-worker-name.your-subdomain.workers.dev';
       const response = await fetch(cloudflareWorkerUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ history: updatedHistory }),
-        signal: controller.signal, //
+        signal: controller.signal,
       });
-      
       clearTimeout(timeoutId);
-
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
       }
-
       const data = await response.json();
       const modelResponse = { role: "model", parts: [{ text: data.response }] };
       setHistory(prevHistory => [...prevHistory, modelResponse]);
-
     } catch (error) {
       clearTimeout(timeoutId);
       console.error("Failed to send message:", error);
@@ -85,8 +73,8 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
       setIsLoading(false);
     }
   };
-
-  // --- (بقية بياناتك ودوالك تبقى كما هي) ---
+    
+  // --- Your data arrays (mockWeatherData, mockCrowdData, destinations) go here ---
   const mockWeatherData = {
     'petra': { temp: 28, condition: 'Sunny', humidity: 45, windSpeed: 12 },
     'wadi-rum': { temp: 32, condition: 'Clear', humidity: 30, windSpeed: 18 },
@@ -185,6 +173,7 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
   
   return (
     <section ref={exploreRef} id="explore" className="py-20 bg-gray-800 relative overflow-hidden">
+      {/* ... Background Elements ... */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-3xl"></div>
@@ -194,9 +183,12 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">Explore Jordan's Treasures</h2>
           <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Discover Jordan's most captivating destinations with real-time insights, personalized recommendations, and expert local guidance</p>
         </div>
+        
+        {/* --- AI PLANNER & MAP SECTION --- */}
         <div className="mb-16 bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-6 lg:p-8 shadow-2xl">
             <h3 className="text-2xl font-bold text-white mb-6 text-center font-poppins">AI Trip Planner & Interactive Map</h3>
             <div className="flex flex-col lg:flex-row gap-8">
+                {/* AI Chatbot */}
                 <div className="lg:w-1/2 flex flex-col h-[500px] bg-gray-800 rounded-xl border border-gray-700">
                     <div className="flex-1 p-4 space-y-4 overflow-y-auto">
                         {history.map((msg, index) => (
@@ -209,9 +201,7 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
                         {isLoading && (
                            <div className="flex justify-start">
                              <div className="bg-gray-700 text-gray-200 rounded-2xl p-3 rounded-bl-none inline-flex items-center">
-                               <span className="animate-pulse">●</span>
-                               <span className="animate-pulse" style={{ animationDelay: '0.2s' }}>●</span>
-                               <span className="animate-pulse" style={{ animationDelay: '0.4s' }}>●</span>
+                               <span className="animate-pulse">●</span><span className="animate-pulse" style={{ animationDelay: '0.2s' }}>●</span><span className="animate-pulse" style={{ animationDelay: '0.4s' }}>●</span>
                              </div>
                            </div>
                         )}
@@ -219,64 +209,32 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
                     </div>
                     <div className="p-4 border-t border-gray-700">
                         <div className="flex items-center space-x-2">
-                            <input
-                                type="text"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                                placeholder="Ask about your trip..."
-                                className="w-full bg-gray-700 border-gray-600 rounded-xl px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                            />
-                            <button
-                                onClick={handleSendMessage}
-                                disabled={isLoading}
-                                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                Send
-                            </button>
+                            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Ask about your trip..." className="w-full bg-gray-700 border-gray-600 rounded-xl px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                            <button onClick={handleSendMessage} disabled={isLoading} className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Send</button>
                         </div>
                     </div>
                 </div>
+                {/* Interactive Map */}
                 <div className="lg:w-1/2 h-96 lg:h-auto bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-700">
                     <MapContainer center={[31.2, 36.5]} zoom={7} style={{ height: '100%', width: '100%', backgroundColor: '#1f2937' }}>
-                        <TileLayer
-                            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                        />
+                        <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' />
                         {destinations.map(dest => {
-                            const position = {
-                                'petra': [30.3285, 35.4444], 'wadi-rum': [29.5732, 35.4211], 'dead-sea': [31.5592, 35.5869],
-                                'jerash': [32.2736, 35.8931], 'amman': [31.9454, 35.9284], 'aqaba': [29.5266, 35.0076],
-                                'mount-nebo': [31.7686, 35.7256], 'dana-reserve': [30.6789, 35.6111]
-                            }[dest.id];
-                            return position ? (
-                              <Marker key={dest.id} position={position}>
-                                  <Popup>
-                                      <b>{dest.name}</b><br/>{dest.shortDescription}
-                                  </Popup>
-                              </Marker>
-                            ) : null;
+                            const position = {'petra': [30.3285, 35.4444],'wadi-rum': [29.5732, 35.4211],'dead-sea': [31.5592, 35.5869],'jerash': [32.2736, 35.8931],'amman': [31.9454, 35.9284],'aqaba': [29.5266, 35.0076],'mount-nebo': [31.7686, 35.7256],'dana-reserve': [30.6789, 35.6111]}[dest.id];
+                            return position ? (<Marker key={dest.id} position={position}><Popup><b>{dest.name}</b><br/>{dest.shortDescription}</Popup></Marker>) : null;
                         })}
                     </MapContainer>
                 </div>
             </div>
         </div>
+        
+        {/* --- DESTINATIONS SECTION --- */}
         <div className="mb-8 space-y-4">
           <div className="relative max-w-md mx-auto">
-            <input
-              type="text"
-              placeholder="Search destinations..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"
-            />
+            <input type="text" placeholder="Search destinations..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"/>
             <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
           </div>
           <div className="text-center">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25"
-            >
+            <button onClick={() => setShowFilters(!showFilters)} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25">
               <svg className={`w-5 h-5 mr-2 inline-block transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z" /></svg>
               Filters
             </button>
@@ -286,58 +244,33 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
-                  <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <option value="all">All Categories</option><option value="nature">Nature</option><option value="historical">Historical</option><option value="religious">Religious</option><option value="urban">Urban</option>
-                  </select>
+                  <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"><option value="all">All Categories</option><option value="nature">Nature</option><option value="historical">Historical</option><option value="religious">Religious</option><option value="urban">Urban</option></select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Difficulty</label>
-                  <select value={selectedDifficulty} onChange={(e) => setSelectedDifficulty(e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <option value="all">All Levels</option><option value="easy">Easy</option><option value="moderate">Moderate</option><option value="hard">Hard</option>
-                  </select>
+                  <select value={selectedDifficulty} onChange={(e) => setSelectedDifficulty(e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"><option value="all">All Levels</option><option value="easy">Easy</option><option value="moderate">Moderate</option><option value="hard">Hard</option></select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Duration</label>
-                  <select value={selectedDuration} onChange={(e) => setSelectedDuration(e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <option value="all">Any Duration</option><option value="2">2-3 hours</option><option value="4">4-6 hours</option><option value="6">6-8 hours</option>
-                  </select>
+                  <select value={selectedDuration} onChange={(e) => setSelectedDuration(e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"><option value="all">Any Duration</option><option value="2">2-3 hours</option><option value="4">4-6 hours</option><option value="6">6-8 hours</option></select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Budget</label>
-                  <select value={selectedBudget} onChange={(e) => setSelectedBudget(e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <option value="all">Any Budget</option><option value="low">Low Budget</option><option value="medium">Medium Budget</option><option value="high">High Budget</option>
-                  </select>
+                  <select value={selectedBudget} onChange={(e) => setSelectedBudget(e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"><option value="all">Any Budget</option><option value="low">Low Budget</option><option value="medium">Medium Budget</option><option value="high">High Budget</option></select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">Accessibility</label>
-                  <select value={selectedAccessibility} onChange={(e) => setSelectedAccessibility(e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <option value="all">All Levels</option><option value="excellent">Excellent</option><option value="good">Good</option><option value="moderate">Moderate</option><option value="limited">Limited</option>
-                  </select>
+                  <select value={selectedAccessibility} onChange={(e) => setSelectedAccessibility(e.target.value)} className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"><option value="all">All Levels</option><option value="excellent">Excellent</option><option value="good">Good</option><option value="moderate">Moderate</option><option value="limited">Limited</option></select>
                 </div>
               </div>
-              <div className="mt-4 text-center">
-                <button
-                  onClick={() => { setSelectedCategory('all'); setSelectedDifficulty('all'); setSelectedDuration('all'); setSelectedBudget('all'); setSelectedAccessibility('all'); setSearchTerm(''); }}
-                  className="text-purple-400 hover:text-purple-300 font-medium transition-colors duration-300"
-                >
-                  Clear All Filters
-                </button>
-              </div>
+              <div className="mt-4 text-center"><button onClick={() => { setSelectedCategory('all'); setSelectedDifficulty('all'); setSelectedDuration('all'); setSelectedBudget('all'); setSelectedAccessibility('all'); setSearchTerm(''); }} className="text-purple-400 hover:text-purple-300 font-medium transition-colors duration-300">Clear All Filters</button></div>
             </div>
           )}
         </div>
-        <div className="text-center mb-8">
-            <p className="text-gray-400">
-                Showing {filteredDestinations.length} of {destinations.length} destinations
-            </p>
-        </div>
+        <div className="text-center mb-8"><p className="text-gray-400">Showing {filteredDestinations.length} of {destinations.length} destinations</p></div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredDestinations.map((destination, index) => (
-                <div
-                    key={destination.id}
-                    className={`bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10 animate-fade-in-up overflow-hidden`}
-                    style={{animationDelay: `${index * 0.1}s`}}
-                >
+                <div key={destination.id} className={`bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10 animate-fade-in-up overflow-hidden`} style={{animationDelay: `${index * 0.1}s`}}>
                     <div className="relative">
                         <img src={destination.image} alt={destination.name} className="w-full h-48 object-cover" />
                         <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-sm rounded-lg px-2 py-1">{renderStars(destination.averageRating)}</div>
@@ -352,22 +285,26 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
                             <div className="flex items-center text-sm"><span className="text-gray-400">Difficulty:</span><span className={`ml-2 font-medium ${getDifficultyColor(destination.difficulty)}`}>{destination.difficulty.charAt(0).toUpperCase() + destination.difficulty.slice(1)}</span></div>
                             <div className="flex items-center text-sm"><span className="text-gray-400">Access:</span><span className="text-white ml-2">{destination.accessibility}</span></div>
                         </div>
+                        {/* --- THIS IS THE LINE THAT WAS FIXED --- */}
                         <div className="grid grid-cols-2 gap-4 mb-4">
                             <div className="bg-gray-800/50 rounded-lg p-3">
-                                <div className="flex items-center justify-between"><span className="text-gray-400 text-sm">Weather</span><span className="text-2xl">{getWeatherIcon(mockWeatherData[destination.id]?.condition)}</div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-gray-400 text-sm">Weather</span>
+                                    <span className="text-2xl">{getWeatherIcon(mockWeatherData[destination.id]?.condition)}</span>
+                                </div>
                                 <div className="text-white font-semibold">{mockWeatherData[destination.id]?.temp}°C</div>
                                 <div className="text-gray-400 text-sm">{mockWeatherData[destination.id]?.condition}</div>
                             </div>
                             <div className="bg-gray-800/50 rounded-lg p-3">
-                                <div className="flex items-center justify-between"><span className="text-gray-400 text-sm">Crowd</span><span className="text-2xl">👥</span></div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-gray-400 text-sm">Crowd</span>
+                                    <span className="text-2xl">👥</span>
+                                </div>
                                 <div className={`font-semibold ${getCrowdColor(mockCrowdData[destination.id]?.level)}`}>{mockCrowdData[destination.id]?.level}</div>
                                 <div className="text-gray-400 text-sm">{mockCrowdData[destination.id]?.percentage}% full</div>
                             </div>
                         </div>
-                        <button
-                            onClick={() => toggleCard(destination.id)}
-                            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25"
-                        >
+                        <button onClick={() => toggleCard(destination.id)} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/25">
                             {expandedCard === destination.id ? 'Show Less' : 'Show More Details'}
                             <svg className={`w-5 h-5 ml-2 inline-block transition-transform duration-300 ${expandedCard === destination.id ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                         </button>
