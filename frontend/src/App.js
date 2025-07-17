@@ -4,7 +4,7 @@ import L from 'leaflet';
 import "./App.css";
 import 'leaflet/dist/leaflet.css';
 
-// GalleryModal and other helper components remain the same
+// GalleryModal component remains the same
 const GalleryModal = ({ isOpen, onClose, images }) => {
     if (!isOpen) return null;
     return (
@@ -55,9 +55,9 @@ const App = () => {
     useEffect(() => {
         delete L.Icon.Default.prototype._getIconUrl;
         L.Icon.Default.mergeOptions({
-            iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-            iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+            iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+            iconUrl: require('leaflet/dist/images/marker-icon.png'),
+            shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
         });
     }, []);
     
@@ -88,7 +88,7 @@ const App = () => {
         { title: '🌊 Dead Sea: The Lowest Point on Earth', description: 'Float effortlessly in its hypersaline waters and benefit from its therapeutic mineral-rich mud.', image: 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' },
         { title: '🧗 Adventure in Canyons', description: 'Experience thrilling adventures like Canyoning in Wadi Mujib and diving in the Red Sea at Aqaba.', image: 'https://images.pexels.com/photos/7989333/pexels-photo-7989333.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2' }
     ];
-    
+
     // ======== CUSTOM MARKER ICONS ========
     const createCustomIcon = (type, emoji) => {
         const iconHtml = `<div style="background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); width: 40px; height: 40px; border-radius: 50% 50% 50% 0; border: 3px solid white; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); display: flex; align-items: center; justify-content: center; font-size: 18px; transform: rotate(-45deg); position: relative;"><span style="transform: rotate(45deg); filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">${emoji}</span></div>`;
@@ -139,9 +139,9 @@ const App = () => {
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
-
+    
     const updateInsights = async () => {
-        const apiKey = '91859b46e4ef01b5415a2f8b1ddbfac1';
+        const apiKey = '91859b46e4ef01b5415a2f8b1ddbfac1'; // Replace with your OpenWeatherMap API key
         const updateUI = (data) => {
             setSensorData(prev => ({...prev, temperature: Math.round(data.main.temp), humidity: data.main.humidity}));
         };
@@ -165,9 +165,9 @@ const App = () => {
             );
         } catch (error) { console.error('Fetch weather error:', error); }
     };
-
+    
     useEffect(() => {
-        updateInsights(); // Initial call
+        updateInsights();
         const interval = setInterval(() => {
             setIsDataUpdating(true);
             setPreviousSensorData(sensorData);
@@ -180,7 +180,7 @@ const App = () => {
                 }));
                 setIsDataUpdating(false);
             }, 300);
-        }, 300000); // Update every 5 minutes
+        }, 300000); 
         return () => clearInterval(interval);
     }, []);
 
@@ -196,8 +196,8 @@ const App = () => {
 
             const sections = [
                 { id: 'home', ref: heroRef }, { id: 'features', ref: featuresRef },
-                { id: 'map', ref: mapRef }, { id: 'insights', ref: insightsRef },
-                { id: 'explore', ref: exploreRef}
+                { id: 'explore', ref: exploreRef }, { id: 'map', ref: mapRef },
+                { id: 'insights', ref: insightsRef }
             ];
 
             for (let section of sections) {
@@ -217,7 +217,7 @@ const App = () => {
     }, []);
 
     const scrollToSection = (sectionId) => {
-        const refs = { home: heroRef, features: featuresRef, map: mapRef, insights: insightsRef, explore: exploreRef };
+        const refs = { home: heroRef, features: featuresRef, explore: exploreRef, map: mapRef, insights: insightsRef };
         if (refs[sectionId]?.current) {
             refs[sectionId].current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -242,8 +242,8 @@ const App = () => {
                                  {[
                                      { id: 'home', label: 'Home', icon: '🏠' }, 
                                      { id: 'features', label: 'Features', icon: '⚡' },
-                                     { id: 'map', label: 'Map', icon: '📍' },
                                      { id: 'explore', label: 'Explore', icon: '🗺️' },
+                                     { id: 'map', label: 'Map', icon: '📍' }, 
                                      { id: 'insights', label: 'Insights', icon: '📊' }
                                  ].map((item) => (
                                      <button key={item.id} onClick={() => scrollToSection(item.id)}
@@ -271,7 +271,7 @@ const App = () => {
 
             <main>
                 <section ref={heroRef} id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
-                    {/* ... Hero content ... */}
+                    {/* ... (Hero content remains unchanged) ... */}
                 </section>
                 
                 <section ref={featuresRef} id="features" className="py-20 bg-gray-900 relative overflow-hidden">
@@ -298,7 +298,6 @@ const App = () => {
                      </div>
                 </section>
                 
-                {/* --- Explore Section with detailed info --- */}
                 <section ref={exploreRef} id="explore" className="py-20">
                     <div className="container mx-auto px-4">
                         <div className="text-center mb-12">
@@ -320,7 +319,7 @@ const App = () => {
                             <h3 className="text-2xl font-semibold mb-6">Immersive Experiences</h3>
                             <div className="flex justify-center flex-wrap gap-4">
                                 <button onClick={() => setIsGalleryOpen(true)} className="btn btn-primary">📸 View Gallery</button>
-                                <a href="ar.html" target="_blank" rel="noopener noreferrer" className="btn btn-primary">🥽 AR View</a>
+                                <a href="#" target="_blank" rel="noopener noreferrer" className="btn btn-primary">🥽 AR View</a>
                                 <a href="#" target="_blank" rel="noopener noreferrer" className="btn btn-primary">🎥 Virtual Tour</a>
                             </div>
                         </div>
@@ -437,7 +436,6 @@ const App = () => {
                 </div>
             </footer>
             
-            {/* --- Floating Chatbot (FUNCTIONAL) --- */}
             <div className={`fixed bottom-6 right-6 z-50 group transition-all duration-500 ${chatbotLoaded ? 'w-full max-w-sm h-[70vh] md:h-[60vh]' : 'w-auto'}`}>
                 {chatbotLoaded ? (
                     <div className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 h-full flex flex-col animate-fade-in-up">
