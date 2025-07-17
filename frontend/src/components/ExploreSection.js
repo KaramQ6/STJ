@@ -102,10 +102,10 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
           <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Discover Jordan's most captivating destinations with real-time insights, personalized recommendations, and expert local guidance</p>
         </div>
         
-        {/* --- هذا هو القسم الذي يحتوي على الخريطة والشات بوت --- */}
-        {/* لقد تم تقسيمه إلى قسمين منفصلين بدلاً من دمجهم معاً */}
+        {/* --- قسم الخريطة والشات بوت --- */}
+        {/* --- قمت بفصلهم إلى قسمين بدلاً من دمجهم معاً للحفاظ على تصميمك الأصلي --- */}
 
-        {/* --- 1. قسم الخريطة التفاعلية --- */}
+        {/* --- 1. قسم الخريطة --- */}
         <div className="mb-12 bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-4 shadow-2xl">
             <h3 className="text-2xl font-bold text-white mb-4 text-center font-poppins">Interactive Map of Jordan</h3>
             <div className="h-96 w-full rounded-xl overflow-hidden border border-gray-700">
@@ -122,7 +122,7 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
             </div>
         </div>
 
-        {/* --- 2. قسم الشات بوت (مخطط الرحلات الذكي) --- */}
+        {/* --- 2. قسم الشات بوت --- */}
         <div className="mb-16 bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-6 lg:p-8 shadow-2xl">
             <h3 className="text-2xl font-bold text-white mb-6 text-center font-poppins">AI Trip Planner</h3>
             <div className="max-w-2xl mx-auto">
@@ -154,7 +154,7 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
             </div>
         </div>
 
-        {/* --- بقية الكود الخاص بك (الفلاتر والبطاقات) يبقى كما هو --- */}
+        {/* --- قسم الفلاتر والبطاقات --- */}
         <div className="mb-8 space-y-4">
           <div className="relative max-w-md mx-auto">
             <input type="text" placeholder="Search destinations..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full bg-gray-900/50 border border-gray-700 rounded-xl px-4 py-3 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent backdrop-blur-sm"/>
