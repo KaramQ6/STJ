@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import './App.css'; 
 import 'leaflet/dist/leaflet.css';
+import ExploreSection from './components/ExploreSection';
 
 // Fix for default Leaflet markers in React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -20,33 +21,17 @@ function ChangeView({ center, zoom }) {
     return null;
 }
 
-const GalleryModal = ({ isOpen, onClose, images }) => {
-    if (!isOpen) return null;
-    return (
-        <div className="modal">
-            <div className="modal-content">
-                <span className="modal-close" onClick={onClose}>&times;</span>
-                <h2 className="section-title">معرض الصور</h2>
-                <div className="gallery-grid">
-                    {images.map((img, index) => (
-                        <img key={index} src={img.src} alt={img.alt} />
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
-};
-
 const App = () => {
+    // --- STATE MANAGEMENT ---
     const [activeSection, setActiveSection] = useState('home');
     const [showBackToTop, setShowBackToTop] = useState(false);
     const [insights, setInsights] = useState({ temp: '--', humidity: '--', crowd: '...', air: '...' });
     const [messages, setMessages] = useState([{ sender: 'bot', text: 'أهلاً بك! أنا مرشدك السياحي الذكي في الأردن. كيف يمكنني مساعدتك اليوم؟' }]);
     const [isTyping, setIsTyping] = useState(false);
-    const [isGalleryOpen, setIsGalleryOpen] = useState(false);
     const [userLocation, setUserLocation] = useState(null);
     const chatEndRef = useRef(null);
     
+    // --- REFS FOR SCROLLING ---
     const sectionRefs = {
         home: useRef(null),
         features: useRef(null),
@@ -55,6 +40,7 @@ const App = () => {
         explore: useRef(null),
     };
 
+    // --- DATA ---
     const touristSites = [
         { id: 1, name: "البتراء", coords: [30.3285, 35.4444] },
         { id: 2, name: "جرش", coords: [32.2730, 35.8911] },
@@ -62,19 +48,12 @@ const App = () => {
         { id: 4, name: "البحر الميت", coords: [31.5553, 35.4732] },
         { id: 5, name: "العقبة", coords: [29.5328, 34.9439] },
     ];
-    
-    const galleryImages = [
-        { src: 'https://images.pexels.com/photos/1587747/pexels-photo-1587747.jpeg', alt: 'Petra' },
-        { src: 'https://images.pexels.com/photos/2440339/pexels-photo-2440339.jpeg', alt: 'Wadi Rum' },
-        { src: 'https://images.pexels.com/photos/1285625/pexels-photo-1285625.jpeg', alt: 'Dead Sea' },
-        { src: 'https://images.pexels.com/photos/73910/jordan-petra-travel-73910.jpeg', alt: 'Jerash' },
-        { src: 'https://images.pexels.com/photos/7989333/pexels-photo-7989333.jpeg', alt: 'Wadi Mujib' },
-        { src: 'https://images.pexels.com/photos/14986348/pexels-photo-14986348.jpeg', alt: 'Baptism Site' },
-    ];
 
+    // --- MAP ICONS ---
     const redIcon = new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
     const blueIcon = new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
 
+    // --- EFFECTS ---
     useEffect(() => {
         const handleScroll = () => {
             setShowBackToTop(window.scrollY > 300);
@@ -133,7 +112,7 @@ const App = () => {
         return () => clearInterval(interval);
     }, []);
 
-    useEffect(() => {
+     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
                 setUserLocation([pos.coords.latitude, pos.coords.longitude]);
@@ -141,6 +120,7 @@ const App = () => {
         }
     }, []);
 
+    // --- HANDLERS ---
     const scrollToSection = (id) => {
         sectionRefs[id]?.current?.scrollIntoView({ behavior: 'smooth' });
     };
@@ -246,17 +226,7 @@ const App = () => {
                     </div>
                 </section>
 
-                 <section ref={sectionRefs.explore} id="explore" className="section">
-                    <div className="container">
-                        <h2 className="section-title">تجارب تفاعلية</h2>
-                        <p className="section-subtitle">انغمس في جمال الأردن قبل أن تصل</p>
-                        <div className="gallery-buttons">
-                            <button onClick={() => setIsGalleryOpen(true)} className="btn btn-primary">📸 معرض الصور</button>
-                            <a href="/virtual-tour.html" target="_blank" className="btn btn-primary">🎥 جولة افتراضية</a>
-                            <a href="/360-view.html" target="_blank" className="btn btn-primary">🌍 عرض 360°</a>
-                        </div>
-                    </div>
-                </section>
+                 <ExploreSection exploreRef={sectionRefs.explore} isVisible={activeSection === 'explore'} />
             </main>
 
             <div className="chatbot-container">
@@ -275,7 +245,6 @@ const App = () => {
                 </form>
             </div>
             
-            <GalleryModal isOpen={isGalleryOpen} onClose={() => setIsGalleryOpen(false)} images={galleryImages} />
             {showBackToTop && <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="back-to-top">↑</button>}
         </div>
     );
