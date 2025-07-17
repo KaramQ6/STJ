@@ -93,7 +93,6 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
   
   return (
     <section ref={exploreRef} id="explore" className="py-20 bg-gray-800 relative overflow-hidden">
-      {/* --- هذا هو الهيكل العام الذي حافظت عليه --- */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-10 w-72 h-72 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 rounded-full blur-3xl"></div>
@@ -105,39 +104,40 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
           <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Discover Jordan's most captivating destinations with real-time insights, personalized recommendations, and expert local guidance</p>
         </div>
         
-        {/* --- قمت بدمج الخريطة والشات بوت هنا --- */}
-        {/* --- هذا القسم الجديد تم وضعه قبل قسم الفلاتر والبطاقات --- */}
-        <div className="mb-16 bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-6 lg:p-8 shadow-2xl">
-            <h3 className="text-2xl font-bold text-white mb-6 text-center font-poppins">AI Trip Planner & Interactive Map</h3>
-            <div className="flex flex-col lg:flex-row gap-8">
-                {/* --- 1. الشات بوت الوظيفي --- */}
-                <div className="lg:w-1/2 flex flex-col h-[500px] bg-gray-800 rounded-xl border border-gray-700">
-                    <div className="flex-1 p-4 space-y-4 overflow-y-auto">
-                        {history.map((msg, index) => (
-                            <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-xs lg:max-w-md p-3 rounded-2xl ${msg.role === 'user' ? 'bg-purple-600 text-white rounded-br-none' : 'bg-gray-700 text-gray-200 rounded-bl-none'}`}>
-                                    <p className="text-sm" style={{whiteSpace: "pre-wrap"}}>{msg.parts[0].text}</p>
-                                </div>
+        {/* --- قسم الخريطة والشات بوت المدمج --- */}
+        <div className="mb-16 flex flex-col lg:flex-row gap-8">
+            {/* --- 1. الشات بوت (مخطط الرحلات الذكي) --- */}
+            <div className="lg:w-1/2 flex flex-col h-[500px] bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-4 shadow-2xl">
+                <h3 className="text-2xl font-bold text-white mb-4 text-center font-poppins">Smart Jordan AI</h3>
+                <div className="flex-1 p-4 space-y-4 overflow-y-auto bg-gray-800 rounded-xl">
+                    {history.map((msg, index) => (
+                        <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`max-w-xs lg:max-w-md p-3 rounded-2xl ${msg.role === 'user' ? 'bg-purple-600 text-white rounded-br-none' : 'bg-gray-700 text-gray-200 rounded-bl-none'}`}>
+                                <p className="text-sm" style={{whiteSpace: "pre-wrap"}}>{msg.parts[0].text}</p>
                             </div>
-                        ))}
-                        {isLoading && (
-                           <div className="flex justify-start">
-                             <div className="bg-gray-700 text-gray-200 rounded-2xl p-3 rounded-bl-none inline-flex items-center">
-                               <span className="animate-pulse">●</span><span className="animate-pulse" style={{ animationDelay: '0.2s' }}>●</span><span className="animate-pulse" style={{ animationDelay: '0.4s' }}>●</span>
-                             </div>
-                           </div>
-                        )}
-                        <div ref={chatEndRef} />
-                    </div>
-                    <div className="p-4 border-t border-gray-700">
-                        <div className="flex items-center space-x-2">
-                            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Ask about your trip..." className="w-full bg-gray-700 border-gray-600 rounded-xl px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" />
-                            <button onClick={handleSendMessage} disabled={isLoading} className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Send</button>
                         </div>
+                    ))}
+                    {isLoading && (
+                        <div className="flex justify-start">
+                          <div className="bg-gray-700 text-gray-200 rounded-2xl p-3 rounded-bl-none inline-flex items-center">
+                            <span className="animate-pulse">●</span><span className="animate-pulse" style={{ animationDelay: '0.2s' }}>●</span><span className="animate-pulse" style={{ animationDelay: '0.4s' }}>●</span>
+                          </div>
+                        </div>
+                    )}
+                    <div ref={chatEndRef} />
+                </div>
+                <div className="p-4 border-t border-gray-700/50">
+                    <div className="flex items-center space-x-2">
+                        <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Ask about your trip..." className="w-full bg-gray-700 border-gray-600 rounded-xl px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                        <button onClick={handleSendMessage} disabled={isLoading} className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Send</button>
                     </div>
                 </div>
-                {/* --- 2. الخريطة الوظيفية --- */}
-                <div className="lg:w-1/2 h-96 lg:h-auto bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-700">
+            </div>
+            
+            {/* --- 2. الخريطة التفاعلية --- */}
+            <div className="lg:w-1/2 h-96 lg:h-[564px] bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-4 shadow-2xl">
+                 <h3 className="text-2xl font-bold text-white mb-4 text-center font-poppins">Interactive Map</h3>
+                <div className="h-full w-full rounded-xl overflow-hidden">
                     <MapContainer center={[31.2, 36.5]} zoom={7} style={{ height: '100%', width: '100%' }}>
                          <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -151,7 +151,7 @@ const ExploreSection = ({ exploreRef, isVisible }) => {
                 </div>
             </div>
         </div>
-        
+
         {/* --- بقية الكود الخاص بك (الفلاتر والبطاقات) يبقى كما هو بدون تغيير --- */}
         <div className="mb-8 space-y-4">
           <div className="relative max-w-md mx-auto">
