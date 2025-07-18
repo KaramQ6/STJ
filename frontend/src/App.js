@@ -77,7 +77,7 @@ const App = () => {
 
     const galleryImages = [
         { src: 'https://images.pexels.com/photos/4388167/pexels-photo-4388167.jpeg', alt: 'Petra Treasury' },
-        { src: 'https://images.pexels.com/photos/2440339/pexels-photo-2440339.jpeg', alt: 'Wadi Rum Desert' },
+        { src: 'https://images.pexels.com/photos/3258242/pexels-photo-3258242.jpeg', alt: 'Wadi Rum Desert' },
         { src: 'https://images.pexels.com/photos/30129079/pexels-photo-30129079.png', alt: 'Dead Sea Salt Formations' },
         { src: 'https://images.pexels.com/photos/18717602/pexels-photo-18717602.jpeg', alt: 'Jerash Colonnaded Street' },
         { src: 'https://images.pexels.com/photos/31159570/pexels-photo-31159570.jpeg', alt: 'Wadi Mujib Canyon' },
@@ -86,9 +86,9 @@ const App = () => {
     
     const exploreData = [
         { title: '🏛️ Petra: The Rose City', description: 'Explore the Treasury, the Monastery, and the ancient tombs of this UNESCO World Heritage wonder.', image: 'https://images.pexels.com/photos/4388167/pexels-photo-4388167.jpeg' },
-        { title: '🏜️ Wadi Rum: The Martian Desert', description: 'Experience Bedouin culture, stunning sunsets, and Jeep tours in this vast desert landscape.', image: 'https://images.pexels.com/photos/2440339/pexels-photo-2440339.jpeg' },
+        { title: '🏜️ Wadi Rum: The Martian Desert', description: 'Experience Bedouin culture, stunning sunsets, and Jeep tours in this vast desert landscape.', image: 'https://images.pexels.com/photos/3258242/pexels-photo-3258242.jpeg' },
         { title: '🌊 Dead Sea: The Lowest Point on Earth', description: 'Float effortlessly in its hypersaline waters and benefit from its therapeutic mineral-rich mud.', image: 'https://images.pexels.com/photos/30129079/pexels-photo-30129079.png' },
-        { title: '🧗 Adventure in Canyons', description: 'Experience thrilling adventures like Canyoning in Wadi Mujib and diving in the Red Sea at Aqaba.', image: 'https://images.pexels.com/photos/2440339/pexels-photo-2440339.jpeg' }
+        { title: '🧗 Adventure in Canyons', description: 'Experience thrilling adventures like Canyoning in Wadi Mujib and diving in the Red Sea at Aqaba.', image: 'https://images.pexels.com/photos/31159570/pexels-photo-31159570.jpeg' }
     ];
 
     // ======== CUSTOM MARKER ICONS ========
