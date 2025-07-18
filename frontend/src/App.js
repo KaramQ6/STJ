@@ -73,7 +73,20 @@ const App = () => {
         { id: 'irbid', name: 'Irbid', position: [32.5555, 35.8500], description: 'A city in northern Jordan', type: 'city', icon: '🏙️', details: 'Known for its cultural heritage...' },
         { id: 'aqaba', name: 'Aqaba', position: [29.5328, 35.0076], description: 'Red Sea resort', type: 'nature', icon: '🏖️', details: 'Diving and coral reefs' },
         { id: 'mount-nebo', name: 'Mount Nebo', position: [31.7690, 35.7272], description: 'Sacred biblical site...', type: 'religious', icon: '⛰️', details: 'Panoramic views...' },
-        { id: 'dana-reserve', name: 'Dana Biosphere Reserve', position: [30.6774, 35.6270], description: 'Jordan\'s largest nature reserve...', type: 'nature', icon: '🌿', details: 'Rare wildlife...' }
+        { id: 'dana-reserve', name: 'Dana Biosphere Reserve', position: [30.6774, 35.6270], description: 'Jordan\'s largest nature reserve...', type: 'nature', icon: '🌿', details: 'Rare wildlife...' },
+        { id: 'wadi-mujib', name: 'Wadi Mujib', position: [31.5000, 35.6000], description: 'Canyon with stunning views', type: 'nature', icon: '🏞️', details: 'Adventure activities like canyoning...' },
+        { id: 'baptism-site', name: 'Baptism Site', position: [31.7000, 35.5000], description: 'Religious significance', type: 'religious', icon: '🕌', details: 'Where Jesus was baptized...' }
+        { id: 'ajloun-castle', name: 'Ajloun Castle', position: [32.3333, 35.7333], description: 'Medieval Islamic castle', type: 'historical', icon: '🏰', details: 'Strategic hilltop location...' }
+        { id: 'mafraq', name: 'Mafraq', position: [32.3400, 36.2100], description: 'Gateway to northern Jordan', type: 'city', icon: '🏙️', details: 'Known for its historical significance...'
+        { id: 'karak-castle', name: 'Karak Castle', position: [31.1833, 35.7000], description: 'Crusader castle', type: 'historical', icon: '🏰', details: 'One of the largest castles in the Levant...' 
+        { id: 'salt', name: 'Salt', position: [32.0000, 35.7500], description: 'Historical city with Ottoman architecture', type: 'city', icon: '🏙️', details: 'Known for its unique architecture...' }
+        { id: 'azraq-oasis', name: 'Azraq Oasis', position: [31.9000, 36.8000], description: 'Desert oasis with rich biodiversity', type: 'nature', icon: '🌵', details: 'Home to migratory birds...' 
+        { id: 'um-qaes', name: 'Um Qais', position: [32.6000, 35.7000], description: 'Ancient Greco-Roman city', type: 'historical', icon: '🏛️', details: 'Stunning views of the Golan Heights...' 
+
+        }
+        }
+        }
+         },
     ];
 
     const galleryImages = [
@@ -404,6 +417,10 @@ const createCustomIcon = (type, emoji) => {
                                                     <div className="flex items-center"><span className="mr-1">⛰️</span> Mountains</div>
                                                     <div className="flex items-center"><span className="mr-1">🌿</span> Forests</div>
                                                     <div className="flex items-center"><span className="mr-1">🏜️</span> Deserts</div>
+                                                    <div className="flex items-center"><span className="mr-1">🏞️</span> Parks</div>
+                                                    <div className="flex items-center"><span className="mr-1">🏛️</span> Archaeological Sites</div>  
+                                                    <div className="flex items-center"><span className="mr-1">🏰</span> Castles</div>
+                                                    
                                                 </div>
                                             </div>
                                         </div>
