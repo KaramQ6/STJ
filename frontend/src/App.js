@@ -389,7 +389,7 @@ const App = () => {
                                                 <div className="space-y-1 text-xs">
                                                     <div className="flex items-center"><span className="mr-1">🏛️</span> Historical</div>
                                                     <div className="flex items-center"><span className="mr-1">🌊</span> Nature</div>
-                                                    <div className="flex items-center"><span className="mr-1">⛰️</span> Religious</div>
+                                                    <div className="flex items-center"><span className="mr-1">🕌</span> Religious</div>
                                                     <div className="flex items-center"><span className="mr-1">🏙️</span> Cities</div>
                                                 </div>
                                             </div>
