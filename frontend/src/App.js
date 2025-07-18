@@ -43,6 +43,8 @@ const App = () => {
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+    // --- (الإصلاح 1): إضافة متغير لتتبع حالة القائمة ---
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // ======== REFS FOR SCROLLING ========
     const heroRef = useRef(null);
@@ -64,25 +66,25 @@ const App = () => {
     }, []);
     
     // ======== DATA ========
-  const jordanDestinations = [
-    { id: 'petra', name: 'Petra', position: [30.3285, 35.4444], description: 'The ancient rose-red city...', type: 'historical', icon: '🏛️', details: 'UNESCO World Heritage Site...' },
-    { id: 'wadi-rum', name: 'Wadi Rum', position: [29.5759, 35.4208], description: 'Valley of the Moon', type: 'nature', icon: '🏜️', details: 'Protected desert wilderness...' },
-    { id: 'dead-sea', name: 'Dead Sea', position: [31.5553, 35.4732], description: 'Lowest point on Earth', type: 'nature', icon: '🌊', details: 'Effortless floating...' },
-    { id: 'jerash', name: 'Jerash', position: [32.2814, 35.8936], description: 'Preserved Roman ruins', type: 'historical', icon: '🏛️', details: 'Best-preserved Roman town' },
-    { id: 'amman', name: 'Amman', position: [31.9454, 35.9284], description: 'The capital city', type: 'city', icon: '🏙️', details: 'Ancient citadel...' },
-    { id: 'irbid', name: 'Irbid', position: [32.5555, 35.8500], description: 'A city in northern Jordan', type: 'city', icon: '🏙️', details: 'Known for its cultural heritage...' },
-    { id: 'aqaba', name: 'Aqaba', position: [29.5328, 35.0076], description: 'Red Sea resort', type: 'nature', icon: '🏖️', details: 'Diving and coral reefs' },
-    { id: 'mount-nebo', name: 'Mount Nebo', position: [31.7690, 35.7272], description: 'Sacred biblical site...', type: 'religious', icon: '⛰️', details: 'Panoramic views...' },
-    { id: 'dana-reserve', name: 'Dana Biosphere Reserve', position: [30.6774, 35.6270], description: 'Jordan\'s largest nature reserve...', type: 'nature', icon: '🌿', details: 'Rare wildlife...' },
-    { id: 'wadi-mujib', name: 'Wadi Mujib', position: [31.5000, 35.6000], description: 'Canyon with stunning views', type: 'nature', icon: '🏞️', details: 'Adventure activities like canyoning...' },
-    { id: 'baptism-site', name: 'Baptism Site', position: [31.7000, 35.5000], description: 'Religious significance', type: 'religious', icon: '🕌', details: 'Where Jesus was baptized...' },
-    { id: 'ajloun-castle', name: 'Ajloun Castle', position: [32.3333, 35.7333], description: 'Medieval Islamic castle', type: 'historical', icon: '🏰', details: 'Strategic hilltop location...' },
-    { id: 'mafraq', name: 'Mafraq', position: [32.3400, 36.2100], description: 'Gateway to northern Jordan', type: 'city', icon: '🏙️', details: 'Known for its historical significance...' },
-    { id: 'karak-castle', name: 'Karak Castle', position: [31.1833, 35.7000], description: 'Crusader castle', type: 'historical', icon: '🏰', details: 'One of the largest castles in the Levant...' },
-    { id: 'salt', name: 'Salt', position: [32.0000, 35.7500], description: 'Historical city with Ottoman architecture', type: 'city', icon: '🏙️', details: 'Known for its unique architecture...' },
-    { id: 'azraq-oasis', name: 'Azraq Oasis', position: [31.9000, 36.8000], description: 'Desert oasis with rich biodiversity', type: 'nature', icon: '🌵', details: 'Home to migratory birds...' },
-    { id: 'um-qaes', name: 'Um Qais', position: [32.6000, 35.7000], description: 'Ancient Greco-Roman city', type: 'historical', icon: '🏛️', details: 'Stunning views of the Golan Heights...' }
-];
+    const jordanDestinations = [
+        { id: 'petra', name: 'Petra', position: [30.3285, 35.4444], description: 'The ancient rose-red city...', type: 'historical', icon: '🏛️', details: 'UNESCO World Heritage Site...' },
+        { id: 'wadi-rum', name: 'Wadi Rum', position: [29.5759, 35.4208], description: 'Valley of the Moon', type: 'nature', icon: '🏜️', details: 'Protected desert wilderness...' },
+        { id: 'dead-sea', name: 'Dead Sea', position: [31.5553, 35.4732], description: 'Lowest point on Earth', type: 'nature', icon: '🌊', details: 'Effortless floating...' },
+        { id: 'jerash', name: 'Jerash', position: [32.2814, 35.8936], description: 'Preserved Roman ruins', type: 'historical', icon: '🏛️', details: 'Best-preserved Roman town' },
+        { id: 'amman', name: 'Amman', position: [31.9454, 35.9284], description: 'The capital city', type: 'city', icon: '🏙️', details: 'Ancient citadel...' },
+        { id: 'irbid', name: 'Irbid', position: [32.5555, 35.8500], description: 'A city in northern Jordan', type: 'city', icon: '🏙️', details: 'Known for its cultural heritage...' },
+        { id: 'aqaba', name: 'Aqaba', position: [29.5328, 35.0076], description: 'Red Sea resort', type: 'nature', icon: '🏖️', details: 'Diving and coral reefs' },
+        { id: 'mount-nebo', name: 'Mount Nebo', position: [31.7690, 35.7272], description: 'Sacred biblical site...', type: 'religious', icon: '⛰️', details: 'Panoramic views...' },
+        { id: 'dana-reserve', name: 'Dana Biosphere Reserve', position: [30.6774, 35.6270], description: 'Jordan\'s largest nature reserve...', type: 'nature', icon: '🌿', details: 'Rare wildlife...' },
+        { id: 'wadi-mujib', name: 'Wadi Mujib', position: [31.5000, 35.6000], description: 'Canyon with stunning views', type: 'nature', icon: '🏞️', details: 'Adventure activities like canyoning...' },
+        { id: 'baptism-site', name: 'Baptism Site', position: [31.7000, 35.5000], description: 'Religious significance', type: 'religious', icon: '🕌', details: 'Where Jesus was baptized...' },
+        { id: 'ajloun-castle', name: 'Ajloun Castle', position: [32.3333, 35.7333], description: 'Medieval Islamic castle', type: 'historical', icon: '🏰', details: 'Strategic hilltop location...' },
+        { id: 'mafraq', name: 'Mafraq', position: [32.3400, 36.2100], description: 'Gateway to northern Jordan', type: 'city', icon: '🏙️', details: 'Known for its historical significance...' },
+        { id: 'karak-castle', name: 'Karak Castle', position: [31.1833, 35.7000], description: 'Crusader castle', type: 'historical', icon: '🏰', details: 'One of the largest castles in the Levant...' },
+        { id: 'salt', name: 'Salt', position: [32.0000, 35.7500], description: 'Historical city with Ottoman architecture', type: 'city', icon: '🏙️', details: 'Known for its unique architecture...' },
+        { id: 'azraq-oasis', name: 'Azraq Oasis', position: [31.9000, 36.8000], description: 'Desert oasis with rich biodiversity', type: 'nature', icon: '🌵', details: 'Home to migratory birds...' },
+        { id: 'um-qaes', name: 'Um Qais', position: [32.6000, 35.7000], description: 'Ancient Greco-Roman city', type: 'historical', icon: '🏛️', details: 'Stunning views of the Golan Heights...' }
+    ];
 
     const galleryImages = [
         { src: 'https://images.pexels.com/photos/4388167/pexels-photo-4388167.jpeg', alt: 'Petra Treasury' },
@@ -101,18 +103,15 @@ const App = () => {
     ];
 
    // ======== CUSTOM MARKER ICONS (REVISED) ========
-const createCustomIcon = (type, emoji) => {
-    return L.divIcon({
-        // HTML أبسط بكثير، فقط الرمز التعبيري داخل حاوية
-        html: `<span class="marker-emoji">${emoji}</span>`,
-        // اسم كلاس جديد ومحدد لتجنب التعارض
-        className: 'custom-styled-marker',
-        iconSize: [40, 40],
-        // نقطة ارتكاز دقيقة لتثبيت أسفل العلامة على الخريطة
-        iconAnchor: [20, 40],
-        popupAnchor: [0, -40]
-    });
-};
+    const createCustomIcon = (type, emoji) => {
+        return L.divIcon({
+            html: `<span class="marker-emoji">${emoji}</span>`,
+            className: 'custom-styled-marker',
+            iconSize: [40, 40],
+            iconAnchor: [20, 40],
+            popupAnchor: [0, -40]
+        });
+    };
 
     // ======== CHATBOT LOGIC (FUNCTIONAL & FIXED) ========
     const sendMessage = async (e) => {
@@ -255,8 +254,10 @@ const createCustomIcon = (type, emoji) => {
                                  <span className="text-white ml-1">Tour.jo</span>
                              </h1>
                          </div>
-                         <div className="hidden md:block">
-                             <div className="ml-10 flex items-baseline space-x-1">
+
+                        {/* --- (الإصلاح 2): تعديل الـ div الخاص بالروابط ليعمل على كل الشاشات --- */}
+                        <div className={`absolute md:static top-16 left-0 w-full md:w-auto bg-gray-900 md:bg-transparent shadow-lg md:shadow-none transition-all duration-300 ease-in-out ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
+                            <div className="flex flex-col md:flex-row items-baseline space-y-4 md:space-y-0 md:space-x-1 p-4 md:p-0">
                                  {[
                                      { id: 'home', label: 'Home', icon: '🏠' }, 
                                      { id: 'features', label: 'Features', icon: '⚡' },
@@ -265,9 +266,9 @@ const createCustomIcon = (type, emoji) => {
                                      { id: 'explore', label: 'Explore', icon: '🗺️' },
                                      { id: 'insights', label: 'Insights', icon: '📊' }
                                  ].map((item) => (
-                                     <button key={item.id} onClick={() => scrollToSection(item.id)}
-                                         className={`group px-4 py-2 rounded-full text-sm font-medium transition-all duration-500 relative overflow-hidden font-inter transform hover:scale-105 ${activeSection === item.id ? 'text-white bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg shadow-purple-600/25 scale-105' : 'text-gray-300 hover:text-white hover:bg-gray-800/50'}`}>
-                                         <span className="relative z-10 flex items-center">
+                                     <button key={item.id} onClick={() => { scrollToSection(item.id); setIsMenuOpen(false); }}
+                                         className={`group w-full md:w-auto px-4 py-2 rounded-full text-sm font-medium transition-all duration-500 relative overflow-hidden font-inter transform hover:scale-105 ${activeSection === item.id ? 'text-white bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg shadow-purple-600/25 scale-105' : 'text-gray-300 hover:text-white hover:bg-gray-800/50'}`}>
+                                         <span className="relative z-10 flex items-center justify-center md:justify-start">
                                              <span className="mr-1 text-xs transition-transform duration-300 group-hover:scale-125">{item.icon}</span>
                                              {item.label}
                                          </span>
@@ -279,19 +280,26 @@ const createCustomIcon = (type, emoji) => {
                                  ))}
                              </div>
                          </div>
+
+                         {/* --- (الإصلاح 3): إضافة onClick لزر قائمة الموبايل --- */}
                          <div className="md:hidden">
-                             <button className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-gray-800/50 transition-all duration-300 transform hover:scale-110">
-                                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+                             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-gray-800/50 transition-all duration-300 transform hover:scale-110">
+                                <span className="sr-only">Open main menu</span>
+                                {isMenuOpen ? (
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                ) : (
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+                                )}
                              </button>
                          </div>
                      </div>
                  </div>
             </nav>
 
+            {/* The rest of the code (main, footer, etc.) remains unchanged */}
             <main>
                 <section ref={heroRef} id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/40 to-indigo-900/60 z-10 animate-pulse"></div>
-                    {/* --- تم إصلاح رابط الصورة هنا --- */}
                     <div className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-1000 parallax" style={{ backgroundImage: `url(https://images.pexels.com/photos/1631665/pexels-photo-1631665.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)`, transform: `translateY(${scrollProgress * 0.5}px) scale(1.1)`}}></div>
                     <div className="absolute inset-0 z-15">
                         <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full blur-xl animate-float"></div>
@@ -319,47 +327,47 @@ const createCustomIcon = (type, emoji) => {
                 </section>
                 
                 <section ref={featuresRef} id="features" className="py-20 bg-gray-900 relative overflow-hidden">
-                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                         <div className={`text-center mb-16 transition-all duration-1000 ${isVisible.features ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
-                             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">Smart Features for Smart Travelers</h2>
-                             <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Experience Jordan like never before with AI-powered recommendations and real-time insights</p>
-                         </div>
-                         <div className={`grid md:grid-cols-3 gap-8 transition-all duration-1000 ${isVisible.features ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`} style={{animationDelay: '0.3s'}}>
-                             {[ { icon: "🤖", title: "AI Itinerary Suggestions", description: "Get personalized travel plans based on your preferences, time, and interests", gradient: "from-purple-500/20 to-purple-700/20", borderColor: "border-purple-500/30", hoverGlow: "hover:shadow-purple-500/20" }, { icon: "🥽", title: "AR Views", description: "Augmented reality experiences that bring historical sites to life", gradient: "from-blue-500/20 to-blue-700/20", borderColor: "border-blue-500/30", hoverGlow: "hover:shadow-blue-500/20" }, { icon: "📊", title: "IoT Sensors", description: "Real-time data on weather, crowds, and optimal visiting times", gradient: "from-indigo-500/20 to-indigo-700/20", borderColor: "border-indigo-500/30", hoverGlow: "hover:shadow-indigo-500/20" } ].map((feature, index) => (
-                                 <div key={index} className={`group bg-gradient-to-br ${feature.gradient} backdrop-blur-sm rounded-2xl p-8 hover:bg-gradient-to-br hover:from-gray-800/70 hover:to-gray-900/70 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border ${feature.borderColor} ${feature.hoverGlow} hover:shadow-2xl relative overflow-hidden animate-fade-in-up`} style={{animationDelay: `${0.1 * index}s`}}>
-                                     <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                                     <div className="relative z-10">
-                                         <div className="text-5xl mb-6 transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">{feature.icon}</div>
-                                         <h3 className="text-xl font-semibold mb-4 text-white group-hover:text-purple-300 transition-colors font-poppins">{feature.title}</h3>
-                                         <p className="text-gray-300 leading-relaxed font-inter group-hover:text-gray-200 transition-colors">{feature.description}</p>
-                                         <div className="mt-6 w-full bg-gray-700/50 rounded-full h-1 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                             <div className={`h-full bg-gradient-to-r ${feature.gradient.replace('/20', '')} transition-all duration-1000 ease-out group-hover:w-full`} style={{width: '0%'}}></div>
+                       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                             <div className={`text-center mb-16 transition-all duration-1000 ${isVisible.features ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
+                                   <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">Smart Features for Smart Travelers</h2>
+                                   <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Experience Jordan like never before with AI-powered recommendations and real-time insights</p>
+                             </div>
+                             <div className={`grid md:grid-cols-3 gap-8 transition-all duration-1000 ${isVisible.features ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`} style={{animationDelay: '0.3s'}}>
+                                 {[ { icon: "🤖", title: "AI Itinerary Suggestions", description: "Get personalized travel plans based on your preferences, time, and interests", gradient: "from-purple-500/20 to-purple-700/20", borderColor: "border-purple-500/30", hoverGlow: "hover:shadow-purple-500/20" }, { icon: "🥽", title: "AR Views", description: "Augmented reality experiences that bring historical sites to life", gradient: "from-blue-500/20 to-blue-700/20", borderColor: "border-blue-500/30", hoverGlow: "hover:shadow-blue-500/20" }, { icon: "📊", title: "IoT Sensors", description: "Real-time data on weather, crowds, and optimal visiting times", gradient: "from-indigo-500/20 to-indigo-700/20", borderColor: "border-indigo-500/30", hoverGlow: "hover:shadow-indigo-500/20" } ].map((feature, index) => (
+                                     <div key={index} className={`group bg-gradient-to-br ${feature.gradient} backdrop-blur-sm rounded-2xl p-8 hover:bg-gradient-to-br hover:from-gray-800/70 hover:to-gray-900/70 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border ${feature.borderColor} ${feature.hoverGlow} hover:shadow-2xl relative overflow-hidden animate-fade-in-up`} style={{animationDelay: `${0.1 * index}s`}}>
+                                         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                         <div className="relative z-10">
+                                             <div className="text-5xl mb-6 transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">{feature.icon}</div>
+                                             <h3 className="text-xl font-semibold mb-4 text-white group-hover:text-purple-300 transition-colors font-poppins">{feature.title}</h3>
+                                             <p className="text-gray-300 leading-relaxed font-inter group-hover:text-gray-200 transition-colors">{feature.description}</p>
+                                             <div className="mt-6 w-full bg-gray-700/50 rounded-full h-1 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                                 <div className={`h-full bg-gradient-to-r ${feature.gradient.replace('/20', '')} transition-all duration-1000 ease-out group-hover:w-full`} style={{width: '0%'}}></div>
+                                             </div>
                                          </div>
                                      </div>
-                                 </div>
-                             ))}
-                         </div>
-                     </div>
+                                 ))}
+                             </div>
+                       </div>
                 </section>
                 
                 <section ref={exploreRef} id="explore" className="py-20">
-                     <div className="container mx-auto px-4">
-                        <div className="text-center mb-12">
-                            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">Discover Jordan Your Way</h2>
-                            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Find experiences that match your interests, from ancient wonders to breathtaking nature.</p>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            {exploreData.map((item, index) => (
-                                <div key={index} className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10">
-                                    <img src={item.image} alt={item.title} className="w-full h-48 object-cover"/>
-                                    <div className="p-6">
-                                        <h3 className="text-xl font-semibold text-white mb-2 font-poppins">{item.title}</h3>
-                                        <p className="text-gray-300 text-sm mb-4 font-inter">{item.description}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                         <div className="container mx-auto px-4">
+                             <div className="text-center mb-12">
+                                 <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">Discover Jordan Your Way</h2>
+                                 <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Find experiences that match your interests, from ancient wonders to breathtaking nature.</p>
+                             </div>
+                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                 {exploreData.map((item, index) => (
+                                     <div key={index} className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10">
+                                         <img src={item.image} alt={item.title} className="w-full h-48 object-cover"/>
+                                         <div className="p-6">
+                                             <h3 className="text-xl font-semibold text-white mb-2 font-poppins">{item.title}</h3>
+                                             <p className="text-gray-300 text-sm mb-4 font-inter">{item.description}</p>
+                                         </div>
+                                     </div>
+                                 ))}
+                             </div>
+                         </div>
                 </section>
                 
                 <section ref={arRef} id="ar" className="py-20 bg-gray-800/50 flex flex-col justify-center items-center">
@@ -413,7 +421,7 @@ const createCustomIcon = (type, emoji) => {
                                                     <div className="flex items-center"><span className="mr-1">🌿</span> Forests</div>
                                                     <div className="flex items-center"><span className="mr-1">🏜️</span> Deserts</div>
                                                     <div className="flex items-center"><span className="mr-1">🏞️</span> Parks</div>
-                                                    <div className="flex items-center"><span className="mr-1">🏛️</span> Archaeological Sites</div>  
+                                                    <div className="flex items-center"><span className="mr-1">🏛️</span> Archaeological Sites</div>  
                                                     <div className="flex items-center"><span className="mr-1">🏰</span> Castles</div>
                                                     
                                                 </div>
@@ -444,27 +452,27 @@ const createCustomIcon = (type, emoji) => {
                 </section>
                 
                 <section ref={insightsRef} id="insights" className="py-20 bg-gray-800">
-                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                         <div className="text-center mb-16">
-                             <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Live Smart Insights</h2>
-                             <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">Real-time data to help you plan the perfect visit</p>
+                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                               <div className="text-center mb-16">
+                                     <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Live Smart Insights</h2>
+                                     <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">Real-time data to help you plan the perfect visit</p>
+                               </div>
+                               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                   {[ { label: 'Temperature', value: `${sensorData.temperature}°C`, icon: '🌡️', color: 'text-red-400', bgColor: 'from-red-500/20 to-orange-500/20', borderColor: 'border-red-500/30', unit: '°C', rawValue: sensorData.temperature, previousValue: previousSensorData.temperature }, { label: 'Humidity', value: `${sensorData.humidity}%`, icon: '💧', color: 'text-blue-400', bgColor: 'from-blue-500/20 to-cyan-500/20', borderColor: 'border-blue-500/30', unit: '%', rawValue: sensorData.humidity, previousValue: previousSensorData.humidity }, { label: 'Crowd Level', value: sensorData.crowdLevel, icon: '👥', color: 'text-yellow-400', bgColor: 'from-yellow-500/20 to-orange-500/20', borderColor: 'border-yellow-500/30', unit: '', rawValue: sensorData.crowdLevel, previousValue: previousSensorData.crowdLevel }, { label: 'Air Quality', value: sensorData.airQuality, icon: '🌬️', color: 'text-green-400', bgColor: 'from-green-500/20 to-emerald-500/20', borderColor: 'border-green-500/30', unit: '', rawValue: sensorData.airQuality, previousValue: previousSensorData.airQuality } ].map((insight, index) => (
+                                       <div key={index} className={`bg-gradient-to-br ${insight.bgColor} backdrop-blur-sm rounded-2xl p-6 text-center border ${insight.borderColor} hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10 relative overflow-hidden group`}>
+                                           <div className={`absolute inset-0 bg-gradient-to-r ${insight.bgColor} opacity-0 group-hover:opacity-30 transition-opacity duration-500`}></div>
+                                           {isDataUpdating && (<div className="absolute top-2 right-2 w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>)}
+                                           <div className="relative z-10">
+                                               <div className={`text-4xl mb-4 transform hover:scale-110 transition-transform duration-300 ${isDataUpdating ? 'animate-pulse' : ''}`}>{insight.icon}</div>
+                                               <div className={`text-2xl font-bold mb-2 ${insight.color} transition-all duration-500 ${isDataUpdating ? 'transform scale-110 animate-pulse' : ''} ${insight.rawValue !== insight.previousValue ? 'animate-bounce' : ''}`}><span className="font-mono tracking-wider">{insight.value}</span></div>
+                                               <div className="text-gray-300 text-sm font-medium tracking-wide uppercase">{insight.label}</div>
+                                               {typeof insight.rawValue === 'number' && (<div className="mt-3 w-full bg-gray-700 rounded-full h-1.5 overflow-hidden"><div className={`h-full bg-gradient-to-r ${insight.bgColor} transition-all duration-1000 ease-out`} style={{ width: insight.label === 'Temperature' ? `${Math.min((insight.rawValue / 40) * 100, 100)}%` : `${Math.min((insight.rawValue / 100) * 100, 100)}%` }}></div></div>)}
+                                               {typeof insight.rawValue === 'string' && (<div className="mt-3 flex justify-center"><div className={`w-2 h-2 rounded-full ${insight.rawValue === 'Good' || insight.rawValue === 'Excellent' || insight.rawValue === 'Low' ? 'bg-green-400' : insight.rawValue === 'Medium' || insight.rawValue === 'Moderate' ? 'bg-yellow-400' : 'bg-red-400'} animate-pulse`}></div></div>)}
+                                           </div>
+                                       </div>
+                                   ))}
+                               </div>
                          </div>
-                         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                             {[ { label: 'Temperature', value: `${sensorData.temperature}°C`, icon: '🌡️', color: 'text-red-400', bgColor: 'from-red-500/20 to-orange-500/20', borderColor: 'border-red-500/30', unit: '°C', rawValue: sensorData.temperature, previousValue: previousSensorData.temperature }, { label: 'Humidity', value: `${sensorData.humidity}%`, icon: '💧', color: 'text-blue-400', bgColor: 'from-blue-500/20 to-cyan-500/20', borderColor: 'border-blue-500/30', unit: '%', rawValue: sensorData.humidity, previousValue: previousSensorData.humidity }, { label: 'Crowd Level', value: sensorData.crowdLevel, icon: '👥', color: 'text-yellow-400', bgColor: 'from-yellow-500/20 to-orange-500/20', borderColor: 'border-yellow-500/30', unit: '', rawValue: sensorData.crowdLevel, previousValue: previousSensorData.crowdLevel }, { label: 'Air Quality', value: sensorData.airQuality, icon: '🌬️', color: 'text-green-400', bgColor: 'from-green-500/20 to-emerald-500/20', borderColor: 'border-green-500/30', unit: '', rawValue: sensorData.airQuality, previousValue: previousSensorData.airQuality } ].map((insight, index) => (
-                                 <div key={index} className={`bg-gradient-to-br ${insight.bgColor} backdrop-blur-sm rounded-2xl p-6 text-center border ${insight.borderColor} hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10 relative overflow-hidden group`}>
-                                     <div className={`absolute inset-0 bg-gradient-to-r ${insight.bgColor} opacity-0 group-hover:opacity-30 transition-opacity duration-500`}></div>
-                                     {isDataUpdating && (<div className="absolute top-2 right-2 w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>)}
-                                     <div className="relative z-10">
-                                         <div className={`text-4xl mb-4 transform hover:scale-110 transition-transform duration-300 ${isDataUpdating ? 'animate-pulse' : ''}`}>{insight.icon}</div>
-                                         <div className={`text-2xl font-bold mb-2 ${insight.color} transition-all duration-500 ${isDataUpdating ? 'transform scale-110 animate-pulse' : ''} ${insight.rawValue !== insight.previousValue ? 'animate-bounce' : ''}`}><span className="font-mono tracking-wider">{insight.value}</span></div>
-                                         <div className="text-gray-300 text-sm font-medium tracking-wide uppercase">{insight.label}</div>
-                                         {typeof insight.rawValue === 'number' && (<div className="mt-3 w-full bg-gray-700 rounded-full h-1.5 overflow-hidden"><div className={`h-full bg-gradient-to-r ${insight.bgColor} transition-all duration-1000 ease-out`} style={{ width: insight.label === 'Temperature' ? `${Math.min((insight.rawValue / 40) * 100, 100)}%` : `${Math.min((insight.rawValue / 100) * 100, 100)}%` }}></div></div>)}
-                                         {typeof insight.rawValue === 'string' && (<div className="mt-3 flex justify-center"><div className={`w-2 h-2 rounded-full ${insight.rawValue === 'Good' || insight.rawValue === 'Excellent' || insight.rawValue === 'Low' ? 'bg-green-400' : insight.rawValue === 'Medium' || insight.rawValue === 'Moderate' ? 'bg-yellow-400' : 'bg-red-400'} animate-pulse`}></div></div>)}
-                                     </div>
-                                 </div>
-                             ))}
-                         </div>
-                     </div>
                 </section>
             </main>
             
@@ -496,8 +504,8 @@ const createCustomIcon = (type, emoji) => {
                 {chatbotLoaded ? (
                     <div className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 h-full flex flex-col animate-fade-in-up">
                         <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-blue-600 p-4 flex items-center justify-between rounded-t-3xl">
-                             <h3 className="text-white font-semibold text-lg">SmartTour.jo AI</h3>
-                             <button onClick={() => setChatbotLoaded(false)} className="text-white text-2xl leading-none">&times;</button>
+                            <h3 className="text-white font-semibold text-lg">SmartTour.jo AI</h3>
+                            <button onClick={() => setChatbotLoaded(false)} className="text-white text-2xl leading-none">&times;</button>
                         </div>
                         <div className="flex-1 p-4 space-y-4 overflow-y-auto custom-scrollbar">
                             {messages.map((msg, index) => (
@@ -528,7 +536,7 @@ const createCustomIcon = (type, emoji) => {
                 ) : (
                     <div onClick={() => setChatbotLoaded(true)} className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-full shadow-2xl h-20 flex items-center justify-center p-4 cursor-pointer hover:scale-105 transition-transform">
                         <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
-                             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                         </div>
                         <h3 className="text-white font-semibold text-lg">Ask our AI Guide!</h3>
                     </div>
