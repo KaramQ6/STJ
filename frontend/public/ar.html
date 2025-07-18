@@ -1,37 +1,48 @@
-
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AR سياحي حسب الموقع</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.min.js"></script>
-    <script src="https://unpkg.com/aframe-gps-camera@1.7.2/dist/aframe-gps-camera.min.js"></script>
+    <title>Location-Based AR.js + A-Frame</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.0/aframe/build/aframe-ar-nft.min.js"></script>
     <style>
-      body { margin: 0; overflow: hidden; }
+      body, html { margin: 0; overflow: hidden; height: 100%; }
+      #info-text {
+        position: fixed; bottom: 20px; width: 100%; text-align: center;
+        color: white; font-size: 1.2em; text-shadow: 0 0 5px black; z-index: 2;
+      }
     </style>
   </head>
-
   <body>
-    <a-scene vr-mode-ui="enabled: false" embedded arjs="sourceType: webcam;">
-
-      <!-- البترا -->
+    <div id="info-text">وجّه الكاميرا نحو الموقع الجغرافي للتعرف على المعالم</div>
+    
+    <a-scene embedded arjs="sourceType: webcam; trackingMethod: gps;">
+      
+      <!-- تعريف الكاميرا مع المكون gps-new-camera لتحويل الإحداثيات الجغرافية -->
+      <a-camera gps-new-camera rotation-reader></a-camera>
+      
+      <!-- إضافة نقطة موقع مع نص معلوماتي -->
       <a-entity 
-        gps-entity-place="latitude: 30.3222; longitude: 35.4444;" 
-        text="value: البترا\nمدينة أثرية مذهلة.\nالدخول: 5 دنانير; color: #f72585; align: center;" 
-        position="0 0 0" 
-        scale="20 20 20">
+        gps-entity-place="latitude: 41.0082; longitude: 28.9784;" 
+        visible="true">
+        <a-text
+          value="إسطنبول - مدينة سياحية تاريخية في تركيا"
+          scale="20 20 20"
+          color="yellow"
+          align="center"
+          position="0 5 0">
+        </a-text>
       </a-entity>
-
-      <!-- جرش -->
-      <a-entity 
-        gps-entity-place="latitude: 32.2769; longitude: 35.8911;" 
-        text="value: جرش\nمن أكبر المدن الرومانية في الشرق; color: yellow; align: center;" 
-        position="0 0 0" 
-        scale="20 20 20">
-      </a-entity>
-
-      <!-- الكاميرا -->
-      <a-camera gps-camera rotation-reader></a-camera>
+      
     </a-scene>
+    
+    <script>
+      // مكون لتحديث دوران الكاميرا (لتحسين التوجيه)
+      AFRAME.registerComponent('rotation-reader', {
+        tick: function() {
+          var rotation = this.el.getAttribute('rotation');
+          // يمكن إضافة معالجة أو تصحيح دوران هنا إذا احتجت
+        }
+      });
+    </script>
   </body>
 </html>
