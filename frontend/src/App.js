@@ -91,11 +91,19 @@ const App = () => {
         { title: '🧗 Adventure in Canyons', description: 'Experience thrilling adventures like Canyoning in Wadi Mujib and diving in the Red Sea at Aqaba.', image: 'https://images.pexels.com/photos/31159570/pexels-photo-31159570.jpeg' }
     ];
 
-    // ======== CUSTOM MARKER ICONS ========
-    const createCustomIcon = (type, emoji) => {
-        const iconHtml = `<div style="background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%); width: 40px; height: 40px; border-radius: 50% 50% 50% 0; border: 3px solid white; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); display: flex; align-items: center; justify-content: center; font-size: 18px; transform: rotate(-45deg); position: relative;"><span style="transform: rotate(45deg); filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));">${emoji}</span></div>`;
-        return L.divIcon({ html: iconHtml, className: 'custom-marker', iconSize: [40, 40], iconAnchor: [20, 35], popupAnchor: [0, -35] });
-    };
+   // ======== CUSTOM MARKER ICONS (REVISED) ========
+const createCustomIcon = (type, emoji) => {
+    return L.divIcon({
+        // HTML أبسط بكثير، فقط الرمز التعبيري داخل حاوية
+        html: `<span class="marker-emoji">${emoji}</span>`,
+        // اسم كلاس جديد ومحدد لتجنب التعارض
+        className: 'custom-styled-marker',
+        iconSize: [40, 40],
+        // نقطة ارتكاز دقيقة لتثبيت أسفل العلامة على الخريطة
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40]
+    });
+};
 
     // ======== CHATBOT LOGIC (FUNCTIONAL & FIXED) ========
     const sendMessage = async (e) => {

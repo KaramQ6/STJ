@@ -982,3 +982,39 @@ img {
     --border-color: #e5e7eb;
   }
 }
+
+/* ======================================================= */
+/* 👇 NEW STYLES FOR CUSTOM MAP MARKERS                     */
+/* ======================================================= */
+
+/* Remove default Leaflet background and border for divIcon */
+.leaflet-div-icon {
+  background: none;
+  border: none;
+}
+
+/* The main container for our custom marker */
+.custom-styled-marker {
+  background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+  border: 3px solid white;
+  border-radius: 50% 50% 50% 0; /* Creates the teardrop shape */
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+  transform: rotate(-45deg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Animate marker on hover */
+.custom-styled-marker:hover {
+  transform: rotate(-45deg) scale(1.1);
+}
+
+/* Counter-rotate the emoji inside so it appears upright */
+.custom-styled-marker .marker-emoji {
+  display: block;
+  transform: rotate(45deg);
+  font-size: 18px;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+}
