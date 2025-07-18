@@ -77,11 +77,11 @@ const App = () => {
         { id: 'wadi-mujib', name: 'Wadi Mujib', position: [31.5000, 35.6000], description: 'Canyon with stunning views', type: 'nature', icon: '🏞️', details: 'Adventure activities like canyoning...' },
         { id: 'baptism-site', name: 'Baptism Site', position: [31.7000, 35.5000], description: 'Religious significance', type: 'religious', icon: '🕌', details: 'Where Jesus was baptized...' }
         { id: 'ajloun-castle', name: 'Ajloun Castle', position: [32.3333, 35.7333], description: 'Medieval Islamic castle', type: 'historical', icon: '🏰', details: 'Strategic hilltop location...' }
-        { id: 'mafraq', name: 'Mafraq', position: [32.3400, 36.2100], description: 'Gateway to northern Jordan', type: 'city', icon: '🏙️', details: 'Known for its historical significance...'
-        { id: 'karak-castle', name: 'Karak Castle', position: [31.1833, 35.7000], description: 'Crusader castle', type: 'historical', icon: '🏰', details: 'One of the largest castles in the Levant...' 
-        { id: 'salt', name: 'Salt', position: [32.0000, 35.7500], description: 'Historical city with Ottoman architecture', type: 'city', icon: '🏙️', details: 'Known for its unique architecture...' }
-        { id: 'azraq-oasis', name: 'Azraq Oasis', position: [31.9000, 36.8000], description: 'Desert oasis with rich biodiversity', type: 'nature', icon: '🌵', details: 'Home to migratory birds...' 
-        { id: 'um-qaes', name: 'Um Qais', position: [32.6000, 35.7000], description: 'Ancient Greco-Roman city', type: 'historical', icon: '🏛️', details: 'Stunning views of the Golan Heights...' 
+        { id: 'mafraq', name: 'Mafraq', position: [32.3400, 36.2100], description: 'Gateway to northern Jordan', type: 'city', icon: '🏙️', details: 'Known for its historical significance...'}
+        { id: 'karak-castle', name: 'Karak Castle', position: [31.1833, 35.7000], description: 'Crusader castle', type: 'historical', icon: '🏰', details: 'One of the largest castles in the Levant...' },
+        { id: 'salt', name: 'Salt', position: [32.0000, 35.7500], description: 'Historical city with Ottoman architecture', type: 'city', icon: '🏙️', details: 'Known for its unique architecture...' },
+        { id: 'azraq-oasis', name: 'Azraq Oasis', position: [31.9000, 36.8000], description: 'Desert oasis with rich biodiversity', type: 'nature', icon: '🌵', details: 'Home to migratory birds...' },
+        { id: 'um-qaes', name: 'Um Qais', position: [32.6000, 35.7000], description: 'Ancient Greco-Roman city', type: 'historical', icon: '🏛️', details: 'Stunning views of the Golan Heights...' }
 
         }
         }
