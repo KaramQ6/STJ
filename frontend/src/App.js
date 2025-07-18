@@ -1,4 +1,5 @@
-
+import React, { useState, useEffect, useRef } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import "./App.css";
 import 'leaflet/dist/leaflet.css';
@@ -254,7 +255,7 @@ const createCustomIcon = (type, emoji) => {
                                  <span className="text-white ml-1">Tour.jo</span>
                              </h1>
                          </div>
-                         <div className={`hidden md:block ${isMenuOpen ? 'block' : 'hidden'}`}>
+                         <div className="hidden md:block">
                              <div className="ml-10 flex items-baseline space-x-1">
                                  {[
                                      { id: 'home', label: 'Home', icon: '🏠' }, 
