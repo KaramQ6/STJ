@@ -393,13 +393,17 @@ const createCustomIcon = (type, emoji) => {
                                             ))}
                                         </MapContainer>
                                         <div className="absolute top-4 right-4 z-[1000] space-y-2">
-                                            <div className="bg-white/90 backdrop-blur-sm rounded-lg p-2 shadow-lg">
-                                                <div className="text-xs font-medium text-gray-700 mb-1">Legend</div>
+                                            <div className="bg-black/90 backdrop-blur-sm rounded-lg p-2 shadow-lg">
+                                                <div className="text-xs font-medium text-white mb-1">Legend</div>
                                                 <div className="space-y-1 text-xs">
                                                     <div className="flex items-center"><span className="mr-1">🏛️</span> Historical</div>
                                                     <div className="flex items-center"><span className="mr-1">🌊</span> Nature</div>
                                                     <div className="flex items-center"><span className="mr-1">🕌</span> Religious</div>
                                                     <div className="flex items-center"><span className="mr-1">🏙️</span> Cities</div>
+                                                    <div className="flex items-center"><span className="mr-1">🏖️</span> Beaches</div>
+                                                    <div className="flex items-center"><span className="mr-1">⛰️</span> Mountains</div>
+                                                    <div className="flex items-center"><span className="mr-1">🌿</span> Forests</div>
+                                                    <div className="flex items-center"><span className="mr-1">🏜️</span> Deserts</div>
                                                 </div>
                                             </div>
                                         </div>
