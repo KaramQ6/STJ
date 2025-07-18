@@ -345,7 +345,7 @@ const App = () => {
                     </div>
                 </section>
                 
-                <section ref={arRef} id="ar" className="py-20 bg-gray-800/50">
+                <section ref={arRef} id="ar" className="py-20 bg-gray-800/50 flex flex-col justify-center items-center">
                     <div className="container text-center">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">AR Experience</h2>
                         <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-8">Bring Jordan's history to life with our Augmented Reality guide.</p>
