@@ -54,11 +54,19 @@
         const statusMessage = document.getElementById('status-message');
 
         const locations = [
-            { name: 'Your Location', lat: 31.9555, lon: 35.9435 },
-            { name: 'Petra', lat: 30.3285, lon: 35.4444 },
-            { name: 'Jerash Ruins', lat: 32.2814, lon: 35.8936 },
-            { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344 },
+            // --- مواقع جامعة جدارا ---
+            { name: 'Jadara Uni. - Building A', lat: 32.4841, lon: 35.8890 },
+            { name: 'Jadara Uni. - Building B', lat: 32.4837, lon: 35.8893 },
+            { name: 'Jadara Uni. - Building C', lat: 32.4835, lon: 35.8887 },
+            { name: 'Jadara Uni. - Building D (Library)', lat: 32.4830, lon: 35.8885 },
+            { name: 'Jadara Uni. - Building E (Engineering)', lat: 32.4851, lon: 35.8899 },
+            { name: 'Jadara Uni. - Building F', lat: 32.4847, lon: 35.8903 },
+            
+            // --- مواقع أخرى ---
             { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587 },
+            { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344 },
+            { name: 'Jerash Ruins', lat: 32.2814, lon: 35.8936 },
+            { name: 'Petra', lat: 30.3285, lon: 35.4444 },
         ];
 
         function getDistance(lat1, lon1, lat2, lon2) {
@@ -110,14 +118,11 @@
                 (position) => {
                     statusMessage.innerText = 'Success! Starting AR...';
                     
-                    // 1. إظهار البيانات فوراً باستخدام الموقع الذي حصلنا عليه
                     updateInfo(position.coords.latitude, position.coords.longitude);
 
-                    // 2. إخفاء شاشة البداية وتشغيل الكاميرا
                     splashScreen.style.display = 'none';
                     arScene.style.display = 'block';
 
-                    // 3. بدء الاستماع للتحديثات المستقبلية من كاميرا الـ AR
                     window.addEventListener("gps-camera-update-position", (e) => {
                         updateInfo(e.detail.position.latitude, e.detail.position.longitude);
                     });
