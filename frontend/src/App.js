@@ -43,8 +43,10 @@ const App = () => {
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-    // --- (الإصلاح 1): إضافة متغير لتتبع حالة القائمة ---
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    // --- (التعديل الجديد): إضافة متغير لتتبع حالة الـ Legend ---
+    const [isLegendOpen, setIsLegendOpen] = useState(true);
+
 
     // ======== REFS FOR SCROLLING ========
     const heroRef = useRef(null);
@@ -102,7 +104,6 @@ const App = () => {
         { title: '🧗 Adventure in Canyons', description: 'Experience thrilling adventures like Canyoning in Wadi Mujib and diving in the Red Sea at Aqaba.', image: 'https://images.pexels.com/photos/31159570/pexels-photo-31159570.jpeg' }
     ];
 
-   // ======== CUSTOM MARKER ICONS (REVISED) ========
     const createCustomIcon = (type, emoji) => {
         return L.divIcon({
             html: `<span class="marker-emoji">${emoji}</span>`,
@@ -113,20 +114,16 @@ const App = () => {
         });
     };
 
-    // ======== CHATBOT LOGIC (FUNCTIONAL & FIXED) ========
     const sendMessage = async (e) => {
         e.preventDefault();
         const inputElement = e.target.elements.message;
         const userInput = inputElement.value.trim();
         if (!userInput) return;
-
         const newMessages = [...messages, { sender: 'user', text: userInput }];
         setMessages(newMessages);
         inputElement.value = '';
         setIsTyping(true);
-
         const workerUrl = "https://white-frost-8014.karam200566.workers.dev/"; 
-
         try {
             const response = await fetch(workerUrl, {
                 method: 'POST',
@@ -138,12 +135,9 @@ const App = () => {
                     }))
                 })
             });
-
             if (!response.ok) throw new Error(`Network error: ${response.status}`);
-            
             const data = await response.json();
             const botResponse = data.response || "Sorry, I couldn't get a response.";
-            
             setMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
         } catch (error) {
             console.error("Chat API Error:", error);
@@ -153,13 +147,12 @@ const App = () => {
         }
     };
     
-    // ======== SCROLL & INSIGHTS LOGIC ========
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
     
     const updateInsights = async () => {
-        const apiKey = '91859b46e4ef01b5415a2f8b1ddbfac1'; // Replace with your OpenWeatherMap API key
+        const apiKey = '91859b46e4ef01b5415a2f8b1ddbfac1';
         const updateUI = (data) => {
             setSensorData(prev => ({...prev, temperature: Math.round(data.main.temp), humidity: data.main.humidity}));
         };
@@ -173,7 +166,7 @@ const App = () => {
                     const data = await response.json();
                     updateUI(data);
                 },
-                async () => { // Fallback to Amman
+                async () => {
                     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=Amman&appid=${apiKey}&units=metric`;
                     const response = await fetch(apiUrl);
                     if (!response.ok) throw new Error('Default weather API error');
@@ -185,7 +178,7 @@ const App = () => {
     };
     
     useEffect(() => {
-        updateInsights(); // Initial call
+        updateInsights();
         const interval = setInterval(() => {
             setIsDataUpdating(true);
             setPreviousSensorData(sensorData);
@@ -208,16 +201,13 @@ const App = () => {
             const windowHeight = window.innerHeight;
             const documentHeight = document.documentElement.scrollHeight - windowHeight;
             const scrollPercentage = (scrollY / documentHeight) * 100;
-            
             setScrollProgress(scrollPercentage);
             setShowBackToTop(scrollY > 300);
-
             const sections = [
                 { id: 'home', ref: heroRef }, { id: 'features', ref: featuresRef },
                 { id: 'explore', ref: exploreRef }, { id: 'map', ref: mapRef },
                 { id: 'ar', ref: arRef }, { id: 'insights', ref: insightsRef }
             ];
-
             for (let section of sections) {
                 if (section.ref.current) {
                     const rect = section.ref.current.getBoundingClientRect();
@@ -255,8 +245,7 @@ const App = () => {
                              </h1>
                          </div>
 
-                        {/* --- (الإصلاح 2): تعديل الـ div الخاص بالروابط ليعمل على كل الشاشات --- */}
-                        <div className={`absolute md:static top-16 left-0 w-full md:w-auto bg-gray-900 md:bg-transparent shadow-lg md:shadow-none transition-all duration-300 ease-in-out ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
+                        <div className={`absolute md:static top-16 left-0 w-full md:w-auto bg-gray-900/95 md:bg-transparent shadow-lg md:shadow-none transition-all duration-300 ease-in-out ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
                             <div className="flex flex-col md:flex-row items-baseline space-y-4 md:space-y-0 md:space-x-1 p-4 md:p-0">
                                  {[
                                      { id: 'home', label: 'Home', icon: '🏠' }, 
@@ -281,7 +270,6 @@ const App = () => {
                              </div>
                          </div>
 
-                         {/* --- (الإصلاح 3): إضافة onClick لزر قائمة الموبايل --- */}
                          <div className="md:hidden">
                              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-gray-800/50 transition-all duration-300 transform hover:scale-110">
                                 <span className="sr-only">Open main menu</span>
@@ -296,8 +284,8 @@ const App = () => {
                  </div>
             </nav>
 
-            {/* The rest of the code (main, footer, etc.) remains unchanged */}
             <main>
+                {/* ... Sections Home, Features, Explore, AR ... */}
                 <section ref={heroRef} id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/40 to-indigo-900/60 z-10 animate-pulse"></div>
                     <div className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-1000 parallax" style={{ backgroundImage: `url(https://images.pexels.com/photos/1631665/pexels-photo-1631665.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)`, transform: `translateY(${scrollProgress * 0.5}px) scale(1.1)`}}></div>
@@ -408,25 +396,39 @@ const App = () => {
                                                 </Marker>
                                             ))}
                                         </MapContainer>
-                                        <div className="absolute top-4 right-4 z-[1000] space-y-2">
-                                            <div className="bg-black/90 backdrop-blur-sm rounded-lg p-2 shadow-lg">
-                                                <div className="text-xs font-medium text-white mb-1">Legend</div>
-                                                <div className="space-y-1 text-xs">
-                                                    <div className="flex items-center"><span className="mr-1">🏛️</span> Historical</div>
-                                                    <div className="flex items-center"><span className="mr-1">🌊</span> Nature</div>
-                                                    <div className="flex items-center"><span className="mr-1">🕌</span> Religious</div>
-                                                    <div className="flex items-center"><span className="mr-1">🏙️</span> Cities</div>
-                                                    <div className="flex items-center"><span className="mr-1">🏖️</span> Beaches</div>
-                                                    <div className="flex items-center"><span className="mr-1">⛰️</span> Mountains</div>
-                                                    <div className="flex items-center"><span className="mr-1">🌿</span> Forests</div>
-                                                    <div className="flex items-center"><span className="mr-1">🏜️</span> Deserts</div>
-                                                    <div className="flex items-center"><span className="mr-1">🏞️</span> Parks</div>
-                                                    <div className="flex items-center"><span className="mr-1">🏛️</span> Archaeological Sites</div>  
-                                                    <div className="flex items-center"><span className="mr-1">🏰</span> Castles</div>
-                                                    
+                                        
+                                        {/* --- (الكود الجديد): الـ Legend القابل للطي --- */}
+                                        <div className="absolute top-4 right-4 z-[1000]">
+                                            <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-2xl border border-white/20">
+                                                <button
+                                                    onClick={() => setIsLegendOpen(!isLegendOpen)}
+                                                    className="w-full flex justify-between items-center p-2 text-white font-semibold focus:outline-none"
+                                                >
+                                                    <span>Legend</span>
+                                                    <svg
+                                                        className={`w-5 h-5 transition-transform duration-300 ${isLegendOpen ? 'rotate-180' : ''}`}
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                                    >
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                    </svg>
+                                                </button>
+                                                <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isLegendOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                                    <div className="p-2 pt-0 text-xs text-gray-200 space-y-1 border-t border-white/10 mt-1">
+                                                        <div className="flex items-center"><span className="mr-2">🏛️</span> Historical</div>
+                                                        <div className="flex items-center"><span className="mr-2">🌊</span> Nature</div>
+                                                        <div className="flex items-center"><span className="mr-2">🕌</span> Religious</div>
+                                                        <div className="flex items-center"><span className="mr-2">🏙️</span> Cities</div>
+                                                        <div className="flex items-center"><span className="mr-2">🏖️</span> Beaches</div>
+                                                        <div className="flex items-center"><span className="mr-2">⛰️</span> Mountains</div>
+                                                        <div className="flex items-center"><span className="mr-2">🌿</span> Forests</div>
+                                                        <div className="flex items-center"><span className="mr-2">🏜️</span> Deserts</div>
+                                                        <div className="flex items-center"><span className="mr-2">🏞️</span> Parks</div>
+                                                        <div className="flex items-center"><span className="mr-2">🏰</span> Castles</div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -451,6 +453,7 @@ const App = () => {
                     </div>
                 </section>
                 
+                {/* ... Rest of the sections and footer ... */}
                 <section ref={insightsRef} id="insights" className="py-20 bg-gray-800">
                          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                                <div className="text-center mb-16">
