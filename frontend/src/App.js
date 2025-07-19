@@ -51,7 +51,7 @@ const App = () => {
     // ======== REFS FOR SCROLLING ========
     const heroRef = useRef(null);
     const featuresRef = useRef(null);
-    const exploreRef = useRef(null); 
+    const exploreRef = useRef(null);
     const mapRef = useRef(null);
     const insightsRef = useRef(null);
     const chatEndRef = useRef(null);
@@ -66,7 +66,7 @@ const App = () => {
             shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
         });
     }, []);
-    
+
     // ======== DATA ========
     const jordanDestinations = [
         { id: 'petra', name: 'Petra', position: [30.3285, 35.4444], description: 'The ancient rose-red city...', type: 'historical', icon: '🏛️', details: 'UNESCO World Heritage Site...' },
@@ -96,7 +96,7 @@ const App = () => {
         { src: 'https://images.pexels.com/photos/31159570/pexels-photo-31159570.jpeg', alt: 'Wadi Mujib Canyon' },
         { src: 'https://images.pexels.com/photos/14986348/pexels-photo-14986348.jpeg', alt: 'Baptism Site' },
     ];
-    
+
     const exploreData = [
         { title: '🏛️ Petra: The Rose City', description: 'Explore the Treasury, the Monastery, and the ancient tombs of this UNESCO World Heritage wonder.', image: 'https://images.pexels.com/photos/4388167/pexels-photo-4388167.jpeg' },
         { title: '🏜️ Wadi Rum: The Martian Desert', description: 'Experience Bedouin culture, stunning sunsets, and Jeep tours in this vast desert landscape.', image: 'https://images.pexels.com/photos/3258242/pexels-photo-3258242.jpeg' },
@@ -123,7 +123,7 @@ const App = () => {
         setMessages(newMessages);
         inputElement.value = '';
         setIsTyping(true);
-        const workerUrl = "https://white-frost-8014.karam200566.workers.dev/"; 
+        const workerUrl = "https://white-frost-8014.karam200566.workers.dev/";
         try {
             const response = await fetch(workerUrl, {
                 method: 'POST',
@@ -146,15 +146,15 @@ const App = () => {
             setIsTyping(false);
         }
     };
-    
+
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
-    
+
     const updateInsights = async () => {
         const apiKey = '91859b46e4ef01b5415a2f8b1ddbfac1';
         const updateUI = (data) => {
-            setSensorData(prev => ({...prev, temperature: Math.round(data.main.temp), humidity: data.main.humidity}));
+            setSensorData(prev => ({ ...prev, temperature: Math.round(data.main.temp), humidity: data.main.humidity }));
         };
         try {
             navigator.geolocation.getCurrentPosition(
@@ -176,7 +176,7 @@ const App = () => {
             );
         } catch (error) { console.error('Fetch weather error:', error); }
     };
-    
+
     useEffect(() => {
         updateInsights();
         const interval = setInterval(() => {
@@ -191,7 +191,7 @@ const App = () => {
                 }));
                 setIsDataUpdating(false);
             }, 300);
-        }, 300000); 
+        }, 300000);
         return () => clearInterval(interval);
     }, []);
 
@@ -235,64 +235,64 @@ const App = () => {
     return (
         <div className="min-h-screen bg-gray-900 text-white">
             <nav className="fixed top-0 w-full bg-black/95 backdrop-blur-xl z-50 border-b border-gray-800/50 transition-all duration-300 shadow-xl">
-                 <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-purple-600 via-purple-400 to-blue-600 transition-all duration-300 ease-out shadow-lg shadow-purple-500/50" style={{ width: `${scrollProgress}%` }}></div>
-                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                     <div className="flex items-center justify-between h-16">
-                         <div className="flex items-center">
-                             <h1 className="text-xl font-bold text-white hover:text-purple-400 transition-all duration-300 cursor-pointer font-poppins tracking-tight transform hover:scale-105" onClick={() => scrollToSection('home')}>
-                                 <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent animate-glow">Smart</span>
-                                 <span className="text-white ml-1">Tour.jo</span>
-                             </h1>
-                         </div>
+                <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-purple-600 via-purple-400 to-blue-600 transition-all duration-300 ease-out shadow-lg shadow-purple-500/50" style={{ width: `${scrollProgress}%` }}></div>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-16">
+                        <div className="flex items-center">
+                            <h1 className="text-xl font-bold text-white hover:text-purple-400 transition-all duration-300 cursor-pointer font-poppins tracking-tight transform hover:scale-105" onClick={() => scrollToSection('home')}>
+                                <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent animate-glow">Smart</span>
+                                <span className="text-white ml-1">Tour.jo</span>
+                            </h1>
+                        </div>
 
                         <div className={`absolute md:static top-16 left-0 w-full md:w-auto bg-gray-900/95 md:bg-transparent shadow-lg md:shadow-none transition-all duration-300 ease-in-out ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
                             <div className="flex flex-col md:flex-row items-baseline space-y-4 md:space-y-0 md:space-x-1 p-4 md:p-0">
-                                 {[
-                                     { id: 'home', label: 'Home', icon: '🏠' }, 
-                                     { id: 'features', label: 'Features', icon: '⚡' },
-                                     { id: 'ar', label: 'AR Guide', icon: '🥽' },
-                                     { id: 'map', label: 'Map', icon: '📍' }, 
-                                     { id: 'explore', label: 'Explore', icon: '🗺️' },
-                                     { id: 'insights', label: 'Insights', icon: '📊' }
-                                 ].map((item) => (
-                                     <button key={item.id} onClick={() => { scrollToSection(item.id); setIsMenuOpen(false); }}
-                                         className={`group w-full md:w-auto px-4 py-2 rounded-full text-sm font-medium transition-all duration-500 relative overflow-hidden font-inter transform hover:scale-105 ${activeSection === item.id ? 'text-white bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg shadow-purple-600/25 scale-105' : 'text-gray-300 hover:text-white hover:bg-gray-800/50'}`}>
-                                         <span className="relative z-10 flex items-center justify-center md:justify-start">
-                                             <span className="mr-1 text-xs transition-transform duration-300 group-hover:scale-125">{item.icon}</span>
-                                             {item.label}
-                                         </span>
-                                         {activeSection !== item.id && (
-                                             <><div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
-                                             <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div></>
-                                         )}
-                                     </button>
-                                 ))}
-                             </div>
-                         </div>
+                                {[
+                                    { id: 'home', label: 'Home', icon: '🏠' },
+                                    { id: 'features', label: 'Features', icon: '⚡' },
+                                    { id: 'ar', label: 'AR Guide', icon: '🥽' },
+                                    { id: 'map', label: 'Map', icon: '📍' },
+                                    { id: 'explore', label: 'Explore', icon: '🗺️' },
+                                    { id: 'insights', label: 'Insights', icon: '📊' }
+                                ].map((item) => (
+                                    <button key={item.id} onClick={() => { scrollToSection(item.id); setIsMenuOpen(false); }}
+                                        className={`group w-full md:w-auto px-4 py-2 rounded-full text-sm font-medium transition-all duration-500 relative overflow-hidden font-inter transform hover:scale-105 ${activeSection === item.id ? 'text-white bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg shadow-purple-600/25 scale-105' : 'text-gray-300 hover:text-white hover:bg-gray-800/50'}`}>
+                                        <span className="relative z-10 flex items-center justify-center md:justify-start">
+                                            <span className="mr-1 text-xs transition-transform duration-300 group-hover:scale-125">{item.icon}</span>
+                                            {item.label}
+                                        </span>
+                                        {activeSection !== item.id && (
+                                            <><div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-blue-600/20 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                                                <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-white/10 transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div></>
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
-                         <div className="md:hidden">
-                             <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-gray-800/50 transition-all duration-300 transform hover:scale-110">
+                        <div className="md:hidden">
+                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-gray-800/50 transition-all duration-300 transform hover:scale-110">
                                 <span className="sr-only">Open main menu</span>
                                 {isMenuOpen ? (
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                 ) : (
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
                                 )}
-                             </button>
-                         </div>
-                     </div>
-                 </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </nav>
 
             <main>
                 {/* ... Sections Home, Features, Explore, AR ... */}
                 <section ref={heroRef} id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/40 to-indigo-900/60 z-10 animate-pulse"></div>
-                    <div className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-1000 parallax" style={{ backgroundImage: `url(https://images.pexels.com/photos/1631665/pexels-photo-1631665.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)`, transform: `translateY(${scrollProgress * 0.5}px) scale(1.1)`}}></div>
+                    <div className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-1000 parallax" style={{ backgroundImage: `url(https://images.pexels.com/photos/1631665/pexels-photo-1631665.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)`, transform: `translateY(${scrollProgress * 0.5}px) scale(1.1)` }}></div>
                     <div className="absolute inset-0 z-15">
                         <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full blur-xl animate-float"></div>
-                        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-full blur-lg animate-float" style={{animationDelay: '1s'}}></div>
-                        <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-gradient-to-br from-indigo-500/15 to-purple-500/15 rounded-full blur-2xl animate-float" style={{animationDelay: '2s'}}></div>
+                        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-full blur-lg animate-float" style={{ animationDelay: '1s' }}></div>
+                        <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-gradient-to-br from-indigo-500/15 to-purple-500/15 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }}></div>
                     </div>
                     <div className={`relative z-20 text-center px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${isVisible.home ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
                         <div className="animate-fade-in-up">
@@ -313,51 +313,51 @@ const App = () => {
                         <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center"><div className="w-1 h-3 bg-white/70 rounded-full mt-2 animate-pulse"></div></div>
                     </div>
                 </section>
-                
+
                 <section ref={featuresRef} id="features" className="py-20 bg-gray-900 relative overflow-hidden">
-                       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                             <div className={`text-center mb-16 transition-all duration-1000 ${isVisible.features ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
-                                   <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">Smart Features for Smart Travelers</h2>
-                                   <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Experience Jordan like never before with AI-powered recommendations and real-time insights</p>
-                             </div>
-                             <div className={`grid md:grid-cols-3 gap-8 transition-all duration-1000 ${isVisible.features ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`} style={{animationDelay: '0.3s'}}>
-                                 {[ { icon: "🤖", title: "AI Itinerary Suggestions", description: "Get personalized travel plans based on your preferences, time, and interests", gradient: "from-purple-500/20 to-purple-700/20", borderColor: "border-purple-500/30", hoverGlow: "hover:shadow-purple-500/20" }, { icon: "🥽", title: "AR Views", description: "Augmented reality experiences that bring historical sites to life", gradient: "from-blue-500/20 to-blue-700/20", borderColor: "border-blue-500/30", hoverGlow: "hover:shadow-blue-500/20" }, { icon: "📊", title: "IoT Sensors", description: "Real-time data on weather, crowds, and optimal visiting times", gradient: "from-indigo-500/20 to-indigo-700/20", borderColor: "border-indigo-500/30", hoverGlow: "hover:shadow-indigo-500/20" } ].map((feature, index) => (
-                                     <div key={index} className={`group bg-gradient-to-br ${feature.gradient} backdrop-blur-sm rounded-2xl p-8 hover:bg-gradient-to-br hover:from-gray-800/70 hover:to-gray-900/70 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border ${feature.borderColor} ${feature.hoverGlow} hover:shadow-2xl relative overflow-hidden animate-fade-in-up`} style={{animationDelay: `${0.1 * index}s`}}>
-                                         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                                         <div className="relative z-10">
-                                             <div className="text-5xl mb-6 transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">{feature.icon}</div>
-                                             <h3 className="text-xl font-semibold mb-4 text-white group-hover:text-purple-300 transition-colors font-poppins">{feature.title}</h3>
-                                             <p className="text-gray-300 leading-relaxed font-inter group-hover:text-gray-200 transition-colors">{feature.description}</p>
-                                             <div className="mt-6 w-full bg-gray-700/50 rounded-full h-1 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                                 <div className={`h-full bg-gradient-to-r ${feature.gradient.replace('/20', '')} transition-all duration-1000 ease-out group-hover:w-full`} style={{width: '0%'}}></div>
-                                             </div>
-                                         </div>
-                                     </div>
-                                 ))}
-                             </div>
-                       </div>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                        <div className={`text-center mb-16 transition-all duration-1000 ${isVisible.features ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
+                            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">Smart Features for Smart Travelers</h2>
+                            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Experience Jordan like never before with AI-powered recommendations and real-time insights</p>
+                        </div>
+                        <div className={`grid md:grid-cols-3 gap-8 transition-all duration-1000 ${isVisible.features ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`} style={{ animationDelay: '0.3s' }}>
+                            {[{ icon: "🤖", title: "AI Itinerary Suggestions", description: "Get personalized travel plans based on your preferences, time, and interests", gradient: "from-purple-500/20 to-purple-700/20", borderColor: "border-purple-500/30", hoverGlow: "hover:shadow-purple-500/20" }, { icon: "🥽", title: "AR Views", description: "Augmented reality experiences that bring historical sites to life", gradient: "from-blue-500/20 to-blue-700/20", borderColor: "border-blue-500/30", hoverGlow: "hover:shadow-blue-500/20" }, { icon: "📊", title: "IoT Sensors", description: "Real-time data on weather, crowds, and optimal visiting times", gradient: "from-indigo-500/20 to-indigo-700/20", borderColor: "border-indigo-500/30", hoverGlow: "hover:shadow-indigo-500/20" }].map((feature, index) => (
+                                <div key={index} className={`group bg-gradient-to-br ${feature.gradient} backdrop-blur-sm rounded-2xl p-8 hover:bg-gradient-to-br hover:from-gray-800/70 hover:to-gray-900/70 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 border ${feature.borderColor} ${feature.hoverGlow} hover:shadow-2xl relative overflow-hidden animate-fade-in-up`} style={{ animationDelay: `${0.1 * index}s` }}>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                                    <div className="relative z-10">
+                                        <div className="text-5xl mb-6 transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">{feature.icon}</div>
+                                        <h3 className="text-xl font-semibold mb-4 text-white group-hover:text-purple-300 transition-colors font-poppins">{feature.title}</h3>
+                                        <p className="text-gray-300 leading-relaxed font-inter group-hover:text-gray-200 transition-colors">{feature.description}</p>
+                                        <div className="mt-6 w-full bg-gray-700/50 rounded-full h-1 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                            <div className={`h-full bg-gradient-to-r ${feature.gradient.replace('/20', '')} transition-all duration-1000 ease-out group-hover:w-full`} style={{ width: '0%' }}></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </section>
-                
+
                 <section ref={exploreRef} id="explore" className="py-20">
-                         <div className="container mx-auto px-4">
-                             <div className="text-center mb-12">
-                                 <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">Discover Jordan Your Way</h2>
-                                 <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Find experiences that match your interests, from ancient wonders to breathtaking nature.</p>
-                             </div>
-                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                 {exploreData.map((item, index) => (
-                                     <div key={index} className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10">
-                                         <img src={item.image} alt={item.title} className="w-full h-48 object-cover"/>
-                                         <div className="p-6">
-                                             <h3 className="text-xl font-semibold text-white mb-2 font-poppins">{item.title}</h3>
-                                             <p className="text-gray-300 text-sm mb-4 font-inter">{item.description}</p>
-                                         </div>
-                                     </div>
-                                 ))}
-                             </div>
-                         </div>
+                    <div className="container mx-auto px-4">
+                        <div className="text-center mb-12">
+                            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">Discover Jordan Your Way</h2>
+                            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-inter">Find experiences that match your interests, from ancient wonders to breathtaking nature.</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {exploreData.map((item, index) => (
+                                <div key={index} className="bg-gray-800/50 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10">
+                                    <img src={item.image} alt={item.title} className="w-full h-48 object-cover" />
+                                    <div className="p-6">
+                                        <h3 className="text-xl font-semibold text-white mb-2 font-poppins">{item.title}</h3>
+                                        <p className="text-gray-300 text-sm mb-4 font-inter">{item.description}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </section>
-                
+
                 <section ref={arRef} id="ar" className="py-20 bg-gray-800/50 flex flex-col justify-center items-center">
                     <div className="container text-center">
                         <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-poppins">AR Experience</h2>
@@ -396,7 +396,7 @@ const App = () => {
                                                 </Marker>
                                             ))}
                                         </MapContainer>
-                                        
+
                                         {/* --- (الكود الجديد): الـ Legend القابل للطي --- */}
                                         <div className="absolute top-4 right-4 z-[1000]">
                                             <div className="bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-2xl border border-white/20">
@@ -436,7 +436,7 @@ const App = () => {
                                 <h3 className="text-xl font-semibold text-white mb-4 font-poppins">Featured Destinations</h3>
                                 <div className="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar">
                                     {jordanDestinations.map((destination, index) => (
-                                        <div key={destination.id} className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 cursor-pointer animate-fade-in-up" style={{animationDelay: `${index * 0.1}s`}}>
+                                        <div key={destination.id} className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 cursor-pointer animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
                                             <div className="flex items-center mb-2">
                                                 <span className="text-2xl mr-3">{destination.icon}</span>
                                                 <div>
@@ -452,33 +452,33 @@ const App = () => {
                         </div>
                     </div>
                 </section>
-                
+
                 {/* ... Rest of the sections and footer ... */}
                 <section ref={insightsRef} id="insights" className="py-20 bg-gray-800">
-                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                               <div className="text-center mb-16">
-                                     <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Live Smart Insights</h2>
-                                     <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">Real-time data to help you plan the perfect visit</p>
-                               </div>
-                               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                                   {[ { label: 'Temperature', value: `${sensorData.temperature}°C`, icon: '🌡️', color: 'text-red-400', bgColor: 'from-red-500/20 to-orange-500/20', borderColor: 'border-red-500/30', unit: '°C', rawValue: sensorData.temperature, previousValue: previousSensorData.temperature }, { label: 'Humidity', value: `${sensorData.humidity}%`, icon: '💧', color: 'text-blue-400', bgColor: 'from-blue-500/20 to-cyan-500/20', borderColor: 'border-blue-500/30', unit: '%', rawValue: sensorData.humidity, previousValue: previousSensorData.humidity }, { label: 'Crowd Level', value: sensorData.crowdLevel, icon: '👥', color: 'text-yellow-400', bgColor: 'from-yellow-500/20 to-orange-500/20', borderColor: 'border-yellow-500/30', unit: '', rawValue: sensorData.crowdLevel, previousValue: previousSensorData.crowdLevel }, { label: 'Air Quality', value: sensorData.airQuality, icon: '🌬️', color: 'text-green-400', bgColor: 'from-green-500/20 to-emerald-500/20', borderColor: 'border-green-500/30', unit: '', rawValue: sensorData.airQuality, previousValue: previousSensorData.airQuality } ].map((insight, index) => (
-                                       <div key={index} className={`bg-gradient-to-br ${insight.bgColor} backdrop-blur-sm rounded-2xl p-6 text-center border ${insight.borderColor} hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10 relative overflow-hidden group`}>
-                                           <div className={`absolute inset-0 bg-gradient-to-r ${insight.bgColor} opacity-0 group-hover:opacity-30 transition-opacity duration-500`}></div>
-                                           {isDataUpdating && (<div className="absolute top-2 right-2 w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>)}
-                                           <div className="relative z-10">
-                                               <div className={`text-4xl mb-4 transform hover:scale-110 transition-transform duration-300 ${isDataUpdating ? 'animate-pulse' : ''}`}>{insight.icon}</div>
-                                               <div className={`text-2xl font-bold mb-2 ${insight.color} transition-all duration-500 ${isDataUpdating ? 'transform scale-110 animate-pulse' : ''} ${insight.rawValue !== insight.previousValue ? 'animate-bounce' : ''}`}><span className="font-mono tracking-wider">{insight.value}</span></div>
-                                               <div className="text-gray-300 text-sm font-medium tracking-wide uppercase">{insight.label}</div>
-                                               {typeof insight.rawValue === 'number' && (<div className="mt-3 w-full bg-gray-700 rounded-full h-1.5 overflow-hidden"><div className={`h-full bg-gradient-to-r ${insight.bgColor} transition-all duration-1000 ease-out`} style={{ width: insight.label === 'Temperature' ? `${Math.min((insight.rawValue / 40) * 100, 100)}%` : `${Math.min((insight.rawValue / 100) * 100, 100)}%` }}></div></div>)}
-                                               {typeof insight.rawValue === 'string' && (<div className="mt-3 flex justify-center"><div className={`w-2 h-2 rounded-full ${insight.rawValue === 'Good' || insight.rawValue === 'Excellent' || insight.rawValue === 'Low' ? 'bg-green-400' : insight.rawValue === 'Medium' || insight.rawValue === 'Moderate' ? 'bg-yellow-400' : 'bg-red-400'} animate-pulse`}></div></div>)}
-                                           </div>
-                                       </div>
-                                   ))}
-                               </div>
-                         </div>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="text-center mb-16">
+                            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">Live Smart Insights</h2>
+                            <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">Real-time data to help you plan the perfect visit</p>
+                        </div>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {[{ label: 'Temperature', value: `${sensorData.temperature}°C`, icon: '🌡️', color: 'text-red-400', bgColor: 'from-red-500/20 to-orange-500/20', borderColor: 'border-red-500/30', unit: '°C', rawValue: sensorData.temperature, previousValue: previousSensorData.temperature }, { label: 'Humidity', value: `${sensorData.humidity}%`, icon: '💧', color: 'text-blue-400', bgColor: 'from-blue-500/20 to-cyan-500/20', borderColor: 'border-blue-500/30', unit: '%', rawValue: sensorData.humidity, previousValue: previousSensorData.humidity }, { label: 'Crowd Level', value: sensorData.crowdLevel, icon: '👥', color: 'text-yellow-400', bgColor: 'from-yellow-500/20 to-orange-500/20', borderColor: 'border-yellow-500/30', unit: '', rawValue: sensorData.crowdLevel, previousValue: previousSensorData.crowdLevel }, { label: 'Air Quality', value: sensorData.airQuality, icon: '🌬️', color: 'text-green-400', bgColor: 'from-green-500/20 to-emerald-500/20', borderColor: 'border-green-500/30', unit: '', rawValue: sensorData.airQuality, previousValue: previousSensorData.airQuality }].map((insight, index) => (
+                                <div key={index} className={`bg-gradient-to-br ${insight.bgColor} backdrop-blur-sm rounded-2xl p-6 text-center border ${insight.borderColor} hover:border-purple-500/50 transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10 relative overflow-hidden group`}>
+                                    <div className={`absolute inset-0 bg-gradient-to-r ${insight.bgColor} opacity-0 group-hover:opacity-30 transition-opacity duration-500`}></div>
+                                    {isDataUpdating && (<div className="absolute top-2 right-2 w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>)}
+                                    <div className="relative z-10">
+                                        <div className={`text-4xl mb-4 transform hover:scale-110 transition-transform duration-300 ${isDataUpdating ? 'animate-pulse' : ''}`}>{insight.icon}</div>
+                                        <div className={`text-2xl font-bold mb-2 ${insight.color} transition-all duration-500 ${isDataUpdating ? 'transform scale-110 animate-pulse' : ''} ${insight.rawValue !== insight.previousValue ? 'animate-bounce' : ''}`}><span className="font-mono tracking-wider">{insight.value}</span></div>
+                                        <div className="text-gray-300 text-sm font-medium tracking-wide uppercase">{insight.label}</div>
+                                        {typeof insight.rawValue === 'number' && (<div className="mt-3 w-full bg-gray-700 rounded-full h-1.5 overflow-hidden"><div className={`h-full bg-gradient-to-r ${insight.bgColor} transition-all duration-1000 ease-out`} style={{ width: insight.label === 'Temperature' ? `${Math.min((insight.rawValue / 40) * 100, 100)}%` : `${Math.min((insight.rawValue / 100) * 100, 100)}%` }}></div></div>)}
+                                        {typeof insight.rawValue === 'string' && (<div className="mt-3 flex justify-center"><div className={`w-2 h-2 rounded-full ${insight.rawValue === 'Good' || insight.rawValue === 'Excellent' || insight.rawValue === 'Low' ? 'bg-green-400' : insight.rawValue === 'Medium' || insight.rawValue === 'Moderate' ? 'bg-yellow-400' : 'bg-red-400'} animate-pulse`}></div></div>)}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </section>
             </main>
-            
+
             <footer className="relative bg-gray-900 border-t border-gray-800">
                 <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{ backgroundImage: `url('https://images.pexels.com/photos/3250591/pexels-photo-3250591.jpeg')` }}></div>
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -491,7 +491,7 @@ const App = () => {
                         <div>
                             <h4 className="text-lg font-semibold mb-4 text-white">Quick Links</h4>
                             <ul className="space-y-2">
-                                {[ { id: 'home', label: 'Home' }, { id: 'features', label: 'Features' }, { id: 'map', label: 'Map' }, { id: 'insights', label: 'Insights' } ].map((item) => (
+                                {[{ id: 'home', label: 'Home' }, { id: 'features', label: 'Features' }, { id: 'map', label: 'Map' }, { id: 'insights', label: 'Insights' }].map((item) => (
                                     <li key={item.id}><button onClick={() => scrollToSection(item.id)} className="text-gray-300 hover:text-white transition-colors">{item.label}</button></li>
                                 ))}
                             </ul>
@@ -502,7 +502,7 @@ const App = () => {
                     </div>
                 </div>
             </footer>
-            
+
             <div className={`fixed bottom-6 right-6 z-50 group transition-all duration-500 ${chatbotLoaded ? 'w-full max-w-sm h-[70vh] md:h-[60vh]' : 'w-auto'}`}>
                 {chatbotLoaded ? (
                     <div className="bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 h-full flex flex-col animate-fade-in-up">
@@ -521,7 +521,7 @@ const App = () => {
                             {isTyping && (
                                 <div className="flex justify-start">
                                     <div className="bg-gray-700 px-4 py-2 rounded-2xl">
-                                        <span className="animate-pulse">●</span><span className="animate-pulse" style={{animationDelay: '0.2s'}}>●</span><span className="animate-pulse" style={{animationDelay: '0.4s'}}>●</span>
+                                        <span className="animate-pulse">●</span><span className="animate-pulse" style={{ animationDelay: '0.2s' }}>●</span><span className="animate-pulse" style={{ animationDelay: '0.4s' }}>●</span>
                                     </div>
                                 </div>
                             )}
@@ -529,9 +529,9 @@ const App = () => {
                         </div>
                         <form onSubmit={sendMessage} className="p-4 bg-gray-800/80 border-t border-white/10 rounded-b-3xl">
                             <div className="flex items-center">
-                                <input name="message" type="text" placeholder="Ask me anything..." className="w-full bg-white/10 border-white/20 rounded-full px-4 py-2 text-white focus:ring-purple-500"/>
+                                <input name="message" type="text" placeholder="Ask me anything..." className="w-full bg-white/10 border-white/20 rounded-full px-4 py-2 text-white focus:ring-purple-500" />
                                 <button type="submit" className="ml-2 bg-purple-600 hover:bg-purple-700 p-2 rounded-full transition-colors">
-                                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                                 </button>
                             </div>
                         </form>
@@ -539,13 +539,13 @@ const App = () => {
                 ) : (
                     <div onClick={() => setChatbotLoaded(true)} className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-full shadow-2xl h-20 flex items-center justify-center p-4 cursor-pointer hover:scale-105 transition-transform">
                         <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
-                            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
                         </div>
                         <h3 className="text-white font-semibold text-lg">Ask our AI Guide!</h3>
                     </div>
                 )}
             </div>
-            
+
             <GalleryModal isOpen={isGalleryOpen} onClose={() => setIsGalleryOpen(false)} images={galleryImages} />
             {showBackToTop && (
                 <button onClick={scrollToTop} className="fixed bottom-6 left-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white p-3 rounded-full shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:scale-110 z-40 animate-fade-in">
@@ -555,30 +555,5 @@ const App = () => {
         </div>
     );
 };
-// ... other imports
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-
-// 👇 أضف هذا الكود في النهاية
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(registration => {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      })
-      .catch(error => {
-        console.log('ServiceWorker registration failed: ', error);
-      });
-  });
-}
-
-reportWebVitals();
 
 export default App;
