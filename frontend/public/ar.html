@@ -52,24 +52,25 @@
         const statusMessage = document.getElementById('status-message');
 
         const locations = [
+            // Your provided location is now the first point of interest
+            { name: 'My Current Location', lat: 32.5336, lon: 35.8427 },
+            
+            // Other locations
             { name: 'Petra', lat: 30.3285, lon: 35.4444 },
             { name: 'Jerash Ruins', lat: 32.2814, lon: 35.8936 },
             { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344 },
             { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587 },
             { name: 'Jadara University Gate', lat: 32.4839, lon: 35.8893 },
         ];
-
+        
         function startARExperience(latitude, longitude) {
-            // الآن نقوم ببناء مشهد الـ AR بعد الحصول على الموقع
             const scene = document.querySelector('a-scene');
 
-            // 1. إضافة الكاميرا
             const camera = document.createElement('a-camera');
             camera.setAttribute('gps-new-camera', `gpsMinDistance: 5; initialLatitude: ${latitude}; initialLongitude: ${longitude}`);
             camera.setAttribute('rotation-reader', '');
             scene.appendChild(camera);
             
-            // 2. إضافة عنصر النص العائم
             const proximityText = document.createElement('a-entity');
             proximityText.setAttribute('id', 'proximity-text');
             proximityText.setAttribute('text', "value: Welcome!; align: center; color: white; width: 6;");
@@ -79,19 +80,12 @@
             proximityText.setAttribute('material', "color: #8B5CF6; opacity: 0.8; transparent: true");
             scene.appendChild(proximityText);
 
-            // 3. إخفاء شاشة البداية وإظهار مشهد الـ AR
             splashScreen.style.display = 'none';
             arScene.style.display = 'block';
 
-            // 4. بدء الاستماع لتحديثات الموقع لعرض المسافات
             window.addEventListener("gps-camera-update-position", onGpsUpdate);
         }
 
-        // --- باقي الدوال تبقى كما هي ---
-        function getDistance(lat1, lon1, lat2, lon2) { /* ... same as before ... */ }
-        function onGpsUpdate(e) { /* ... same as before ... */ }
-
-        // --- منطق زر البدء الجديد ---
         startButton.addEventListener('click', () => {
             statusMessage.innerText = 'Requesting location... please approve.';
             startButton.disabled = true;
@@ -114,9 +108,8 @@
             );
         });
 
-        // (لصق الدوال الناقصة هنا للتأكيد)
         function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371000;
+            const R = 6371000; // Earth radius in meters
             const toRad = (deg) => deg * Math.PI / 180;
             const dLat = toRad(lat2 - lat1);
             const dLon = toRad(lon2 - lon1);
@@ -147,9 +140,9 @@
             if (nearestPlace) {
                 infoPanel.style.display = 'block';
                 nearestPlaceName.innerText = nearestPlace.name;
-                distanceInfo.innerText = `${minDistance.toFixed(0)} متر`;
+                distanceInfo.innerText = `${minDistance.toFixed(0)} meters`;
 
-                if (minDistance < 25) {
+                if (minDistance < 25) { // Show message if you are within 25 meters
                     proximityText.setAttribute('visible', 'true');
                     proximityText.setAttribute('text', `value: You are near ${nearestPlace.name}!`);
                 } else {
