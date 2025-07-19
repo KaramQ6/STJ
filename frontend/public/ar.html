@@ -2,44 +2,78 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>AR Near Me - SmartTour.jo</title>
+    <title>AR Experience - SmartTour.jo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
     <style>
+        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+        
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #111827; /* Dark background */
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            text-align: center;
+            padding: 20px;
+        }
+        #start-button {
+            background-color: #8B5CF6; /* Purple */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        #start-button:hover {
+            transform: scale(1.05);
+        }
+        #start-button:disabled {
+            background-color: #585858;
+            cursor: not-allowed;
+        }
         .info-panel {
             position: fixed;
-            bottom: 20px;
-            left: 50%;
+            bottom: 20px; left: 50%;
             transform: translateX(-50%);
             background-color: rgba(0, 0, 0, 0.75);
-            color: white;
             padding: 15px;
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            font-family: Arial, sans-serif;
             text-align: center;
             z-index: 1000;
             font-size: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            width: 90%;
-            max-width: 400px;
-        }
-        #proximity-text {
-            font-size: 1.5em; /* Make the AR text bigger */
+            width: 90%; max-width: 400px;
         }
     </style>
 </head>
 
-<body style="margin: 0; overflow: hidden;">
+<body>
+    <div id="splash-screen">
+        <h2>Welcome to the AR Guide</h2>
+        <p>This experience requires access to your camera and location to show you nearby points of interest.</p>
+        <button id="start-button">Start Experience</button>
+    </div>
+
     <a-scene
+        id="ar-scene"
         embedded
         vr-mode-ui="enabled: false"
         arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
         renderer="antialias: true; alpha: true"
+        style="display: none;"
     >
         <a-camera gps-new-camera="gpsMinDistance: 5" rotation-reader></a-camera>
-
         <a-entity
             id="proximity-text"
             text="value: Welcome!; align: center; color: white; width: 6; anchor: center;"
@@ -56,9 +90,10 @@
     </div>
 
     <script>
-        // --- الكود الجديد والمحسن ---
+        const startButton = document.getElementById('start-button');
+        const splashScreen = document.getElementById('splash-screen');
+        const arScene = document.getElementById('ar-scene');
 
-        // قائمة المواقع
         const locations = [
             { name: 'Petra', lat: 30.3285, lon: 35.4444 },
             { name: 'Jerash Ruins', lat: 32.2814, lon: 35.8936 },
@@ -73,7 +108,6 @@
             { name: 'Jadara Uni. - Library', lat: 32.4830, lon: 35.8885 }
         ];
 
-        // دالة حساب المسافة
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371000;
             const toRad = (deg) => deg * Math.PI / 180;
@@ -84,11 +118,9 @@
             return R * c;
         }
 
-        // دالة يتم تشغيلها عند تحديث موقع المستخدم
         function onGpsUpdate(e) {
             const userLat = e.detail.position.latitude;
             const userLon = e.detail.position.longitude;
-            
             let nearestPlace = null;
             let minDistance = Infinity;
 
@@ -99,7 +131,7 @@
                     nearestPlace = place;
                 }
             });
-            
+
             const infoPanel = document.getElementById("info-panel");
             const nearestPlaceName = document.getElementById("nearest-place-name");
             const distanceInfo = document.getElementById("distance-info");
@@ -119,36 +151,45 @@
             }
         }
 
-        // طلب الإذن عند تحميل الصفحة
-        window.onload = () => {
-            console.log("Page loaded. Requesting geolocation...");
+        // --- هذا هو الجزء الذي كان ناقصاً ---
+        startButton.addEventListener('click', () => {
+            console.log('Start button clicked');
+            
             if (!navigator.geolocation) {
                 alert('Geolocation is not supported by your browser.');
                 return;
             }
 
-            // طلب الموقع بشكل مباشر
+            // تغيير نص الزر ليعرف المستخدم أن شيئاً ما يحدث
+            startButton.innerText = 'Getting Location...';
+            startButton.disabled = true;
+
+            // طلب الموقع الجغرافي
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     console.log("Geolocation access granted!", position);
-                    // بعد الحصول على الإذن، نبدأ بالاستماع لتحديثات الموقع
+                    
+                    // إخفاء شاشة البداية وإظهار مشهد الواقع المعزز
+                    splashScreen.style.display = 'none';
+                    arScene.style.display = 'block';
+
+                    // الآن فقط نبدأ بالاستماع لتحديثات الموقع
                     window.addEventListener("gps-camera-update-position", onGpsUpdate);
                 },
                 (err) => {
                     console.error("Geolocation error:", err);
                     alert(`Failed to get location: ${err.message}\nPlease ensure location services are enabled for your browser and this site.`);
-                    // عرض رسالة خطأ في لوحة المعلومات
-                    const infoPanel = document.getElementById("info-panel");
-                    infoPanel.style.display = 'block';
-                    infoPanel.innerHTML = '<span style="color: red;">Location access denied. Please enable it in your browser settings.</span>';
+                    // إعادة الزر إلى حالته الطبيعية عند حدوث خطأ
+                    startButton.innerText = 'Start Experience';
+                    startButton.disabled = false;
                 },
                 {
                     enableHighAccuracy: true,
-                    timeout: 10000,
+                    timeout: 15000,
                     maximumAge: 0
                 }
             );
-        };
+        });
     </script>
 </body>
 </html>
