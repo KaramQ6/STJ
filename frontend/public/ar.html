@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>AR Near Me - SmartTour.jo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
     <style>
@@ -21,6 +22,11 @@
             z-index: 1000;
             font-size: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            width: 90%;
+            max-width: 400px;
+        }
+        #proximity-text {
+            font-size: 1.5em; /* Make the AR text bigger */
         }
     </style>
 </head>
@@ -36,11 +42,11 @@
 
         <a-entity
             id="proximity-text"
-            text="value: Welcome!; align: center; color: white; width: 4; anchor: center;"
-            position="0 1.8 -4"
+            text="value: Welcome!; align: center; color: white; width: 6; anchor: center;"
+            position="0 1.8 -5"
             visible="false"
             geometry="primitive: plane; width: auto; height: auto; padding: 0.2"
-            material="color: #8B5CF6; opacity: 0.8"
+            material="color: #8B5CF6; opacity: 0.8; transparent: true"
         ></a-entity>
     </a-scene>
 
@@ -50,40 +56,36 @@
     </div>
 
     <script>
-        // --- (تم التحديث): إضافة مواقع جديدة في إربد وجامعة جدارا ---
+        // --- الكود الجديد والمحسن ---
+
+        // قائمة المواقع
         const locations = [
-            // مواقع عامة
             { name: 'Petra', lat: 30.3285, lon: 35.4444 },
             { name: 'Jerash Ruins', lat: 32.2814, lon: 35.8936 },
             { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344 },
             { name: 'Wadi Rum', lat: 29.5759, lon: 35.4208 },
             { name: 'Dead Sea', lat: 31.5553, lon: 35.4732 },
-            
-            // مواقع في إربد
             { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587 },
             { name: 'Yarmouk University Gate', lat: 32.5413, lon: 35.8550 },
             { name: 'Museum of Jordanian Heritage', lat: 32.5442, lon: 35.8524 },
-            
-            // مواقع في جامعة جدارا
             { name: 'Jadara University Main Gate', lat: 32.4839, lon: 35.8893 },
             { name: 'Jadara Uni. - Faculty of Engineering', lat: 32.4851, lon: 35.8899 },
             { name: 'Jadara Uni. - Library', lat: 32.4830, lon: 35.8885 }
         ];
 
+        // دالة حساب المسافة
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371000;
             const toRad = (deg) => deg * Math.PI / 180;
             const dLat = toRad(lat2 - lat1);
             const dLon = toRad(lon2 - lon1);
-            const a =
-                Math.sin(dLat / 2) ** 2 +
-                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-                Math.sin(dLon / 2) ** 2;
+            const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             return R * c;
         }
 
-        window.addEventListener("gps-camera-update-position", (e) => {
+        // دالة يتم تشغيلها عند تحديث موقع المستخدم
+        function onGpsUpdate(e) {
             const userLat = e.detail.position.latitude;
             const userLon = e.detail.position.longitude;
             
@@ -108,29 +110,45 @@
                 nearestPlaceName.innerText = nearestPlace.name;
                 distanceInfo.innerText = `${minDistance.toFixed(0)} متر`;
 
-                if (minDistance < 25) { // إظهار الرسالة عند مسافة 25 متر أو أقل
+                if (minDistance < 25) {
                     proximityText.setAttribute('visible', 'true');
                     proximityText.setAttribute('text', `value: You are near ${nearestPlace.name}!`);
                 } else {
                     proximityText.setAttribute('visible', 'false');
                 }
             }
-        });
+        }
 
-        window.addEventListener('load', () => {
+        // طلب الإذن عند تحميل الصفحة
+        window.onload = () => {
+            console.log("Page loaded. Requesting geolocation...");
             if (!navigator.geolocation) {
                 alert('Geolocation is not supported by your browser.');
                 return;
             }
 
+            // طلب الموقع بشكل مباشر
             navigator.geolocation.getCurrentPosition(
-                () => { console.log("Geolocation access granted."); },
-                (err) => { 
+                (position) => {
+                    console.log("Geolocation access granted!", position);
+                    // بعد الحصول على الإذن، نبدأ بالاستماع لتحديثات الموقع
+                    window.addEventListener("gps-camera-update-position", onGpsUpdate);
+                },
+                (err) => {
                     console.error("Geolocation error:", err);
                     alert(`Failed to get location: ${err.message}\nPlease ensure location services are enabled for your browser and this site.`);
+                    // عرض رسالة خطأ في لوحة المعلومات
+                    const infoPanel = document.getElementById("info-panel");
+                    infoPanel.style.display = 'block';
+                    infoPanel.innerHTML = '<span style="color: red;">Location access denied. Please enable it in your browser settings.</span>';
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
                 }
             );
-        });
+        };
     </script>
 </body>
 </html>
