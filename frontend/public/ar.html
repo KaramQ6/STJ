@@ -2,65 +2,141 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>AR GPS Test</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AR Experience - SmartTour.jo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
     <style>
-        #splash {
+        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+        #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; color: white; z-index: 100;
-            display: flex; justify-content: center; align-items: center;
+            background: #111827; color: white;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 10000; text-align: center; padding: 20px; box-sizing: border-box;
         }
-        button { font-size: 24px; padding: 15px 30px; }
+        #start-button {
+            background-color: #8B5CF6; color: white; border: none;
+            padding: 15px 30px; font-size: 18px; font-weight: bold;
+            border-radius: 50px; cursor: pointer; margin-top: 20px;
+        }
+        #start-button:disabled { background-color: #4B5563; cursor: not-allowed; }
+        .info-panel {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.75);
+            padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center; z-index: 1000; font-size: 16px;
+            width: 90%; max-width: 400px; color: white;
+        }
     </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
-
-    <div id="splash">
-        <button id="start-button">Start AR GPS Test</button>
+<body>
+    <div id="splash-screen">
+        <h2>Welcome to the AR Guide</h2>
+        <p>This experience requires camera and location access.</p>
+        <button id="start-button">Start Experience</button>
+        <p id="status-message" style="margin-top: 20px; color: #9CA3AF;"></p>
     </div>
 
-    <a-scene id="scene" vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;" renderer="antialias: true; alpha: true">
+    <a-scene id="ar-scene" embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;" renderer="antialias: true; alpha: true" style="display: none;">
         <a-camera id="camera" rotation-reader></a-camera>
     </a-scene>
 
+    <div id="info-panel" class="info-panel" style="display: none;">
+        أقرب موقع: <strong id="nearest-place-name">...</strong><br>
+        المسافة: <span id="distance-info">...</span>
+    </div>
+
     <script>
         const startButton = document.getElementById('start-button');
-        const splash = document.getElementById('splash');
+        const splashScreen = document.getElementById('splash-screen');
+        const arScene = document.getElementById('ar-scene');
+        const statusMessage = document.getElementById('status-message');
         const camera = document.getElementById('camera');
 
+        const locations = [
+            { name: 'Your Location', lat: 31.9555, lon: 35.9435 },
+            { name: 'Petra', lat: 30.3285, lon: 35.4444 },
+            { name: 'Jerash Ruins', lat: 32.2814, lon: 35.8936 },
+            { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344 },
+            { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587 },
+        ];
+
+        function startARExperience() {
+            // إضافة النقاط الديناميكية إلى المشهد
+            locations.forEach(place => {
+                const entity = document.createElement('a-entity');
+                entity.setAttribute('gps-new-entity-place', `latitude: ${place.lat}; longitude: ${place.lon};`);
+                
+                const textEntity = document.createElement('a-text');
+                textEntity.setAttribute('value', place.name);
+                textEntity.setAttribute('scale', '20 20 20'); // Make text larger
+                textEntity.setAttribute('position', '0 5 0'); // Position text above the point
+                
+                entity.appendChild(textEntity);
+                arScene.appendChild(entity);
+            });
+            
+            // تفعيل خاصية تتبع الموقع في الكاميرا (الطريقة الصحيحة)
+            camera.setAttribute('gps-new-camera', 'gpsMinDistance: 5');
+            
+            splashScreen.style.display = 'none';
+            arScene.style.display = 'block';
+            window.addEventListener("gps-camera-update-position", onGpsUpdate);
+        }
+
         startButton.addEventListener('click', () => {
-            console.log('Start button clicked. Requesting location...');
-            splash.innerText = 'Requesting location permission...';
+            statusMessage.innerText = 'Requesting location... please approve.';
+            startButton.disabled = true;
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const { latitude, longitude } = position.coords;
-                    console.log(`Success! Lat: ${latitude}, Lon: ${longitude}`);
-                    
-                    // بعد النجاح، نقوم بتفعيل خاصية تتبع الموقع في الكاميرا
-                    camera.setAttribute('gps-new-camera', `initialLatitude: ${latitude}; initialLongitude: ${longitude}`);
-                    
-                    // نبدأ بالاستماع لتحديثات الموقع
-                    window.addEventListener('gps-camera-update-position', e => {
-                        console.log('GPS Position UPDATED:', e.detail.position);
-                        splash.innerHTML = `GPS Active!<br>Lat: ${e.detail.position.latitude.toFixed(4)}<br>Lon: ${e.detail.position.longitude.toFixed(4)}`;
-                    });
-
-                    // إخفاء شاشة البداية بعد ثانية لإعطاء الكاميرا وقتاً للعمل
-                    setTimeout(() => {
-                        splash.style.display = 'none';
-                    }, 1000);
-
+                    statusMessage.innerText = 'Success! Starting AR...';
+                    // استدعاء الدالة لبدء التجربة
+                    startARExperience();
                 },
-                (error) => {
-                    console.error('Geolocation Error:', error);
-                    splash.innerText = `ERROR: ${error.message}`;
+                (err) => {
+                    statusMessage.innerText = `Error: ${err.message}. Please enable location and refresh.`;
+                    startButton.disabled = false;
                 },
                 { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
             );
         });
+
+        // دوال حساب المسافة وتحديث الواجهة (تبقى كما هي)
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371000;
+            const toRad = (deg) => deg * Math.PI / 180;
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function onGpsUpdate(e) {
+            const userLat = e.detail.position.latitude;
+            const userLon = e.detail.position.longitude;
+            let nearestPlace = null;
+            let minDistance = Infinity;
+
+            locations.forEach(place => {
+                const distance = getDistance(userLat, userLon, place.lat, place.lon);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestPlace = place;
+                }
+            });
+
+            const infoPanel = document.getElementById("info-panel");
+            const nearestPlaceName = document.getElementById("nearest-place-name");
+            const distanceInfo = document.getElementById("distance-info");
+
+            if (nearestPlace) {
+                infoPanel.style.display = 'block';
+                nearestPlaceName.innerText = nearestPlace.name;
+                distanceInfo.innerText = `${minDistance.toFixed(0)} meters`;
+            }
+        }
     </script>
 </body>
 </html>
