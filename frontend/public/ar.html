@@ -38,7 +38,8 @@
     </div>
 
     <a-scene id="ar-scene" embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;" renderer="antialias: true; alpha: true" style="display: none;">
-        <a-camera id="camera" rotation-reader></a-camera>
+        <a-camera id="camera" gps-new-camera="gpsMinDistance: 5" rotation-reader></a-camera>
+        <a-entity id="proximity-text" text="value: Welcome!; align: center; color: white; width: 6;" position="0 1.8 -5" visible="false" geometry="primitive: plane; width: auto; height: auto; padding: 0.2" material="color: #8B5CF6; opacity: 0.8; transparent: true"></a-entity>
     </a-scene>
 
     <div id="info-panel" class="info-panel" style="display: none;">
@@ -51,7 +52,6 @@
         const splashScreen = document.getElementById('splash-screen');
         const arScene = document.getElementById('ar-scene');
         const statusMessage = document.getElementById('status-message');
-        const camera = document.getElementById('camera');
 
         const locations = [
             { name: 'Your Location', lat: 31.9555, lon: 35.9435 },
@@ -61,48 +61,6 @@
             { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587 },
         ];
 
-        function startARExperience() {
-            // إضافة النقاط الديناميكية إلى المشهد
-            locations.forEach(place => {
-                const entity = document.createElement('a-entity');
-                entity.setAttribute('gps-new-entity-place', `latitude: ${place.lat}; longitude: ${place.lon};`);
-                
-                const textEntity = document.createElement('a-text');
-                textEntity.setAttribute('value', place.name);
-                textEntity.setAttribute('scale', '20 20 20'); // Make text larger
-                textEntity.setAttribute('position', '0 5 0'); // Position text above the point
-                
-                entity.appendChild(textEntity);
-                arScene.appendChild(entity);
-            });
-            
-            // تفعيل خاصية تتبع الموقع في الكاميرا (الطريقة الصحيحة)
-            camera.setAttribute('gps-new-camera', 'gpsMinDistance: 5');
-            
-            splashScreen.style.display = 'none';
-            arScene.style.display = 'block';
-            window.addEventListener("gps-camera-update-position", onGpsUpdate);
-        }
-
-        startButton.addEventListener('click', () => {
-            statusMessage.innerText = 'Requesting location... please approve.';
-            startButton.disabled = true;
-
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    statusMessage.innerText = 'Success! Starting AR...';
-                    // استدعاء الدالة لبدء التجربة
-                    startARExperience();
-                },
-                (err) => {
-                    statusMessage.innerText = `Error: ${err.message}. Please enable location and refresh.`;
-                    startButton.disabled = false;
-                },
-                { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
-            );
-        });
-
-        // دوال حساب المسافة وتحديث الواجهة (تبقى كما هي)
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371000;
             const toRad = (deg) => deg * Math.PI / 180;
@@ -113,14 +71,12 @@
             return R * c;
         }
 
-        function onGpsUpdate(e) {
-            const userLat = e.detail.position.latitude;
-            const userLon = e.detail.position.longitude;
+        function updateInfo(latitude, longitude) {
             let nearestPlace = null;
             let minDistance = Infinity;
 
             locations.forEach(place => {
-                const distance = getDistance(userLat, userLon, place.lat, place.lon);
+                const distance = getDistance(latitude, longitude, place.lat, place.lon);
                 if (distance < minDistance) {
                     minDistance = distance;
                     nearestPlace = place;
@@ -130,13 +86,49 @@
             const infoPanel = document.getElementById("info-panel");
             const nearestPlaceName = document.getElementById("nearest-place-name");
             const distanceInfo = document.getElementById("distance-info");
+            const proximityText = document.getElementById("proximity-text");
 
             if (nearestPlace) {
                 infoPanel.style.display = 'block';
                 nearestPlaceName.innerText = nearestPlace.name;
                 distanceInfo.innerText = `${minDistance.toFixed(0)} meters`;
+
+                if (minDistance < 25) {
+                    proximityText.setAttribute('visible', 'true');
+                    proximityText.setAttribute('text', `value: You are near ${nearestPlace.name}!`);
+                } else {
+                    proximityText.setAttribute('visible', 'false');
+                }
             }
         }
+
+        startButton.addEventListener('click', () => {
+            statusMessage.innerText = 'Requesting location... please approve.';
+            startButton.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    statusMessage.innerText = 'Success! Starting AR...';
+                    
+                    // 1. إظهار البيانات فوراً باستخدام الموقع الذي حصلنا عليه
+                    updateInfo(position.coords.latitude, position.coords.longitude);
+
+                    // 2. إخفاء شاشة البداية وتشغيل الكاميرا
+                    splashScreen.style.display = 'none';
+                    arScene.style.display = 'block';
+
+                    // 3. بدء الاستماع للتحديثات المستقبلية من كاميرا الـ AR
+                    window.addEventListener("gps-camera-update-position", (e) => {
+                        updateInfo(e.detail.position.latitude, e.detail.position.longitude);
+                    });
+                },
+                (err) => {
+                    statusMessage.innerText = `Error: ${err.message}. Please enable location and refresh.`;
+                    startButton.disabled = false;
+                },
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+            );
+        });
     </script>
 </body>
 </html>
