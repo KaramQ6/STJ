@@ -7,53 +7,31 @@
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
-        
+        body { margin: 0; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         #splash-screen {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #111827; /* Dark background */
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            text-align: center;
-            padding: 20px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #111827; color: white;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 10000; text-align: center; padding: 20px; box-sizing: border-box;
+        }
+        #status-message {
+            margin-top: 20px; font-size: 16px; color: #9CA3AF;
         }
         #start-button {
-            background-color: #8B5CF6; /* Purple */
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            margin-top: 20px;
+            background-color: #8B5CF6; color: white; border: none;
+            padding: 15px 30px; font-size: 18px; font-weight: bold;
+            border-radius: 50px; cursor: pointer; margin-top: 20px;
             transition: transform 0.2s, background-color 0.2s;
         }
-        #start-button:hover {
-            transform: scale(1.05);
-        }
         #start-button:disabled {
-            background-color: #585858;
-            cursor: not-allowed;
+            background-color: #4B5563; cursor: not-allowed;
         }
         .info-panel {
-            position: fixed;
-            bottom: 20px; left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.75);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            text-align: center;
-            z-index: 1000;
-            font-size: 16px;
-            width: 90%; max-width: 400px;
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.75);
+            padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center; z-index: 1000; font-size: 16px;
+            width: 90%; max-width: 400px; color: white;
         }
     </style>
 </head>
@@ -61,27 +39,14 @@
 <body>
     <div id="splash-screen">
         <h2>Welcome to the AR Guide</h2>
-        <p>This experience requires access to your camera and location to show you nearby points of interest.</p>
-        <button id="start-button">Start Experience</button>
+        <p>This experience requires access to your camera and location.</p>
+        <button id="start-button" disabled>Start Experience</button>
+        <p id="status-message">Please allow location access to begin...</p>
     </div>
 
-    <a-scene
-        id="ar-scene"
-        embedded
-        vr-mode-ui="enabled: false"
-        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
-        renderer="antialias: true; alpha: true"
-        style="display: none;"
-    >
+    <a-scene id="ar-scene" embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;" renderer="antialias: true; alpha: true" style="display: none;">
         <a-camera gps-new-camera="gpsMinDistance: 5" rotation-reader></a-camera>
-        <a-entity
-            id="proximity-text"
-            text="value: Welcome!; align: center; color: white; width: 6; anchor: center;"
-            position="0 1.8 -5"
-            visible="false"
-            geometry="primitive: plane; width: auto; height: auto; padding: 0.2"
-            material="color: #8B5CF6; opacity: 0.8; transparent: true"
-        ></a-entity>
+        <a-entity id="proximity-text" text="value: Welcome!; align: center; color: white; width: 6;" position="0 1.8 -5" visible="false" geometry="primitive: plane; width: auto; height: auto; padding: 0.2" material="color: #8B5CF6; opacity: 0.8; transparent: true"></a-entity>
     </a-scene>
 
     <div id="info-panel" class="info-panel" style="display: none;">
@@ -93,19 +58,14 @@
         const startButton = document.getElementById('start-button');
         const splashScreen = document.getElementById('splash-screen');
         const arScene = document.getElementById('ar-scene');
+        const statusMessage = document.getElementById('status-message');
 
         const locations = [
             { name: 'Petra', lat: 30.3285, lon: 35.4444 },
             { name: 'Jerash Ruins', lat: 32.2814, lon: 35.8936 },
             { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344 },
-            { name: 'Wadi Rum', lat: 29.5759, lon: 35.4208 },
-            { name: 'Dead Sea', lat: 31.5553, lon: 35.4732 },
             { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587 },
-            { name: 'Yarmouk University Gate', lat: 32.5413, lon: 35.8550 },
-            { name: 'Museum of Jordanian Heritage', lat: 32.5442, lon: 35.8524 },
-            { name: 'Jadara University Main Gate', lat: 32.4839, lon: 35.8893 },
-            { name: 'Jadara Uni. - Faculty of Engineering', lat: 32.4851, lon: 35.8899 },
-            { name: 'Jadara Uni. - Library', lat: 32.4830, lon: 35.8885 }
+            { name: 'Jadara University Gate', lat: 32.4839, lon: 35.8893 },
         ];
 
         function getDistance(lat1, lon1, lat2, lon2) {
@@ -151,44 +111,41 @@
             }
         }
 
-        // --- هذا هو الجزء الذي كان ناقصاً ---
-        startButton.addEventListener('click', () => {
-            console.log('Start button clicked');
-            
+        // --- المنطق الجديد والمحسن ---
+        window.onload = () => {
+            statusMessage.innerText = 'Requesting location access...';
+
             if (!navigator.geolocation) {
-                alert('Geolocation is not supported by your browser.');
+                statusMessage.innerText = 'Error: Geolocation is not supported by your browser.';
                 return;
             }
 
-            // تغيير نص الزر ليعرف المستخدم أن شيئاً ما يحدث
-            startButton.innerText = 'Getting Location...';
-            startButton.disabled = true;
-
-            // طلب الموقع الجغرافي
-            navigator.geolocation.getCurrentPosition(
+            // استخدام watchPosition للاستمرار في محاولة الحصول على الموقع
+            navigator.geolocation.watchPosition(
                 (position) => {
-                    console.log("Geolocation access granted!", position);
-                    
-                    // إخفاء شاشة البداية وإظهار مشهد الواقع المعزز
-                    splashScreen.style.display = 'none';
-                    arScene.style.display = 'block';
-
-                    // الآن فقط نبدأ بالاستماع لتحديثات الموقع
-                    window.addEventListener("gps-camera-update-position", onGpsUpdate);
+                    // تم النجاح في الحصول على الموقع
+                    console.log("GPS signal acquired!", position);
+                    statusMessage.innerText = 'GPS signal acquired! Ready to start.';
+                    startButton.disabled = false; // تفعيل زر البدء
                 },
                 (err) => {
+                    // فشل الحصول على الموقع
                     console.error("Geolocation error:", err);
-                    alert(`Failed to get location: ${err.message}\nPlease ensure location services are enabled for your browser and this site.`);
-                    // إعادة الزر إلى حالته الطبيعية عند حدوث خطأ
-                    startButton.innerText = 'Start Experience';
-                    startButton.disabled = false;
+                    statusMessage.innerText = `Error: ${err.message}. Make sure location is enabled.`;
                 },
                 {
                     enableHighAccuracy: true,
-                    timeout: 30000,
+                    timeout: 10000,
                     maximumAge: 0
                 }
             );
+        };
+
+        // عند الضغط على زر البدء
+        startButton.addEventListener('click', () => {
+            splashScreen.style.display = 'none';
+            arScene.style.display = 'block';
+            window.addEventListener("gps-camera-update-position", onGpsUpdate);
         });
     </script>
 </body>
