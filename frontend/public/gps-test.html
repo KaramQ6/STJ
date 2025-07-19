@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            flex-direction: column;
+        }
+        #container {
+            text-align: center;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>GPS Location Test</h1>
+        <p>اضغط على الزر أدناه لطلب موقعك الجغرافي.</p>
+        <button id="getLocationBtn">Get My Location</button>
+        <div id="status">Status: Waiting for action...</div>
+    </div>
+
+    <script>
+        const getLocationBtn = document.getElementById('getLocationBtn');
+        const statusDiv = document.getElementById('status');
+
+        getLocationBtn.addEventListener('click', () => {
+            statusDiv.textContent = 'Status: Requesting location...';
+            console.log('Button clicked. Requesting location.');
+
+            if (!navigator.geolocation) {
+                statusDiv.textContent = 'Error: Geolocation is not supported.';
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    console.log('Success:', position);
+                    statusDiv.innerHTML = `Success!<br>Latitude: ${lat.toFixed(4)}<br>Longitude: ${lon.toFixed(4)}`;
+                },
+                (err) => {
+                    console.error('Error:', err);
+                    statusDiv.textContent = `Error (${err.code}): ${err.message}`;
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 20000, // 20 seconds
+                    maximumAge: 0
+                }
+            );
+        });
+    </script>
+</body>
+</html>
