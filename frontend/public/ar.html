@@ -1,27 +1,73 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Location-Based AR in Irbid</title>
+    <title>AR Near Me</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-</head>
+  </head>
 
-<body style="margin: 0; overflow: hidden;">
+  <body style="margin: 0; overflow: hidden;">
     <a-scene
-        vr-mode-ui="enabled: false"
-        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
-        renderer="antialias: true; alpha: true"
+      embedded
+      vr-mode-ui="enabled: false"
+      arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+      renderer="antialias: true; alpha: true"
     >
-        <a-camera gps-new-camera="gpsMinDistance: 5"></a-camera>
+      <a-camera gps-new-camera rotation-reader></a-camera>
 
-        <a-entity
-            material="color: #8b5cf6"
-            geometry="primitive: box; height: 20; depth: 20; width: 20"
-            gps-new-entity-place="latitude: 32.5514; longitude: 35.8514"
-        ></a-entity>
+      <!-- عنصر المعلومات -->
+      <a-entity
+        id="info-box"
+        visible="false"
+        text="value: إنت قريب من النقطة; color: black; align: center"
+        position="0 2 -5"
+      ></a-entity>
     </a-scene>
-</body>
+
+    <script>
+      let targetLat = null;
+      let targetLon = null;
+
+      // جلب موقع المستخدم
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          targetLat = position.coords.latitude;
+          targetLon = position.coords.longitude;
+          console.log("موقعك الحالي:", targetLat, targetLon);
+        },
+        (err) => {
+          alert("فشل في تحديد الموقع: " + err.message);
+        },
+        { enableHighAccuracy: true }
+      );
+
+      function getDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371000;
+        const toRad = (deg) => deg * Math.PI / 180;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a =
+          Math.sin(dLat / 2) ** 2 +
+          Math.cos(toRad(lat1)) *
+            Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) ** 2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+      }
+
+      window.addEventListener("gps-camera-update-position", (e) => {
+        if (targetLat === null || targetLon === null) return;
+
+        const userLat = e.detail.position.latitude;
+        const userLon = e.detail.position.longitude;
+
+        const distance = getDistance(userLat, userLon, targetLat, targetLon);
+        console.log(المسافة: ${distance.toFixed(2)} متر);
+
+        const infoBox = document.getElementById("info-box");
+        infoBox.setAttribute("visible", distance < 6);
+      });
+    </script>
+  </body>
 </html>
