@@ -7,25 +7,19 @@
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
     <style>
-        body { margin: 0; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #111827; color: white;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 10000; text-align: center; padding: 20px; box-sizing: border-box;
         }
-        #status-message {
-            margin-top: 20px; font-size: 16px; color: #9CA3AF;
-        }
         #start-button {
             background-color: #8B5CF6; color: white; border: none;
             padding: 15px 30px; font-size: 18px; font-weight: bold;
             border-radius: 50px; cursor: pointer; margin-top: 20px;
-            transition: transform 0.2s, background-color 0.2s;
         }
-        #start-button:disabled {
-            background-color: #4B5563; cursor: not-allowed;
-        }
+        #start-button:disabled { background-color: #4B5563; cursor: not-allowed; }
         .info-panel {
             position: fixed; bottom: 20px; left: 50%;
             transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.75);
@@ -35,19 +29,16 @@
         }
     </style>
 </head>
-
 <body>
     <div id="splash-screen">
         <h2>Welcome to the AR Guide</h2>
-        <p>This experience requires access to your camera and location.</p>
-        <button id="start-button" disabled>Start Experience</button>
-        <p id="status-message">Please allow location access to begin...</p>
+        <p>This experience requires camera and location access.</p>
+        <button id="start-button">Start Experience</button>
+        <p id="status-message" style="margin-top: 20px; color: #9CA3AF;"></p>
     </div>
 
     <a-scene id="ar-scene" embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;" renderer="antialias: true; alpha: true" style="display: none;">
-        <a-camera gps-new-camera="gpsMinDistance: 5" rotation-reader></a-camera>
-        <a-entity id="proximity-text" text="value: Welcome!; align: center; color: white; width: 6;" position="0 1.8 -5" visible="false" geometry="primitive: plane; width: auto; height: auto; padding: 0.2" material="color: #8B5CF6; opacity: 0.8; transparent: true"></a-entity>
-    </a-scene>
+        </a-scene>
 
     <div id="info-panel" class="info-panel" style="display: none;">
         أقرب موقع: <strong id="nearest-place-name">...</strong><br>
@@ -68,6 +59,62 @@
             { name: 'Jadara University Gate', lat: 32.4839, lon: 35.8893 },
         ];
 
+        function startARExperience(latitude, longitude) {
+            // الآن نقوم ببناء مشهد الـ AR بعد الحصول على الموقع
+            const scene = document.querySelector('a-scene');
+
+            // 1. إضافة الكاميرا
+            const camera = document.createElement('a-camera');
+            camera.setAttribute('gps-new-camera', `gpsMinDistance: 5; initialLatitude: ${latitude}; initialLongitude: ${longitude}`);
+            camera.setAttribute('rotation-reader', '');
+            scene.appendChild(camera);
+            
+            // 2. إضافة عنصر النص العائم
+            const proximityText = document.createElement('a-entity');
+            proximityText.setAttribute('id', 'proximity-text');
+            proximityText.setAttribute('text', "value: Welcome!; align: center; color: white; width: 6;");
+            proximityText.setAttribute('position', "0 1.8 -5");
+            proximityText.setAttribute('visible', 'false');
+            proximityText.setAttribute('geometry', "primitive: plane; width: auto; height: auto; padding: 0.2");
+            proximityText.setAttribute('material', "color: #8B5CF6; opacity: 0.8; transparent: true");
+            scene.appendChild(proximityText);
+
+            // 3. إخفاء شاشة البداية وإظهار مشهد الـ AR
+            splashScreen.style.display = 'none';
+            arScene.style.display = 'block';
+
+            // 4. بدء الاستماع لتحديثات الموقع لعرض المسافات
+            window.addEventListener("gps-camera-update-position", onGpsUpdate);
+        }
+
+        // --- باقي الدوال تبقى كما هي ---
+        function getDistance(lat1, lon1, lat2, lon2) { /* ... same as before ... */ }
+        function onGpsUpdate(e) { /* ... same as before ... */ }
+
+        // --- منطق زر البدء الجديد ---
+        startButton.addEventListener('click', () => {
+            statusMessage.innerText = 'Requesting location... please approve.';
+            startButton.disabled = true;
+
+            if (!navigator.geolocation) {
+                statusMessage.innerText = 'Error: Geolocation not supported.';
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    statusMessage.innerText = 'Success! Starting AR...';
+                    startARExperience(position.coords.latitude, position.coords.longitude);
+                },
+                (err) => {
+                    statusMessage.innerText = `Error: ${err.message}. Please enable location and refresh.`;
+                    startButton.disabled = false;
+                },
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+            );
+        });
+
+        // (لصق الدوال الناقصة هنا للتأكيد)
         function getDistance(lat1, lon1, lat2, lon2) {
             const R = 6371000;
             const toRad = (deg) => deg * Math.PI / 180;
@@ -110,43 +157,6 @@
                 }
             }
         }
-
-        // --- المنطق الجديد والمحسن ---
-        window.onload = () => {
-            statusMessage.innerText = 'Requesting location access...';
-
-            if (!navigator.geolocation) {
-                statusMessage.innerText = 'Error: Geolocation is not supported by your browser.';
-                return;
-            }
-
-            // استخدام watchPosition للاستمرار في محاولة الحصول على الموقع
-            navigator.geolocation.watchPosition(
-                (position) => {
-                    // تم النجاح في الحصول على الموقع
-                    console.log("GPS signal acquired!", position);
-                    statusMessage.innerText = 'GPS signal acquired! Ready to start.';
-                    startButton.disabled = false; // تفعيل زر البدء
-                },
-                (err) => {
-                    // فشل الحصول على الموقع
-                    console.error("Geolocation error:", err);
-                    statusMessage.innerText = `Error: ${err.message}. Make sure location is enabled.`;
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
-        };
-
-        // عند الضغط على زر البدء
-        startButton.addEventListener('click', () => {
-            splashScreen.style.display = 'none';
-            arScene.style.display = 'block';
-            window.addEventListener("gps-camera-update-position", onGpsUpdate);
-        });
     </script>
 </body>
 </html>
