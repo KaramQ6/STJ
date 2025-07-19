@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>AR Near Me</title>
+    <title>Nearby AR Info</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
   </head>
@@ -16,11 +16,10 @@
     >
       <a-camera gps-new-camera rotation-reader></a-camera>
 
-      <!-- عنصر المعلومات -->
       <a-entity
         id="info-box"
         visible="false"
-        text="value: إنت قريب من النقطة; color: black; align: center"
+        text="value: أنت في المكان الصحيح!; color: black; align: center"
         position="0 2 -5"
       ></a-entity>
     </a-scene>
@@ -29,15 +28,15 @@
       let targetLat = null;
       let targetLon = null;
 
-      // جلب موقع المستخدم
+      // أول مرة بنحدد الموقع الحالي كنقطة الهدف
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          targetLat = position.coords.latitude;
-          targetLon = position.coords.longitude;
-          console.log("موقعك الحالي:", targetLat, targetLon);
+        (pos) => {
+          targetLat = pos.coords.latitude;
+          targetLon = pos.coords.longitude;
+          console.log("Target location set:", targetLat, targetLon);
         },
         (err) => {
-          alert("فشل في تحديد الموقع: " + err.message);
+          console.error("Failed to get location", err);
         },
         { enableHighAccuracy: true }
       );
@@ -56,6 +55,7 @@
         return R * c;
       }
 
+      // تحديث موقع المستخدم ومقارنة المسافة مع الهدف
       window.addEventListener("gps-camera-update-position", (e) => {
         if (targetLat === null || targetLon === null) return;
 
@@ -63,7 +63,7 @@
         const userLon = e.detail.position.longitude;
 
         const distance = getDistance(userLat, userLon, targetLat, targetLon);
-        console.log(المسافة: ${distance.toFixed(2)} متر);
+        console.log(المسافة لموقعك الأساسي: ${distance.toFixed(2)} متر);
 
         const infoBox = document.getElementById("info-box");
         infoBox.setAttribute("visible", distance < 6);
