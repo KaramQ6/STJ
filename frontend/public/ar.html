@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Readable Marker AR - SmartTour</title>
+    <title>Corrected Persistence AR - SmartTour</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 
     <script>
-        // Custom component for 60-second persistence
-        AFRAME.registerComponent('marker-persistence', {
+        // -- المكون المخصص للثبات وتحديث الموقع --
+        AFRAME.registerComponent('marker-handler', {
             schema: {
-                delay: { type: 'number', default: 60000 } // 60 seconds
+                delay: { type: 'number', default: 30000 }, // 30000ms = 30s
+                target: { type: 'selector' } // سيستقبل بطاقة المعلومات كهدف
             },
 
             init: function () {
                 const marker = this.el;
+                const infoCard = this.data.target; // بطاقة المعلومات
                 const delay = this.data.delay;
-                const infoCard = marker.querySelector('#info-card');
                 let hideTimeout = null;
 
+                // إخفاء البطاقة في البداية
                 infoCard.setAttribute('visible', false);
 
+                // الاستماع لحدث "العثور على الواسم"
                 marker.addEventListener('markerFound', () => {
                     if (hideTimeout) {
                         clearTimeout(hideTimeout);
@@ -30,11 +33,24 @@
                     infoCard.setAttribute('visible', true);
                 });
 
+                // الاستماع لحدث "فقدان الواسم"
                 marker.addEventListener('markerLost', () => {
                     hideTimeout = setTimeout(() => {
                         infoCard.setAttribute('visible', false);
                     }, delay);
                 });
+            },
+
+            // دالة tick تعمل مع كل إطار (frame)
+            tick: function () {
+                const marker = this.el;
+                const infoCard = this.data.target;
+
+                // إذا كان الواسم ظاهرًا، قم بتحديث موقع واتجاه البطاقة باستمرار
+                if (marker.object3D.visible) {
+                    infoCard.setAttribute('position', marker.object3D.position);
+                    infoCard.setAttribute('rotation', marker.object3D.rotation);
+                }
             }
         });
     </script>
@@ -44,38 +60,36 @@
 
     <a-scene embedded arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
 
-        <a-marker type="pattern" url="marker.patt" marker-persistence>
+        <a-marker type="pattern" url="marker.patt" marker-handler="target: #info-card;"></a-marker>
         
-            <a-entity id="info-card" position="0 0 0" rotation="-90 0 0" look-at="[camera]">
-                
-                <a-plane 
-                    width="1.5" 
-                    height="0.7" 
-                    position="0 0.4 0"
-                    color="#8B5CF6" 
-                    material="transparent: true; opacity: 0.9" 
-                    rounded="radius: 0.05">
-                </a-plane>
-
-                <a-text 
-                    value="SmartTour.jo"
-                    color="#FFFFFF" 
-                    align="center" 
-                    width="2.5" 
-                    position="0 0.55 0.01">
-                </a-text>
-                
-                <a-text 
-                    value="by Nova Squad"
-                    color="#E0E0E0"
-                    align="center" 
-                    width="1.5" 
-                    position="0 0.25 0.01">
-                </a-text>
-
-            </a-entity>
+        <a-entity id="info-card" look-at="[camera]">
             
-        </a-marker>
+            <a-plane 
+                width="1.5" 
+                height="0.7" 
+                position="0 0.4 0"
+                color="#8B5CF6" 
+                material="transparent: true; opacity: 0.9" 
+                rounded="radius: 0.05">
+            </a-plane>
+
+            <a-text 
+                value="SmartTour.jo"
+                color="#FFFFFF" 
+                align="center" 
+                width="2.5" 
+                position="0 0.55 0.01">
+            </a-text>
+            
+            <a-text 
+                value="by Nova Squad"
+                color="#E0E0E0"
+                align="center" 
+                width="1.5" 
+                position="0 0.25 0.01">
+            </a-text>
+
+        </a-entity>
 
         <a-entity camera></a-entity>
     </a-scene>
