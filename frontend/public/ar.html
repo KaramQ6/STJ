@@ -1,19 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Marker AR - SmartTour</title>
+    <title>Marker AR with Persistence - SmartTour</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+    <script>
+        // -- المكون المخصص للثبات لمدة 30 ثانية --
+        AFRAME.registerComponent('marker-persistence', {
+            // المخطط: يمكننا تحديد مدة التأخير من الـ HTML
+            schema: {
+                delay: { type: 'number', default: 30000 } // 30000ms = 30s
+            },
+
+            init: function () {
+                // 'this.el' هو الواسم (a-marker) نفسه
+                const marker = this.el;
+                // 'this.data.delay' هي قيمة التأخير (30000)
+                const delay = this.data.delay;
+
+                // الحصول على بطاقة المعلومات التي بداخل الواسم
+                const infoCard = marker.querySelector('#info-card');
+                
+                // متغير لحفظ مؤقت الإخفاء
+                let hideTimeout = null;
+
+                // إخفاء البطاقة في البداية
+                infoCard.setAttribute('visible', false);
+
+                // الاستماع لحدث "العثور على الواسم"
+                marker.addEventListener('markerFound', () => {
+                    // إذا كان هناك مؤقت إخفاء يعمل، قم بإلغائه
+                    if (hideTimeout) {
+                        clearTimeout(hideTimeout);
+                        hideTimeout = null;
+                    }
+                    // إظهار البطاقة
+                    infoCard.setAttribute('visible', true);
+                });
+
+                // الاستماع لحدث "فقدان الواسم"
+                marker.addEventListener('markerLost', () => {
+                    // ابدأ مؤقتًا جديدًا لإخفاء البطاقة بعد 30 ثانية
+                    hideTimeout = setTimeout(() => {
+                        infoCard.setAttribute('visible', false);
+                    }, delay);
+                });
+            }
+        });
+    </script>
 </head>
-<body style="margin : 0px; overflow: hidden;">
+
+<body style="margin: 0px; overflow: hidden;">
 
     <a-scene embedded arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
 
-        <a-marker type="pattern" url="marker.patt">
+        <a-marker type="pattern" url="marker.patt" marker-persistence>
         
-            <a-box position="0 0.5 0" material="color: red;"></a-box>
+            <a-entity id="info-card" position="0 0.7 0" scale="1.5 1.5 1.5">
+                
+                <a-plane 
+                    width="1.5" 
+                    height="0.5" 
+                    color="#8B5CF6" 
+                    material="transparent: true; opacity: 0.9" 
+                    rounded="radius: 0.05">
+                </a-plane>
+
+                <a-text 
+                    value="SmartTour.jo by Nova Squad" 
+                    color="#FFFFFF" 
+                    align="center" 
+                    width="2" 
+                    position="0 0 0.01">
+                </a-text>
+
+            </a-entity>
             
         </a-marker>
 
