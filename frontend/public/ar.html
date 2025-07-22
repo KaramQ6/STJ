@@ -42,9 +42,7 @@
 
         <a-entity id="info-card" position="0 1.6 -4" visible="false">
             <a-plane id="card-bg" width="2.2" height="1.2" color="#1F2937" material="transparent: true; opacity: 0.9" rounded="radius: 0.05"></a-plane>
-            
             <a-text id="card-title" value="" color="#FFFFFF" align="center" width="2" position="0 0.35 0.01"></a-text>
-            
             <a-text id="card-description" value="" color="#D1D5DB" align="left" width="1.9" position="-0.95 0.05 0.01" wrap-count="35"></a-text>
         </a-entity>
     </a-scene>
@@ -60,7 +58,6 @@
         const arScene = document.getElementById('ar-scene');
         const statusMessage = document.getElementById('status-message');
 
-        // قائمة المواقع بدون خاصية الصور
         const locations = [
             { name: 'Jadara Uni. - Building A', lat: 32.4841, lon: 35.8890, description: 'Main administration building. Houses the president office and registration department.' },
             { name: 'Jadara Uni. - Building B', lat: 32.4216, lon: 35.9471, description: 'Faculty of Engineering and IT. Contains modern labs and workshops.' },
