@@ -39,7 +39,16 @@
 
     <a-scene id="ar-scene" embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;" renderer="antialias: true; alpha: true" style="display: none;">
         <a-camera id="camera" gps-new-camera="gpsMinDistance: 5" rotation-reader></a-camera>
-        <a-entity id="proximity-text" text="value: Welcome!; align: center; color: white; width: 6;" position="0 1.8 -5" visible="false" geometry="primitive: plane; width: auto; height: auto; padding: 0.2" material="color: #8B5CF6; opacity: 0.8; transparent: true"></a-entity>
+
+        <a-entity id="info-card" position="0 1.6 -4" visible="false">
+            <a-plane id="card-bg" width="2.2" height="2" color="#1F2937" material="transparent: true; opacity: 0.9" rounded="radius: 0.05"></a-plane>
+            
+            <a-image id="card-image" src="" width="2" height="1" position="0 0.4 0.01"></a-image>
+            
+            <a-text id="card-title" value="" color="#FFFFFF" align="center" width="2" position="0 -0.25 0.01"></a-text>
+            
+            <a-text id="card-description" value="" color="#D1D5DB" align="left" width="1.9" position="-0.95 -0.5 0.01" wrap-count="35"></a-text>
+        </a-entity>
     </a-scene>
 
     <div id="info-panel" class="info-panel" style="display: none;">
@@ -53,20 +62,17 @@
         const arScene = document.getElementById('ar-scene');
         const statusMessage = document.getElementById('status-message');
 
+        // قائمة المواقع مع إضافة وصف وصورة لكل موقع
         const locations = [
-            // --- مواقع جامعة جدارا ---
-            { name: 'Jadara Uni. - Building A', lat: 32.4841, lon: 35.8890 },
-            { name: 'Jadara Uni. - Building B', lat: 32.4216, lon: 35.9471 },
-            { name: 'Jadara Uni. - Building C', lat: 32.4835, lon: 35.8887 },
-            { name: 'Jadara Uni. - Building D (Library)', lat: 32.4830, lon: 35.8885 },
-            { name: 'Jadara Uni. - Building E (Engineering)', lat: 32.4851, lon: 35.8899 },
-            { name: 'Jadara Uni. - Building F', lat: 32.4847, lon: 35.8903 },
-            
-            // --- مواقع أخرى ---
-            { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587 },
-            { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344 },
-            { name: 'Jerash Ruins', lat: 32.2814, lon: 35.8936 },
-            { name: 'Petra', lat: 30.3285, lon: 35.4444 },
+            { name: 'Jadara Uni. - Building A', lat: 32.4841, lon: 35.8890, description: 'Main administration building. Houses the president office and registration department.', image: 'https://picsum.photos/seed/buildingA/400/200' },
+            { name: 'Jadara Uni. - Building B', lat: 32.4216, lon: 35.9471, description: 'Faculty of Engineering and IT. Contains modern labs and workshops.', image: 'https://picsum.photos/seed/buildingB/400/200' },
+            { name: 'Jadara Uni. - Building C', lat: 32.4835, lon: 35.8887, description: 'Faculty of Arts and Sciences. Home to the main library.', image: 'https://picsum.photos/seed/buildingC/400/200' },
+            { name: 'Jadara Uni. - Building D', lat: 32.4830, lon: 35.8885, description: 'Student activities center and cafeteria.', image: 'https://picsum.photos/seed/buildingD/400/200' },
+            { name: 'Jadara Uni. - Building E', lat: 32.4851, lon: 35.8899, description: 'Faculty of Pharmacy and Medical Sciences.', image: 'https://picsum.photos/seed/buildingE/400/200' },
+            { name: 'Jadara Uni. - Building F', lat: 32.4847, lon: 35.8903, description: 'Research and development center.', image: 'https://picsum.photos/seed/buildingF/400/200' },
+            { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344, description: 'A historical site at the center of downtown Amman, also known as Jabal al-Qal\'a.', image: 'https://picsum.photos/seed/citadel/400/200' },
+            { name: 'Jerash Ruins', lat: 32.2814, lon: 35.8936, description: 'The ruins of the ancient Greco-Roman city of Gerasa, a popular tourist destination.', image: 'https://picsum.photos/seed/jerash/400/200' },
+            { name: 'Petra', lat: 30.3285, lon: 35.4444, description: 'The famous archaeological city in southern Jordan, known for its rock-cut architecture.', image: 'https://picsum.photos/seed/petra/400/200' }
         ];
 
         function getDistance(lat1, lon1, lat2, lon2) {
@@ -91,21 +97,31 @@
                 }
             });
 
+            // الحصول على عناصر لوحة المعلومات السفلية
             const infoPanel = document.getElementById("info-panel");
             const nearestPlaceName = document.getElementById("nearest-place-name");
             const distanceInfo = document.getElementById("distance-info");
-            const proximityText = document.getElementById("proximity-text");
+            
+            // الحصول على عناصر بطاقة المعلومات الجديدة
+            const infoCard = document.getElementById("info-card");
+            const cardImage = document.getElementById("card-image");
+            const cardTitle = document.getElementById("card-title");
+            const cardDescription = document.getElementById("card-description");
 
             if (nearestPlace) {
+                // تحديث لوحة المعلومات السفلية دائمًا
                 infoPanel.style.display = 'block';
                 nearestPlaceName.innerText = nearestPlace.name;
-                distanceInfo.innerText = `${minDistance.toFixed(0)} meters`;
+                distanceInfo.innerText = `${minDistance.toFixed(0)} متر`;
 
+                // التحقق من القرب (أقل من 25 مترًا) لعرض بطاقة المعلومات في الواقع المعزز
                 if (minDistance < 25) {
-                    proximityText.setAttribute('visible', 'true');
-                    proximityText.setAttribute('text', `value: You are near ${nearestPlace.name}!`);
+                    infoCard.setAttribute('visible', 'true');
+                    cardTitle.setAttribute('text', `value: ${nearestPlace.name}`);
+                    cardDescription.setAttribute('text', `value: ${nearestPlace.description}`);
+                    cardImage.setAttribute('src', nearestPlace.image);
                 } else {
-                    proximityText.setAttribute('visible', 'false');
+                    infoCard.setAttribute('visible', 'false');
                 }
             }
         }
