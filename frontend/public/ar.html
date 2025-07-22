@@ -1,30 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Corrected Persistence AR - SmartTour</title>
+    <title>Stable AR - SmartTour</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 
     <script>
-        // -- المكون المخصص للثبات وتحديث الموقع --
+        // Custom component for persistence and position updates
         AFRAME.registerComponent('marker-handler', {
             schema: {
-                delay: { type: 'number', default: 30000 }, // 30000ms = 30s
-                target: { type: 'selector' } // سيستقبل بطاقة المعلومات كهدف
+                delay: { type: 'number', default: 30000 },
+                target: { type: 'selector' } 
             },
 
             init: function () {
                 const marker = this.el;
-                const infoCard = this.data.target; // بطاقة المعلومات
+                const infoCard = this.data.target;
                 const delay = this.data.delay;
                 let hideTimeout = null;
 
-                // إخفاء البطاقة في البداية
                 infoCard.setAttribute('visible', false);
 
-                // الاستماع لحدث "العثور على الواسم"
                 marker.addEventListener('markerFound', () => {
                     if (hideTimeout) {
                         clearTimeout(hideTimeout);
@@ -33,7 +31,6 @@
                     infoCard.setAttribute('visible', true);
                 });
 
-                // الاستماع لحدث "فقدان الواسم"
                 marker.addEventListener('markerLost', () => {
                     hideTimeout = setTimeout(() => {
                         infoCard.setAttribute('visible', false);
@@ -41,15 +38,16 @@
                 });
             },
 
-            // دالة tick تعمل مع كل إطار (frame)
+            // tick function runs on every frame
             tick: function () {
                 const marker = this.el;
                 const infoCard = this.data.target;
 
-                // إذا كان الواسم ظاهرًا، قم بتحديث موقع واتجاه البطاقة باستمرار
+                // If the marker is visible, ONLY update the card's position.
+                // The 'look-at' component will handle the rotation smoothly.
                 if (marker.object3D.visible) {
                     infoCard.setAttribute('position', marker.object3D.position);
-                    infoCard.setAttribute('rotation', marker.object3D.rotation);
+                    // THE ROTATION LINE HAS BEEN REMOVED TO FIX THE FLICKERING
                 }
             }
         });
