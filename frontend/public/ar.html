@@ -75,101 +75,92 @@
         المسافة: <span id="distance-info">...</span> متر
     </div>
 
-    <script>
-        window.addEventListener('load', () => {
-            const statusMessage = document.getElementById('status-message');
-            const infoPanel = document.getElementById('info-panel');
-            
-            // عناصر الواجهة الجديدة
-            const infoCard = document.getElementById('info-card');
-            const cardTitle = document.getElementById('card-title');
-            const cardDescription = document.getElementById('card-description');
-            const arrow = document.getElementById('arrow');
-            const targetPoi = document.getElementById('target-poi');
+<script>
+    window.addEventListener('load', () => {
+        const statusMessage = document.getElementById('status-message');
+        const infoPanel = document.getElementById('info-panel');
+        
+        const infoCard = document.getElementById('info-card');
+        const cardTitle = document.getElementById('card-title');
+        const cardDescription = document.getElementById('card-description');
+        const arrow = document.getElementById('arrow');
+        const targetPoi = document.getElementById('target-poi');
 
-            const locations = [
-                { name: 'Jadara Uni. - Building A', lat: 32.4841, lon: 35.8890, desc: "Main administration building." },
-                { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587, desc: "A prominent landmark." },
-                { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344, desc: "A famous historical site." },
-                { name: 'Calma Space', lat: 32.5400, lon: 35.8500, desc: "A popular spot in Irbid." }
-            ];
+        const locations = [
+            { name: 'Jadara Uni. - Building A', lat: 32.4841, lon: 35.8890, desc: "Main administration building." },
+            { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587, desc: "A prominent landmark." },
+            { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344, desc: "A famous historical site." },
+            { name: 'Calma Space', lat: 32.5400, lon: 35.8500, desc: "A popular spot in Irbid." }
+        ];
 
-            function getDistance(lat1, lon1, lat2, lon2) {
-                const R = 6371000;
-                const toRad = (deg) => deg * Math.PI / 180;
-                const dLat = toRad(lat2 - lat1);
-                const dLon = toRad(lon2 - lon1);
-                const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                return R * c;
-            }
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371000;
+            const toRad = (deg) => deg * Math.PI / 180;
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
 
-            // الدالة الرئيسية التي تدير الواجهة
-            function updateScene(userLat, userLon) {
-                let nearestPlace = null;
-                let minDistance = Infinity;
+        function updateScene(userLat, userLon) {
+            let nearestPlace = null;
+            let minDistance = Infinity;
 
-                locations.forEach(place => {
-                    const distance = getDistance(userLat, userLon, place.lat, place.lon);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        nearestPlace = place;
-                    }
-                });
-
-                // عرض معلومات المسافة دائمًا
-                document.getElementById('nearest-place-name').innerText = nearestPlace.name;
-                document.getElementById('distance-info').innerText = minDistance.toFixed(0);
-                infoPanel.style.display = 'block';
-
-                // --- المنطق الجديد للتحكم في الواجهة ---
-
-                // إذا كانت المسافة أقل من 75 مترًا، أظهر البطاقة وأخفِ السهم
-                if (minDistance < 75) {
-                    infoCard.setAttribute('visible', true);
-                    arrow.setAttribute('visible', false);
-
-                    // تحديث محتوى البطاقة
-                    cardTitle.setAttribute('value', nearestPlace.name);
-                    cardDescription.setAttribute('value', nearestPlace.desc);
-
-                } else {
-                    // إذا كانت المسافة أكبر، أخفِ البطاقة وأظهر السهم
-                    infoCard.setAttribute('visible', false);
-                    arrow.setAttribute('visible', true);
-
-                    // حدّث موقع الهدف الوهمي ليشير السهم إليه
-                    targetPoi.setAttribute('gps-new-entity-place', `latitude: ${nearestPlace.lat}; longitude: ${nearestPlace.lon};`);
+            locations.forEach(place => {
+                const distance = getDistance(userLat, userLon, place.lat, place.lon);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestPlace = place;
                 }
-            }
-            
-            document.getElementById('start-button').addEventListener('click', () => {
-                const startButton = document.getElementById('start-button');
-                const splashScreen = document.getElementById('splash-screen');
-                const arScene = document.getElementById('ar-scene');
-
-                statusMessage.innerText = 'Requesting permissions...';
-                startButton.disabled = true;
-
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        statusMessage.innerText = 'GPS signal acquired. Starting AR...';
-                        splashScreen.style.display = 'none';
-                        arScene.style.display = 'block';
-
-                        // الاستماع لتحديثات الموقع باستمرار
-                        window.addEventListener('gps-camera-update-position', (e) => {
-                            updateScene(e.detail.position.latitude, e.detail.position.longitude);
-                        });
-                    },
-                    (err) => {
-                        statusMessage.innerText = `Error: ${err.message}. Please enable location and refresh.`;
-                        startButton.disabled = false;
-                    },
-                    { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
-                );
             });
+
+            document.getElementById('nearest-place-name').innerText = nearestPlace.name;
+            document.getElementById('distance-info').innerText = minDistance.toFixed(0);
+            infoPanel.style.display = 'block';
+
+            if (minDistance < 75) {
+                infoCard.setAttribute('visible', true);
+                arrow.setAttribute('visible', false);
+                cardTitle.setAttribute('value', nearestPlace.name);
+                cardDescription.setAttribute('value', nearestPlace.desc);
+            } else {
+                infoCard.setAttribute('visible', false);
+                arrow.setAttribute('visible', true);
+                targetPoi.setAttribute('gps-new-entity-place', `latitude: ${nearestPlace.lat}; longitude: ${nearestPlace.lon};`);
+            }
+        }
+        
+        document.getElementById('start-button').addEventListener('click', () => {
+            const startButton = document.getElementById('start-button');
+            const splashScreen = document.getElementById('splash-screen');
+            const arScene = document.getElementById('ar-scene');
+
+            statusMessage.innerText = 'Requesting permissions...';
+            startButton.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    statusMessage.innerText = 'GPS signal acquired. Starting AR...';
+                    splashScreen.style.display = 'none';
+                    arScene.style.display = 'block';
+
+                    // -- THIS LINE WAS MISSING --
+                    // It calls the update function immediately with the first GPS position.
+                    updateScene(position.coords.latitude, position.coords.longitude);
+
+                    window.addEventListener('gps-camera-update-position', (e) => {
+                        updateScene(e.detail.position.latitude, e.detail.position.longitude);
+                    });
+                },
+                (err) => {
+                    statusMessage.innerText = `Error: ${err.message}. Please enable location and refresh.`;
+                    startButton.disabled = false;
+                },
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+            );
         });
-    </script>
+    });
+</script>
 </body>
 </html>
