@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GPS AR - SmartTour</title>
+    <title>GPS AR with Navigation - SmartTour</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
@@ -45,34 +45,29 @@
         renderer="antialias: true; alpha: true"
         style="display: none;">
 
-        <a-camera gps-new-camera="gpsMinDistance: 5"></a-camera>
+        <a-camera gps-new-camera="gpsMinDistance: 5">
+            
+            <a-entity id="info-card" position="0 -0.8 -2" visible="false">
+                <a-plane 
+                    width="1.5" 
+                    height="0.7" 
+                    position="0 0 0"
+                    color="#8B5CF6" 
+                    material="transparent: true; opacity: 0.9" 
+                    rounded="radius: 0.05">
+                </a-plane>
+                <a-text id="card-title" value="" color="#FFFFFF" align="center" width="2.5" position="0 0.15 0.01"></a-text>
+                <a-text id="card-description" value="" color="#E0E0E0" align="center" width="1.5" position="0 -0.1 0.01"></a-text>
+            </a-entity>
+            
+            <a-entity id="arrow" look-at="#target-poi" position="0 0.5 -3" visible="false">
+                 <a-cone color="yellow" radius-bottom="0.2" radius-top="0" height="0.4" rotation="90 0 0"></a-cone>
+            </a-entity>
 
-        <a-entity id="info-card" look-at="[gps-new-camera]">
-            <a-plane 
-                width="2" 
-                height="1" 
-                position="0 0 0"
-                color="#8B5CF6" 
-                material="transparent: true; opacity: 0.9" 
-                rounded="radius: 0.05">
-            </a-plane>
-            <a-text 
-                id="card-title"
-                value=""
-                color="#FFFFFF" 
-                align="center" 
-                width="3" 
-                position="0 0.25 0.01">
-            </a-text>
-            <a-text
-                id="card-description" 
-                value=""
-                color="#E0E0E0"
-                align="center" 
-                width="1.8" 
-                position="0 -0.1 0.01">
-            </a-text>
-        </a-entity>
+        </a-camera>
+
+        <a-entity id="target-poi"></a-entity>
+
     </a-scene>
 
     <div id="info-panel" class="info-panel" style="display: none;">
@@ -82,21 +77,22 @@
 
     <script>
         window.addEventListener('load', () => {
-            const startButton = document.getElementById('start-button');
-            const splashScreen = document.getElementById('splash-screen');
             const statusMessage = document.getElementById('status-message');
-            const arScene = document.getElementById('ar-scene');
             const infoPanel = document.getElementById('info-panel');
+            
+            // عناصر الواجهة الجديدة
             const infoCard = document.getElementById('info-card');
             const cardTitle = document.getElementById('card-title');
             const cardDescription = document.getElementById('card-description');
+            const arrow = document.getElementById('arrow');
+            const targetPoi = document.getElementById('target-poi');
 
             const locations = [
                 { name: 'Jadara Uni. - Building A', lat: 32.4841, lon: 35.8890, desc: "Main administration building." },
-                { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587, desc: "A prominent landmark in the city center." },
+                { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587, desc: "A prominent landmark." },
                 { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344, desc: "A famous historical site." },
                 { name: 'Calma Space', lat: 32.5400, lon: 35.8500, desc: "A popular spot in Irbid." }
-        ];
+            ];
 
             function getDistance(lat1, lon1, lat2, lon2) {
                 const R = 6371000;
@@ -108,7 +104,7 @@
                 return R * c;
             }
 
-            // هذه الدالة هي المحرك الأساسي
+            // الدالة الرئيسية التي تدير الواجهة
             function updateScene(userLat, userLon) {
                 let nearestPlace = null;
                 let minDistance = Infinity;
@@ -121,25 +117,37 @@
                     }
                 });
 
-                // تحديث لوحة المعلومات السفلية
+                // عرض معلومات المسافة دائمًا
                 document.getElementById('nearest-place-name').innerText = nearestPlace.name;
                 document.getElementById('distance-info').innerText = minDistance.toFixed(0);
                 infoPanel.style.display = 'block';
 
-                // التحقق مما إذا كان المستخدم قريبًا بما فيه الكفاية (أقل من 50 مترًا)
-                if (minDistance < 50) {
-                    // إذا كان قريبًا، قم بتحديث بطاقة المعلومات وموقعها واجعلها مرئية
+                // --- المنطق الجديد للتحكم في الواجهة ---
+
+                // إذا كانت المسافة أقل من 75 مترًا، أظهر البطاقة وأخفِ السهم
+                if (minDistance < 75) {
+                    infoCard.setAttribute('visible', true);
+                    arrow.setAttribute('visible', false);
+
+                    // تحديث محتوى البطاقة
                     cardTitle.setAttribute('value', nearestPlace.name);
                     cardDescription.setAttribute('value', nearestPlace.desc);
-                    infoCard.setAttribute('gps-new-entity-place', `latitude: ${nearestPlace.lat}; longitude: ${nearestPlace.lon};`);
-                    infoCard.setAttribute('visible', true);
+
                 } else {
-                    // إذا كان بعيدًا، قم بإخفاء البطاقة
+                    // إذا كانت المسافة أكبر، أخفِ البطاقة وأظهر السهم
                     infoCard.setAttribute('visible', false);
+                    arrow.setAttribute('visible', true);
+
+                    // حدّث موقع الهدف الوهمي ليشير السهم إليه
+                    targetPoi.setAttribute('gps-new-entity-place', `latitude: ${nearestPlace.lat}; longitude: ${nearestPlace.lon};`);
                 }
             }
             
-            startButton.addEventListener('click', () => {
+            document.getElementById('start-button').addEventListener('click', () => {
+                const startButton = document.getElementById('start-button');
+                const splashScreen = document.getElementById('splash-screen');
+                const arScene = document.getElementById('ar-scene');
+
                 statusMessage.innerText = 'Requesting permissions...';
                 startButton.disabled = true;
 
@@ -149,10 +157,7 @@
                         splashScreen.style.display = 'none';
                         arScene.style.display = 'block';
 
-                        // استدعاء الدالة لأول مرة عند النجاح
-                        updateScene(position.coords.latitude, position.coords.longitude);
-
-                        // الاستماع لتحديثات موقع الكاميرا وتحديث المشهد بناءً عليها
+                        // الاستماع لتحديثات الموقع باستمرار
                         window.addEventListener('gps-camera-update-position', (e) => {
                             updateScene(e.detail.position.latitude, e.detail.position.longitude);
                         });
