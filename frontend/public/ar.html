@@ -1,96 +1,170 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Stable AR - SmartTour</title>
+    <title>GPS AR - SmartTour</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 
-    <script>
-        // Custom component for persistence and position updates
-        AFRAME.registerComponent('marker-handler', {
-            schema: {
-                delay: { type: 'number', default: 30000 },
-                target: { type: 'selector' } 
-            },
-
-            init: function () {
-                const marker = this.el;
-                const infoCard = this.data.target;
-                const delay = this.data.delay;
-                let hideTimeout = null;
-
-                infoCard.setAttribute('visible', false);
-
-                marker.addEventListener('markerFound', () => {
-                    if (hideTimeout) {
-                        clearTimeout(hideTimeout);
-                        hideTimeout = null;
-                    }
-                    infoCard.setAttribute('visible', true);
-                });
-
-                marker.addEventListener('markerLost', () => {
-                    hideTimeout = setTimeout(() => {
-                        infoCard.setAttribute('visible', false);
-                    }, delay);
-                });
-            },
-
-            // tick function runs on every frame
-            tick: function () {
-                const marker = this.el;
-                const infoCard = this.data.target;
-
-                // If the marker is visible, ONLY update the card's position.
-                // The 'look-at' component will handle the rotation smoothly.
-                if (marker.object3D.visible) {
-                    infoCard.setAttribute('position', marker.object3D.position);
-                    // THE ROTATION LINE HAS BEEN REMOVED TO FIX THE FLICKERING
-                }
-            }
-        });
-    </script>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #111827; color: white;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 10000; text-align: center; padding: 20px; box-sizing: border-box;
+        }
+        #start-button {
+            background-color: #8B5CF6; color: white; border: none;
+            padding: 15px 30px; font-size: 18px; font-weight: bold;
+            border-radius: 50px; cursor: pointer; margin-top: 20px;
+        }
+        #start-button:disabled { background-color: #4B5563; cursor: not-allowed; }
+        .info-panel {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.75);
+            padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center; z-index: 1000; font-size: 16px;
+            width: 90%; max-width: 400px; color: white;
+        }
+    </style>
 </head>
+<body>
+    <div id="splash-screen">
+        <h2>AR GPS Guide</h2>
+        <p>This experience requires camera and precise location access. Please test outdoors.</p>
+        <button id="start-button">Start Experience</button>
+        <p id="status-message" style="margin-top: 20px; color: #9CA3AF;"></p>
+    </div>
 
-<body style="margin: 0px; overflow: hidden;">
+    <a-scene 
+        id="ar-scene"
+        vr-mode-ui="enabled: false"
+        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+        renderer="antialias: true; alpha: true"
+        style="display: none;">
 
-    <a-scene embedded arjs="sourceType: webcam; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+        <a-camera gps-new-camera="gpsMinDistance: 5"></a-camera>
 
-        <a-marker type="pattern" url="marker.patt" marker-handler="target: #info-card;"></a-marker>
-        
-        <a-entity id="info-card" look-at="[camera]">
-            
+        <a-entity id="info-card" look-at="[gps-new-camera]">
             <a-plane 
-                width="1.5" 
-                height="0.7" 
-                position="0 0.4 0"
+                width="2" 
+                height="1" 
+                position="0 0 0"
                 color="#8B5CF6" 
                 material="transparent: true; opacity: 0.9" 
                 rounded="radius: 0.05">
             </a-plane>
-
             <a-text 
-                value="SmartTour.jo"
+                id="card-title"
+                value=""
                 color="#FFFFFF" 
                 align="center" 
-                width="2.5" 
-                position="0 0.55 0.01">
-            </a-text>
-            
-            <a-text 
-                value="by Nova Squad"
-                color="#E0E0E0"
-                align="center" 
-                width="1.5" 
+                width="3" 
                 position="0 0.25 0.01">
             </a-text>
-
+            <a-text
+                id="card-description" 
+                value=""
+                color="#E0E0E0"
+                align="center" 
+                width="1.8" 
+                position="0 -0.1 0.01">
+            </a-text>
         </a-entity>
-
-        <a-entity camera></a-entity>
     </a-scene>
 
+    <div id="info-panel" class="info-panel" style="display: none;">
+        أقرب موقع: <strong id="nearest-place-name">...</strong><br>
+        المسافة: <span id="distance-info">...</span> متر
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const startButton = document.getElementById('start-button');
+            const splashScreen = document.getElementById('splash-screen');
+            const statusMessage = document.getElementById('status-message');
+            const arScene = document.getElementById('ar-scene');
+            const infoPanel = document.getElementById('info-panel');
+            const infoCard = document.getElementById('info-card');
+            const cardTitle = document.getElementById('card-title');
+            const cardDescription = document.getElementById('card-description');
+
+            const locations = [
+                { name: 'Jadara Uni. - Building A', lat: 32.4841, lon: 35.8890, desc: "Main administration building." },
+                { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587, desc: "A prominent landmark in the city center." },
+                { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344, desc: "A famous historical site." },
+                { name: 'Calma Space', lat: 32.5400, lon: 35.8500, desc: "A popular spot in Irbid." }
+        ];
+
+            function getDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371000;
+                const toRad = (deg) => deg * Math.PI / 180;
+                const dLat = toRad(lat2 - lat1);
+                const dLon = toRad(lon2 - lon1);
+                const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+            }
+
+            // هذه الدالة هي المحرك الأساسي
+            function updateScene(userLat, userLon) {
+                let nearestPlace = null;
+                let minDistance = Infinity;
+
+                locations.forEach(place => {
+                    const distance = getDistance(userLat, userLon, place.lat, place.lon);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        nearestPlace = place;
+                    }
+                });
+
+                // تحديث لوحة المعلومات السفلية
+                document.getElementById('nearest-place-name').innerText = nearestPlace.name;
+                document.getElementById('distance-info').innerText = minDistance.toFixed(0);
+                infoPanel.style.display = 'block';
+
+                // التحقق مما إذا كان المستخدم قريبًا بما فيه الكفاية (أقل من 50 مترًا)
+                if (minDistance < 50) {
+                    // إذا كان قريبًا، قم بتحديث بطاقة المعلومات وموقعها واجعلها مرئية
+                    cardTitle.setAttribute('value', nearestPlace.name);
+                    cardDescription.setAttribute('value', nearestPlace.desc);
+                    infoCard.setAttribute('gps-new-entity-place', `latitude: ${nearestPlace.lat}; longitude: ${nearestPlace.lon};`);
+                    infoCard.setAttribute('visible', true);
+                } else {
+                    // إذا كان بعيدًا، قم بإخفاء البطاقة
+                    infoCard.setAttribute('visible', false);
+                }
+            }
+            
+            startButton.addEventListener('click', () => {
+                statusMessage.innerText = 'Requesting permissions...';
+                startButton.disabled = true;
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        statusMessage.innerText = 'GPS signal acquired. Starting AR...';
+                        splashScreen.style.display = 'none';
+                        arScene.style.display = 'block';
+
+                        // استدعاء الدالة لأول مرة عند النجاح
+                        updateScene(position.coords.latitude, position.coords.longitude);
+
+                        // الاستماع لتحديثات موقع الكاميرا وتحديث المشهد بناءً عليها
+                        window.addEventListener('gps-camera-update-position', (e) => {
+                            updateScene(e.detail.position.latitude, e.detail.position.longitude);
+                        });
+                    },
+                    (err) => {
+                        statusMessage.innerText = `Error: ${err.message}. Please enable location and refresh.`;
+                        startButton.disabled = false;
+                    },
+                    { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+                );
+            });
+        });
+    </script>
 </body>
 </html>
