@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Smart Tour Plan - Smart Jordan</title>
+    <title>Your Smart Tour Plan - SmartTour.jo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -129,10 +130,21 @@
             animation: fadeInUp 0.6s ease-out forwards;
         }
 
-        .timeline-item:nth-child(1) { animation-delay: 0.1s; }
-        .timeline-item:nth-child(2) { animation-delay: 0.2s; }
-        .timeline-item:nth-child(3) { animation-delay: 0.3s; }
-        .timeline-item:nth-child(4) { animation-delay: 0.4s; }
+        .timeline-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .timeline-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .timeline-item:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .timeline-item:nth-child(4) {
+            animation-delay: 0.4s;
+        }
 
         .timeline-dot {
             position: absolute;
@@ -320,6 +332,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -386,11 +399,12 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-container">
-            <a href="index.html" class="logo">Smart Jordan</a>
+            <a href="index.html" class="logo">SmartTour.jo</a>
             <a href="index.html" class="back-btn">← Back to Home</a>
         </div>
     </header>
@@ -399,12 +413,13 @@
     <main class="main">
         <div class="container">
             <h1 class="page-title">Your Smart Tour Plan</h1>
-            <p class="page-subtitle">A perfectly curated day in Jordan optimized by AI for the ultimate travel experience</p>
+            <p class="page-subtitle">A perfectly curated day in Jordan optimized by AI for the ultimate travel
+                experience</p>
 
             <!-- Timeline -->
             <div class="timeline-container">
                 <div class="timeline-line"></div>
-                
+
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
@@ -415,7 +430,9 @@
                                 <h3 class="timeline-title">Arrive at Hotel</h3>
                             </div>
                         </div>
-                        <p class="timeline-description">Begin your smart Jordan adventure by checking into your carefully selected accommodation and receiving your personalized travel kit with IoT sensors and AR devices.</p>
+                        <p class="timeline-description">Begin your SmartTour.jo adventure by checking into your
+                            carefully selected accommodation and receiving your personalized travel kit with IoT sensors
+                            and AR devices.</p>
                         <div class="timeline-details">
                             <h4>What's Included:</h4>
                             <ul>
@@ -438,7 +455,9 @@
                                 <h3 class="timeline-title">Visit Downtown</h3>
                             </div>
                         </div>
-                        <p class="timeline-description">Explore Amman's vibrant downtown with our AI-guided walking tour, featuring the Roman Theatre, Citadel, and bustling traditional souks with real-time crowd optimization.</p>
+                        <p class="timeline-description">Explore Amman's vibrant downtown with our AI-guided walking
+                            tour, featuring the Roman Theatre, Citadel, and bustling traditional souks with real-time
+                            crowd optimization.</p>
                         <div class="timeline-details">
                             <h4>Highlights:</h4>
                             <ul>
@@ -461,7 +480,9 @@
                                 <h3 class="timeline-title">Archaeological Site</h3>
                             </div>
                         </div>
-                        <p class="timeline-description">Experience Petra's magnificence with cutting-edge AR visualization showing how the ancient city looked 2000 years ago, complete with virtual Nabataean guides.</p>
+                        <p class="timeline-description">Experience Petra's magnificence with cutting-edge AR
+                            visualization showing how the ancient city looked 2000 years ago, complete with virtual
+                            Nabataean guides.</p>
                         <div class="timeline-details">
                             <h4>AR Experiences:</h4>
                             <ul>
@@ -484,7 +505,9 @@
                                 <h3 class="timeline-title">Food Market</h3>
                             </div>
                         </div>
-                        <p class="timeline-description">Savor authentic Jordanian cuisine at local food markets with AI-powered recommendations based on your dietary preferences, allergies, and flavor profiles.</p>
+                        <p class="timeline-description">Savor authentic Jordanian cuisine at local food markets with
+                            AI-powered recommendations based on your dietary preferences, allergies, and flavor
+                            profiles.</p>
                         <div class="timeline-details">
                             <h4>Culinary Journey:</h4>
                             <ul>
@@ -525,11 +548,11 @@
 
         // Add some interactive elements
         document.querySelectorAll('.timeline-content').forEach(content => {
-            content.addEventListener('mouseenter', function() {
+            content.addEventListener('mouseenter', function () {
                 this.style.transform = 'translateY(-5px) scale(1.02)';
             });
-            
-            content.addEventListener('mouseleave', function() {
+
+            content.addEventListener('mouseleave', function () {
                 this.style.transform = 'translateY(0) scale(1)';
             });
         });
@@ -555,4 +578,5 @@
         });
     </script>
 </body>
+
 </html>
