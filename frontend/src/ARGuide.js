@@ -1,6 +1,5 @@
 // src/ARGuide.js
-
-import React, { useEffect } from 'react';
+export default ARGuide;
 
 // --- دالة التحقق من دعم الحساسات ---
 const checkSensorSupport = () => {
