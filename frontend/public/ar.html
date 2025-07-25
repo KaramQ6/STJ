@@ -1,14 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Professional GPS AR - SmartTour</title>
+    <title>Professional GPS AR v2 - SmartTour</title>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 
     <style>
-        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+        body { margin: 0; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+        .info-panel, #location-list {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(17, 24, 39, 0.85);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            z-index: 1000;
+            color: white;
+            width: 90%;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+        }
+        .info-panel { bottom: 20px; }
+        #location-list {
+            top: 20px;
+            padding: 8px;
+            display: none; /* Hidden by default */
+        }
+        .location-button {
+            background-color: #8B5CF6;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+        .location-button:first-child { margin-top: 0; }
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #111827; color: white;
@@ -20,14 +55,6 @@
             padding: 15px 30px; font-size: 18px; font-weight: bold;
             border-radius: 50px; cursor: pointer; margin-top: 20px;
         }
-        #start-button:disabled { background-color: #4B5563; cursor: not-allowed; }
-        .info-panel {
-            position: fixed; bottom: 20px; left: 50%;
-            transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.75);
-            padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.3);
-            text-align: center; z-index: 1000; font-size: 16px;
-            width: 90%; max-width: 400px; color: white;
-        }
     </style>
 </head>
 <body style="margin: 0; overflow: hidden;">
@@ -37,11 +64,16 @@
         <button id="start-button">Start Experience</button>
         <p id="status-message" style="margin-top: 20px; color: #9CA3AF;"></p>
     </div>
+    
+    <div id="location-list">
+        <h4>Choose a destination:</h4>
+        <div id="buttons-container"></div>
+    </div>
 
     <a-scene 
         id="ar-scene"
         vr-mode-ui="enabled: false"
-        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false; trackingMethod: best;"
         renderer="antialias: true; alpha: true"
         style="display: none;"
         ar-handler>
@@ -49,28 +81,26 @@
         <a-camera gps-new-camera="gpsMinDistance: 5">
             <a-entity id="info-card" position="0 -0.8 -2.5" visible="false">
                 <a-plane width="1.8" height="0.8" color="#8B5CF6" material="transparent: true; opacity: 0.9" rounded="radius: 0.05"></a-plane>
-                <a-text id="card-title" value="Location Name" color="#FFFFFF" align="center" width="3" position="0 0.2 0.01"></a-text>
-                <a-text id="card-description" value="Location description." color="#E0E0E0" align="center" width="1.7" position="0 -0.1 0.01"></a-text>
+                <a-text id="card-title" value="" color="#FFFFFF" align="center" width="3" position="0 0.2 0.01"></a-text>
+                <a-text id="card-description" value="" color="#E0E0E0" align="center" width="1.7" position="0 -0.1 0.01"></a-text>
             </a-entity>
             
             <a-entity id="arrow-container" position="0 0 -4" visible="false">
                 <a-cone id="arrow-cone" color="yellow" radius-bottom="0.3" radius-top="0" height="0.5" rotation="-90 0 0"></a-cone>
-                <a-text id="arrow-distance" value="100m" color="white" align="center" position="0 0.8 0" width="8"></a-text>
+                <a-text id="arrow-distance" value="" color="white" align="center" position="0 0.8 0" width="8"></a-text>
             </a-entity>
         </a-camera>
-
         <a-entity id="target-poi"></a-entity>
     </a-scene>
 
-    <div id="info-panel" class="info-panel" style="display: none;">
-        الوجهة: <strong id="nearest-place-name">...</strong> | المسافة: <span id="distance-info">...</span> متر
-    </div>
+    <div id="info-panel" class="info-panel" style="display: none;"></div>
 
     <script>
         AFRAME.registerComponent('ar-handler', {
             init: function () {
                 this.userLat = 0;
                 this.userLon = 0;
+                this.activeTarget = null;
                 this.locations = [
                     { name: 'Jadara Uni. - Building A', lat: 32.4841, lon: 35.8890, desc: "Main administration building." },
                     { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587, desc: "A prominent landmark." },
@@ -87,33 +117,85 @@
             tick: function () {
                 if (this.userLat === 0) return;
 
-                const distanceThreshold = 50; 
+                const nearbyPlaces = this.findNearbyPlaces(2000); // 2000 meters = 2km
+                this.updateLocationList(nearbyPlaces);
 
-                const infoCard = document.getElementById('info-card');
-                const arrowContainer = document.getElementById('arrow-container');
-                const targetPoi = document.getElementById('target-poi');
-                
-                const nearest = this.findNearestPlace();
-                this.updateBottomPanel(nearest.name, nearest.distance);
-
-                if (nearest.distance < distanceThreshold) {
-                    if (!infoCard.getAttribute('visible')) {
-                        infoCard.setAttribute('visible', true);
-                        arrowContainer.setAttribute('visible', false);
-                        document.getElementById('card-title').setAttribute('value', nearest.name);
-                        document.getElementById('card-description').setAttribute('value', nearest.desc);
+                if (this.activeTarget) {
+                    const distance = this.getDistance(this.userLat, this.userLon, this.activeTarget.lat, this.activeTarget.lon);
+                    this.updateUIVisibility(distance);
+                    this.updateBottomPanel(this.activeTarget.name, distance);
+                    
+                    const arrowContainer = document.getElementById('arrow-container');
+                    if(arrowContainer.getAttribute('visible')) {
+                        const targetPoi = document.getElementById('target-poi');
+                        targetPoi.setAttribute('gps-new-entity-place', `latitude: ${this.activeTarget.lat}; longitude: ${this.activeTarget.lon};`);
+                        document.getElementById('arrow-distance').setAttribute('value', `${distance.toFixed(0)}m`);
+                        arrowContainer.object3D.lookAt(targetPoi.object3D.position);
                     }
                 } else {
-                    if (!arrowContainer.getAttribute('visible')) {
-                        infoCard.setAttribute('visible', false);
-                        arrowContainer.setAttribute('visible', true);
-                    }
-                    targetPoi.setAttribute('gps-new-entity-place', `latitude: ${nearest.lat}; longitude: ${nearest.lon};`);
-                    document.getElementById('arrow-distance').setAttribute('value', `${nearest.distance.toFixed(0)}m`);
-                    
-                    // --- الكود الجديد الذي يحل مشكلة اتجاه السهم ---
-                    arrowContainer.object3D.lookAt(targetPoi.object3D.position);
+                    this.hideAllUI();
                 }
+            },
+
+            updateLocationList: function(places) {
+                const listContainer = document.getElementById('location-list');
+                const buttonsContainer = document.getElementById('buttons-container');
+
+                if (this.activeTarget) {
+                    listContainer.style.display = 'none';
+                    return;
+                }
+                
+                if (places.length === 0) {
+                    listContainer.style.display = 'none';
+                } else if (places.length === 1) {
+                    this.setActiveTarget(places[0]);
+                    listContainer.style.display = 'none';
+                } else {
+                    listContainer.style.display = 'block';
+                    buttonsContainer.innerHTML = '';
+                    places.forEach(place => {
+                        const button = document.createElement('button');
+                        button.innerHTML = `${place.name} (${this.getDistance(this.userLat, this.userLon, place.lat, place.lon).toFixed(0)}m)`;
+                        button.className = 'location-button';
+                        button.onclick = () => this.setActiveTarget(place);
+                        buttonsContainer.appendChild(button);
+                    });
+                }
+            },
+
+            setActiveTarget: function(place) {
+                this.activeTarget = place;
+                document.getElementById('location-list').style.display = 'none';
+            },
+
+            updateUIVisibility: function(distance) {
+                const distanceThreshold = 50;
+                const infoCard = document.getElementById('info-card');
+                const arrowContainer = document.getElementById('arrow-container');
+
+                if (distance < distanceThreshold) {
+                    infoCard.setAttribute('visible', true);
+                    arrowContainer.setAttribute('visible', false);
+                    document.getElementById('card-title').setAttribute('value', this.activeTarget.name);
+                    document.getElementById('card-description').setAttribute('value', this.activeTarget.desc);
+                } else {
+                    infoCard.setAttribute('visible', false);
+                    arrowContainer.setAttribute('visible', true);
+                }
+            },
+            
+            hideAllUI: function() {
+                document.getElementById('info-card').setAttribute('visible', false);
+                document.getElementById('arrow-container').setAttribute('visible', false);
+                document.getElementById('info-panel').style.display = 'none';
+            },
+
+            findNearbyPlaces: function(radius) {
+                return this.locations.filter(place => {
+                    const distance = this.getDistance(this.userLat, this.userLon, place.lat, place.lon);
+                    return distance < radius;
+                });
             },
 
             getDistance: (lat1, lon1, lat2, lon2) => {
@@ -126,26 +208,10 @@
                 return R * c;
             },
 
-            findNearestPlace: function() {
-                let nearestPlace = null;
-                let minDistance = Infinity;
-                this.locations.forEach(place => {
-                    const distance = this.getDistance(this.userLat, this.userLon, place.lat, place.lon);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        nearestPlace = place;
-                    }
-                });
-                return { ...nearestPlace, distance: minDistance };
-            },
-
             updateBottomPanel: (name, distance) => {
                 const infoPanel = document.getElementById('info-panel');
-                document.getElementById('nearest-place-name').innerText = name;
-                document.getElementById('distance-info').innerText = distance.toFixed(0);
-                if (infoPanel.style.display === 'none') {
-                    infoPanel.style.display = 'block';
-                }
+                infoPanel.innerHTML = `الوجهة: <strong>${name}</strong> | المسافة: <span>${distance.toFixed(0)}</span> متر`;
+                infoPanel.style.display = 'block';
             }
         });
 
