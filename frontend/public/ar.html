@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Professional GPS AR v2 - SmartTour</title>
+    <title>Professional GPS AR v3 - SmartTour</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
@@ -10,7 +10,7 @@
 
     <style>
         body { margin: 0; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
-        .info-panel, #location-list {
+        .ui-panel {
             position: fixed;
             left: 50%;
             transform: translateX(-50%);
@@ -24,13 +24,10 @@
             width: 90%;
             max-width: 400px;
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
-        .info-panel { bottom: 20px; }
-        #location-list {
-            top: 20px;
-            padding: 8px;
-            display: none; /* Hidden by default */
-        }
+        .info-panel { bottom: 20px; display: none; }
+        #location-list { top: 20px; padding: 8px; display: none; }
         .location-button {
             background-color: #8B5CF6;
             color: white;
@@ -60,12 +57,12 @@
 <body style="margin: 0; overflow: hidden;">
     <div id="splash-screen">
         <h2>SmartTour AR Guide</h2>
-        <p>For best results, please test in an open outdoor area and grant location permissions.</p>
+        <p>This experience uses your device's sensors for orientation.</p>
         <button id="start-button">Start Experience</button>
         <p id="status-message" style="margin-top: 20px; color: #9CA3AF;"></p>
     </div>
     
-    <div id="location-list">
+    <div id="location-list" class="ui-panel">
         <h4>Choose a destination:</h4>
         <div id="buttons-container"></div>
     </div>
@@ -78,7 +75,7 @@
         style="display: none;"
         ar-handler>
 
-        <a-camera gps-new-camera="gpsMinDistance: 5">
+        <a-camera gps-new-camera="gpsMinDistance: 5" rotation-reader>
             <a-entity id="info-card" position="0 -0.8 -2.5" visible="false">
                 <a-plane width="1.8" height="0.8" color="#8B5CF6" material="transparent: true; opacity: 0.9" rounded="radius: 0.05"></a-plane>
                 <a-text id="card-title" value="" color="#FFFFFF" align="center" width="3" position="0 0.2 0.01"></a-text>
@@ -93,9 +90,37 @@
         <a-entity id="target-poi"></a-entity>
     </a-scene>
 
-    <div id="info-panel" class="info-panel" style="display: none;"></div>
+    <div id="info-panel" class="info-panel ui-panel"></div>
 
     <script>
+        // --- 3. دالة التحقق من دعم الحساسات ---
+        const checkSensorSupport = () => {
+            return new Promise((resolve, reject) => {
+                if (!window.DeviceOrientationEvent) {
+                    return reject(new Error("Your device does not support orientation sensors (Gyroscope)."));
+                }
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    DeviceOrientationEvent.requestPermission()
+                        .then(permissionState => {
+                            if (permissionState === 'granted') resolve();
+                            else reject(new Error("Permission for orientation sensors was denied."));
+                        }).catch(err => reject(err));
+                } else {
+                    const handleOrientation = (event) => {
+                        if (event.alpha !== null || event.webkitCompassHeading !== undefined) {
+                            window.removeEventListener('deviceorientation', handleOrientation);
+                            resolve();
+                        }
+                    };
+                    window.addEventListener('deviceorientation', handleOrientation);
+                    setTimeout(() => {
+                        window.removeEventListener('deviceorientation', handleOrientation);
+                        reject(new Error("Could not detect orientation sensors. Please ensure they are enabled in your browser settings."));
+                    }, 3000);
+                }
+            });
+        };
+
         AFRAME.registerComponent('ar-handler', {
             init: function () {
                 this.userLat = 0;
@@ -117,10 +142,11 @@
             tick: function () {
                 if (this.userLat === 0) return;
 
-                const nearbyPlaces = this.findNearbyPlaces(2000); // 2000 meters = 2km
-                this.updateLocationList(nearbyPlaces);
-
-                if (this.activeTarget) {
+                if (!this.activeTarget) {
+                    const nearbyPlaces = this.findNearbyPlaces(2000);
+                    this.updateLocationList(nearbyPlaces);
+                    this.hideAllUI();
+                } else {
                     const distance = this.getDistance(this.userLat, this.userLon, this.activeTarget.lat, this.activeTarget.lon);
                     this.updateUIVisibility(distance);
                     this.updateBottomPanel(this.activeTarget.name, distance);
@@ -132,15 +158,13 @@
                         document.getElementById('arrow-distance').setAttribute('value', `${distance.toFixed(0)}m`);
                         arrowContainer.object3D.lookAt(targetPoi.object3D.position);
                     }
-                } else {
-                    this.hideAllUI();
                 }
             },
 
             updateLocationList: function(places) {
                 const listContainer = document.getElementById('location-list');
                 const buttonsContainer = document.getElementById('buttons-container');
-
+                
                 if (this.activeTarget) {
                     listContainer.style.display = 'none';
                     return;
@@ -148,15 +172,19 @@
                 
                 if (places.length === 0) {
                     listContainer.style.display = 'none';
+                    if (!this.noPlaceMessage) {
+                        document.getElementById('status-message').innerText = 'No locations within 2km.';
+                        this.noPlaceMessage = true;
+                    }
                 } else if (places.length === 1) {
                     this.setActiveTarget(places[0]);
-                    listContainer.style.display = 'none';
                 } else {
                     listContainer.style.display = 'block';
                     buttonsContainer.innerHTML = '';
                     places.forEach(place => {
                         const button = document.createElement('button');
-                        button.innerHTML = `${place.name} (${this.getDistance(this.userLat, this.userLon, place.lat, place.lon).toFixed(0)}m)`;
+                        const distance = this.getDistance(this.userLat, this.userLon, place.lat, place.lon);
+                        button.innerHTML = `${place.name} (${distance.toFixed(0)}m)`;
                         button.className = 'location-button';
                         button.onclick = () => this.setActiveTarget(place);
                         buttonsContainer.appendChild(button);
@@ -170,7 +198,7 @@
             },
 
             updateUIVisibility: function(distance) {
-                const distanceThreshold = 50;
+                const distanceThreshold = 75;
                 const infoCard = document.getElementById('info-card');
                 const arrowContainer = document.getElementById('arrow-container');
 
@@ -192,10 +220,7 @@
             },
 
             findNearbyPlaces: function(radius) {
-                return this.locations.filter(place => {
-                    const distance = this.getDistance(this.userLat, this.userLon, place.lat, place.lon);
-                    return distance < radius;
-                });
+                return this.locations.filter(place => this.getDistance(this.userLat, this.userLon, place.lat, place.lon) < radius);
             },
 
             getDistance: (lat1, lon1, lat2, lon2) => {
@@ -215,27 +240,32 @@
             }
         });
 
-        document.getElementById('start-button').addEventListener('click', () => {
+        document.getElementById('start-button').addEventListener('click', async () => {
             const startButton = document.getElementById('start-button');
             const splashScreen = document.getElementById('splash-screen');
             const arScene = document.getElementById('ar-scene');
             const statusMessage = document.getElementById('status-message');
 
-            statusMessage.innerText = 'Requesting permissions...';
             startButton.disabled = true;
+            statusMessage.innerText = 'Checking device sensors...';
 
-            navigator.geolocation.getCurrentPosition(
-                () => {
-                    statusMessage.innerText = 'GPS signal acquired. Starting AR...';
-                    splashScreen.style.display = 'none';
-                    arScene.style.display = 'block';
-                },
-                (err) => {
-                    statusMessage.innerText = `Error: ${err.message}. Please enable location and refresh.`;
-                    startButton.disabled = false;
-                },
-                { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
-            );
+            try {
+                await checkSensorSupport();
+                statusMessage.innerText = 'Sensors OK. Requesting location...';
+                
+                navigator.geolocation.getCurrentPosition(
+                    () => {
+                        statusMessage.innerText = 'Permissions granted. Starting AR...';
+                        splashScreen.style.display = 'none';
+                        arScene.style.display = 'block';
+                    },
+                    (err) => { throw new Error(err.message); },
+                    { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+                );
+            } catch (error) {
+                alert(`Error: ${error.message}\n\nThe page will now refresh.`);
+                window.location.reload();
+            }
         });
     </script>
 </body>
