@@ -1,40 +1,122 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GPS AR with Navigation - SmartTour</title>
+    <title>Fixed Navigation AR - SmartTour</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 
-    <style>
-        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
-        #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #111827; color: white;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 10000; text-align: center; padding: 20px; box-sizing: border-box;
-        }
-        #start-button {
-            background-color: #8B5CF6; color: white; border: none;
-            padding: 15px 30px; font-size: 18px; font-weight: bold;
-            border-radius: 50px; cursor: pointer; margin-top: 20px;
-        }
-        #start-button:disabled { background-color: #4B5563; cursor: not-allowed; }
-        .info-panel {
-            position: fixed; bottom: 20px; left: 50%;
-            transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.75);
-            padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.3);
-            text-align: center; z-index: 1000; font-size: 16px;
-            width: 90%; max-width: 400px; color: white;
-        }
-    </style>
+    <script>
+        // -- تم تعديل المكون ليقوم بتوجيه السهم يدويًا --
+        AFRAME.registerComponent('ar-handler', {
+            schema: {
+                target: { type: 'selector' },
+                infoCard: { type: 'selector' },
+                arrow: { type: 'selector' },
+                distanceThreshold: { type: 'number', default: 75 }
+            },
+
+            init: function () {
+                this.userLat = 0;
+                this.userLon = 0;
+
+                // الاستماع لتحديثات الموقع وتخزينها
+                window.addEventListener('gps-camera-update-position', (e) => {
+                    this.userLat = e.detail.position.latitude;
+                    this.userLon = e.detail.position.longitude;
+                });
+            },
+
+            tick: function () {
+                if (this.userLat === 0) return; // لا تفعل شيئًا قبل الحصول على أول إشارة
+
+                const { target, infoCard, arrow, distanceThreshold } = this.data;
+                const { name, lat, lon, desc } = this.findNearestPlace();
+                const distance = this.getDistance(this.userLat, this.userLon, lat, lon);
+                
+                // تحديث لوحة المعلومات السفلية
+                this.updateInfoPanel(name, distance);
+                
+                // إذا كنا قريبين
+                if (distance < distanceThreshold) {
+                    if (!infoCard.getAttribute('visible')) {
+                        infoCard.setAttribute('visible', true);
+                        arrow.setAttribute('visible', false);
+                        infoCard.querySelector('#card-title').setAttribute('value', name);
+                        infoCard.querySelector('#card-description').setAttribute('value', desc);
+                    }
+                } 
+                // إذا كنا بعيدين
+                else {
+                    if (!arrow.getAttribute('visible')) {
+                        infoCard.setAttribute('visible', false);
+                        arrow.setAttribute('visible', true);
+                    }
+                    // تحديث موقع الهدف
+                    target.setAttribute('gps-new-entity-place', `latitude: ${lat}; longitude: ${lon};`);
+
+                    // --- الجزء الجديد والمهم: توجيه السهم يدويًا ---
+                    // هذا الكود يجبر السهم على النظر إلى الهدف في كل إطار
+                    arrow.object3D.lookAt(target.object3D.position);
+                }
+            },
+
+            // دالة مساعدة لحساب المسافة
+            getDistance: function (lat1, lon1, lat2, lon2) {
+                const R = 6371000;
+                const toRad = (deg) => deg * Math.PI / 180;
+                const dLat = toRad(lat2 - lat1);
+                const dLon = toRad(lon2 - lon1);
+                const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+            },
+            
+            // دالة مساعدة للعثور على أقرب مكان
+            findNearestPlace: function() {
+                const locations = this.el.sceneEl.systems.locations.data; // الحصول على المواقع من النظام
+                let nearestPlace = null;
+                let minDistance = Infinity;
+
+                locations.forEach(place => {
+                    const distance = this.getDistance(this.userLat, this.userLon, place.lat, place.lon);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        nearestPlace = place;
+                    }
+                });
+                return nearestPlace;
+            },
+
+            // دالة مساعدة لتحديث اللوحة السفلية
+            updateInfoPanel: function(name, distance) {
+                const infoPanel = document.getElementById('info-panel');
+                document.getElementById('nearest-place-name').innerText = name;
+                document.getElementById('distance-info').innerText = distance.toFixed(0);
+                infoPanel.style.display = 'block';
+            }
+        });
+
+        // نظام لتخزين المواقع بشكل مركزي
+        AFRAME.registerSystem('locations', {
+            init: function() {
+                this.data = [
+                    { name: 'Jadara Uni. - Building A', lat: 32.4841, lon: 35.8890, desc: "Main administration building." },
+                    { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587, desc: "A prominent landmark." },
+                    { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344, desc: "A famous historical site." },
+                    { name: 'Calma Space', lat: 32.5400, lon: 35.8500, desc: "A popular spot in Irbid." }
+                ];
+            }
+        });
+
+    </script>
 </head>
-<body>
+<body style="margin: 0px; overflow: hidden;">
     <div id="splash-screen">
         <h2>AR GPS Guide</h2>
         <p>This experience requires camera and precise location access. Please test outdoors.</p>
-        <button id="start-button">Start Experience</button>
+        <button id="start-button" onclick="startExperience()">Start Experience</button>
         <p id="status-message" style="margin-top: 20px; color: #9CA3AF;"></p>
     </div>
 
@@ -43,31 +125,23 @@
         vr-mode-ui="enabled: false"
         arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
         renderer="antialias: true; alpha: true"
-        style="display: none;">
+        style="display: none;"
+        locations
+        ar-handler="target: #target-poi; infoCard: #info-card; arrow: #arrow;">
 
         <a-camera gps-new-camera="gpsMinDistance: 5">
-            
             <a-entity id="info-card" position="0 -0.8 -2" visible="false">
-                <a-plane 
-                    width="1.5" 
-                    height="0.7" 
-                    position="0 0 0"
-                    color="#8B5CF6" 
-                    material="transparent: true; opacity: 0.9" 
-                    rounded="radius: 0.05">
-                </a-plane>
+                <a-plane width="1.5" height="0.7" position="0 0 0" color="#8B5CF6" material="transparent: true; opacity: 0.9" rounded="radius: 0.05"></a-plane>
                 <a-text id="card-title" value="" color="#FFFFFF" align="center" width="2.5" position="0 0.15 0.01"></a-text>
                 <a-text id="card-description" value="" color="#E0E0E0" align="center" width="1.5" position="0 -0.1 0.01"></a-text>
             </a-entity>
             
-            <a-entity id="arrow" look-at="#target-poi" position="0 0.5 -3" visible="false">
+            <a-entity id="arrow" position="0 0.5 -3" visible="false">
                  <a-cone color="yellow" radius-bottom="0.2" radius-top="0" height="0.4" rotation="90 0 0"></a-cone>
             </a-entity>
-
         </a-camera>
 
         <a-entity id="target-poi"></a-entity>
-
     </a-scene>
 
     <div id="info-panel" class="info-panel" style="display: none;">
@@ -75,83 +149,22 @@
         المسافة: <span id="distance-info">...</span> متر
     </div>
 
-<script>
-    window.addEventListener('load', () => {
-        const statusMessage = document.getElementById('status-message');
-        const infoPanel = document.getElementById('info-panel');
-        
-        const infoCard = document.getElementById('info-card');
-        const cardTitle = document.getElementById('card-title');
-        const cardDescription = document.getElementById('card-description');
-        const arrow = document.getElementById('arrow');
-        const targetPoi = document.getElementById('target-poi');
-
-        const locations = [
-            { name: 'Jadara Uni. - Building A', lat: 32.4841, lon: 35.8890, desc: "Main administration building." },
-            { name: 'Irbid Clock Tower', lat: 32.5539, lon: 35.8587, desc: "A prominent landmark." },
-            { name: 'Amman Citadel', lat: 31.9545, lon: 35.9344, desc: "A famous historical site." },
-            { name: 'Calma Space', lat: 32.5400, lon: 35.8500, desc: "A popular spot in Irbid." }
-        ];
-
-        function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371000;
-            const toRad = (deg) => deg * Math.PI / 180;
-            const dLat = toRad(lat2 - lat1);
-            const dLon = toRad(lon2 - lon1);
-            const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
-        }
-
-        function updateScene(userLat, userLon) {
-            let nearestPlace = null;
-            let minDistance = Infinity;
-
-            locations.forEach(place => {
-                const distance = getDistance(userLat, userLon, place.lat, place.lon);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearestPlace = place;
-                }
-            });
-
-            document.getElementById('nearest-place-name').innerText = nearestPlace.name;
-            document.getElementById('distance-info').innerText = minDistance.toFixed(0);
-            infoPanel.style.display = 'block';
-
-            if (minDistance < 75) {
-                infoCard.setAttribute('visible', true);
-                arrow.setAttribute('visible', false);
-                cardTitle.setAttribute('value', nearestPlace.name);
-                cardDescription.setAttribute('value', nearestPlace.desc);
-            } else {
-                infoCard.setAttribute('visible', false);
-                arrow.setAttribute('visible', true);
-                targetPoi.setAttribute('gps-new-entity-place', `latitude: ${nearestPlace.lat}; longitude: ${nearestPlace.lon};`);
-            }
-        }
-        
-        document.getElementById('start-button').addEventListener('click', () => {
+    <script>
+        // دالة بدء التشغيل
+        function startExperience() {
             const startButton = document.getElementById('start-button');
             const splashScreen = document.getElementById('splash-screen');
             const arScene = document.getElementById('ar-scene');
+            const statusMessage = document.getElementById('status-message');
 
             statusMessage.innerText = 'Requesting permissions...';
             startButton.disabled = true;
 
             navigator.geolocation.getCurrentPosition(
-                (position) => {
+                () => {
                     statusMessage.innerText = 'GPS signal acquired. Starting AR...';
                     splashScreen.style.display = 'none';
                     arScene.style.display = 'block';
-
-                    // -- THIS LINE WAS MISSING --
-                    // It calls the update function immediately with the first GPS position.
-                    updateScene(position.coords.latitude, position.coords.longitude);
-
-                    window.addEventListener('gps-camera-update-position', (e) => {
-                        updateScene(e.detail.position.latitude, e.detail.position.longitude);
-                    });
                 },
                 (err) => {
                     statusMessage.innerText = `Error: ${err.message}. Please enable location and refresh.`;
@@ -159,8 +172,7 @@
                 },
                 { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
             );
-        });
-    });
-</script>
+        }
+    </script>
 </body>
 </html>
