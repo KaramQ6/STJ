@@ -47,8 +47,7 @@
         ar-handler>
 
         <a-camera gps-new-camera="gpsMinDistance: 5">
-            
-            <a-entity id="info-card-container" position="0 -0.8 -2.5" visible="false">
+            <a-entity id="info-card" position="0 -0.8 -2.5" visible="false">
                 <a-plane width="1.8" height="0.8" color="#8B5CF6" material="transparent: true; opacity: 0.9" rounded="radius: 0.05"></a-plane>
                 <a-text id="card-title" value="Location Name" color="#FFFFFF" align="center" width="3" position="0 0.2 0.01"></a-text>
                 <a-text id="card-description" value="Location description." color="#E0E0E0" align="center" width="1.7" position="0 -0.1 0.01"></a-text>
@@ -58,7 +57,6 @@
                 <a-cone id="arrow-cone" color="yellow" radius-bottom="0.3" radius-top="0" height="0.5" rotation="-90 0 0"></a-cone>
                 <a-text id="arrow-distance" value="100m" color="white" align="center" position="0 0.8 0" width="8"></a-text>
             </a-entity>
-
         </a-camera>
 
         <a-entity id="target-poi"></a-entity>
@@ -69,7 +67,6 @@
     </div>
 
     <script>
-        // المكون الرئيسي الذي يدير كل منطق الواقع المعزز
         AFRAME.registerComponent('ar-handler', {
             init: function () {
                 this.userLat = 0;
@@ -88,11 +85,11 @@
             },
 
             tick: function () {
-                if (this.userLat === 0) return; // انتظر أول إشارة GPS
+                if (this.userLat === 0) return;
 
-                const distanceThreshold = 50; // مسافة التحول من سهم إلى بطاقة (بالمتر)
+                const distanceThreshold = 50; 
 
-                const infoCardContainer = document.getElementById('info-card-container');
+                const infoCard = document.getElementById('info-card');
                 const arrowContainer = document.getElementById('arrow-container');
                 const targetPoi = document.getElementById('target-poi');
                 
@@ -100,31 +97,25 @@
                 this.updateBottomPanel(nearest.name, nearest.distance);
 
                 if (nearest.distance < distanceThreshold) {
-                    // إذا كنا قريبين: أظهر البطاقة
-                    if (!infoCardContainer.getAttribute('visible')) {
-                        infoCardContainer.setAttribute('visible', true);
+                    if (!infoCard.getAttribute('visible')) {
+                        infoCard.setAttribute('visible', true);
                         arrowContainer.setAttribute('visible', false);
                         document.getElementById('card-title').setAttribute('value', nearest.name);
                         document.getElementById('card-description').setAttribute('value', nearest.desc);
                     }
                 } else {
-                    // إذا كنا بعيدين: أظهر السهم
                     if (!arrowContainer.getAttribute('visible')) {
-                        infoCardContainer.setAttribute('visible', false);
+                        infoCard.setAttribute('visible', false);
                         arrowContainer.setAttribute('visible', true);
                     }
-                    // تحديث موقع الهدف ليشير إليه السهم
                     targetPoi.setAttribute('gps-new-entity-place', `latitude: ${nearest.lat}; longitude: ${nearest.lon};`);
-                    // تحديث نص المسافة فوق السهم
                     document.getElementById('arrow-distance').setAttribute('value', `${nearest.distance.toFixed(0)}m`);
                     
-                    // --- هذا هو الكود الذي يحل مشكلة اتجاه السهم ---
-                    // في كل لحظة، اجعل حاوية السهم تنظر باتجاه الهدف
+                    // --- الكود الجديد الذي يحل مشكلة اتجاه السهم ---
                     arrowContainer.object3D.lookAt(targetPoi.object3D.position);
                 }
             },
 
-            // الدوال المساعدة
             getDistance: (lat1, lon1, lat2, lon2) => {
                 const R = 6371000;
                 const toRad = (deg) => deg * Math.PI / 180;
@@ -152,11 +143,12 @@
                 const infoPanel = document.getElementById('info-panel');
                 document.getElementById('nearest-place-name').innerText = name;
                 document.getElementById('distance-info').innerText = distance.toFixed(0);
-                infoPanel.style.display = 'block';
+                if (infoPanel.style.display === 'none') {
+                    infoPanel.style.display = 'block';
+                }
             }
         });
 
-        // منطق بدء التجربة
         document.getElementById('start-button').addEventListener('click', () => {
             const startButton = document.getElementById('start-button');
             const splashScreen = document.getElementById('splash-screen');
