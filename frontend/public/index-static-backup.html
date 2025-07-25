@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartTour.JO - اكتشف الأردن بذكاء</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        /* Your original CSS is preserved here */
+        html[lang="ar"] body { font-family: 'Cairo', sans-serif; }
+        html[lang="en"] body { font-family: 'Poppins', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { line-height: 1.6; color: #ffffff; background-color: #0f0f10; overflow-x: hidden; }
+        html { scroll-behavior: smooth; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        .section { padding: 5rem 0; position: relative; }
+        .section:nth-child(even) { background-color: #111827; }
+        .section-title { text-align: center; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; margin-bottom: 1rem; background: linear-gradient(135deg, #8b5cf6, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .section-subtitle { text-align: center; font-size: 1.2rem; color: #9ca3af; margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .btn { padding: 1rem 2rem; border-radius: 50px; font-weight: 600; text-decoration: none; transition: all 0.3s ease; border: none; cursor: pointer; font-size: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn-primary { background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3); }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(139, 92, 246, 0.5); }
+        .navbar { position: fixed; top: 0; width: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 1000; padding: 1rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: #8b5cf6; text-decoration: none; }
+        .nav-menu { display: flex; list-style: none; margin: 0; padding: 0; gap: 1.5rem; align-items: center; }
+        .nav-link { color: #d1d5db; text-decoration: none; font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.3s ease; position: relative; }
+        .nav-link:hover, .nav-link.active { color: #ffffff; background: rgba(139, 92, 246, 0.2); transform: translateY(-2px); }
+        .lang-switcher { display: flex; gap: 10px; align-items: center; }
+        .lang-switcher button { background: none; border: 1px solid #4b5563; color: #d1d5db; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.2s ease; }
+        .lang-switcher button.active { background: #8b5cf6; color: white; border-color: #8b5cf6; }
+        .hero { height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden; background-color: #111; background-image: url('frontend/public/petra.webp'); background-size: cover; background-position: center 70%; }
+        .hero::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1)); z-index: 1; }
+        .hero-content { position: relative; z-index: 2; max-width: 800px; padding: 0 2rem; animation: fadeInUp 1s ease-out; }
+        .hero h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; margin-bottom: 1rem; color: white; text-shadow: 0 4px 8px rgba(0, 0, 0, 0.6); }
+        .hero p { font-size: clamp(1.1rem, 2vw, 1.3rem); margin-bottom: 2rem; color: #f3f4f6; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); }
+        .chatbot-container, .ar-container, .map-container { background: rgba(31, 41, 55, 0.5); border-radius: 1rem; padding: 2rem; backdrop-filter: blur(16px); border: 1px solid rgba(75, 85, 99, 0.3); }
+        #chatWindow { background: rgba(15, 15, 16, 0.5); border-radius: 8px; height: 400px; padding: 1rem; overflow-y: auto; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 1rem; border: 1px solid #4b5563; }
+        .chat-message { padding: 0.75rem 1rem; border-radius: 12px; max-width: 80%; line-height: 1.5; white-space: pre-wrap; }
+        .user-message { background-color: #8b5cf6; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        html[dir="rtl"] .user-message { align-self: flex-start; border-bottom-right-radius: 12px; border-bottom-left-radius: 2px; }
+        .bot-message { background-color: #374151; color: #f3f4f6; align-self: flex-start; border-bottom-left-radius: 2px; }
+        html[dir="rtl"] .bot-message { align-self: flex-end; border-bottom-left-radius: 12px; border-bottom-right-radius: 2px; }
+        .chat-input-area { display: flex; gap: 1rem; }
+        #chatInput { flex-grow: 1; padding: 1rem; border-radius: 8px; border: 1px solid #4b5563; background-color: #1f2937; color: white; font-size: 1rem; }
+        #sendButton { padding: 1rem 1.5rem; }
+        #sendButton:disabled { background: #583c9c; cursor: not-allowed; }
+        .insights-grid, .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .insight-card, .feature-card { background: rgba(31, 41, 55, 0.5); border-radius: 1rem; padding: 1.5rem; text-align: center; border: 1px solid rgba(75, 85, 99, 0.3); transition: all 0.3s ease; }
+        .insight-card:hover, .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1); }
+        .insight-icon, .feature-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+        .insight-value { font-size: 1.8rem; font-weight: 700; color: #8b5cf6; margin-bottom: 0.5rem; }
+        .insight-label { font-size: 0.9rem; color: #9ca3af; }
+        .feature-title { font-size: 1.2rem; font-weight: 600; color: #ffffff; margin-bottom: 0.5rem; }
+        .feature-description { color: #9ca3af; font-size: 0.9rem; }
+        #map { height: 500px; border-radius: 0.5rem; z-index: 1; }
+        .categories-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .category-card { background: rgba(31, 41, 55, 0.5); border-radius: 1rem; overflow: hidden; border: 1px solid rgba(75, 85, 99, 0.3); transition: all 0.3s ease; cursor: pointer; }
+        .category-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2); border-color: rgba(139, 92, 246, 0.5); }
+        .category-image { height: 200px; background-size: cover; background-position: center; }
+        .category-content { padding: 1.5rem; }
+        .category-title { font-size: 1.3rem; font-weight: 600; color: #ffffff; margin-bottom: 0.5rem; }
+        .category-description { color: #9ca3af; font-size: 0.9rem; line-height: 1.5; }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; }
+        .modal-content { background: #1f2937; padding: 2rem; border-radius: 1rem; width: 90%; max-width: 600px; position: relative; animation: modalSlideIn 0.3s ease; }
+        .modal-close { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; cursor: pointer; color: #9ca3af; transition: color 0.3s ease; }
+        html[lang="ar"] .modal-close { right: auto; left: 1rem; }
+        .back-to-top { position: fixed; bottom: 2rem; right: 2rem; background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; width: 50px; height: 50px; border-radius: 50%; border: none; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 1000; }
+        html[lang="ar"] .back-to-top { right: auto; left: 2rem; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes modalSlideIn { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) { .nav-menu { display: none; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar"><div class="nav-container container"><a class="logo" href="#hero" data-translate="siteTitle"></a><ul class="nav-menu"><li><a class="nav-link active" href="#hero" data-translate="navHome"></a></li><li><a class="nav-link" href="#features" data-translate="navFeatures"></a></li><li><a class="nav-link" href="#chatbot" data-translate="navAIGuide"></a></li><li><a class="nav-link" href="#insights" data-translate="navInsights"></a></li><li><a class="nav-link" href="#map-section" data-translate="navMap"></a></li><li><a class="nav-link" href="#categories" data-translate="navExplore"></a></li><li class="lang-switcher"><button id="lang-ar">العربية</button><button id="lang-en">English</button></li></ul></div></nav>
+    <main><section class="hero" id="hero"><div class="hero-content"><h1 data-translate="heroTitle"></h1><p data-translate="heroSubtitle"></p><div class="hero-buttons"><a class="btn btn-primary" href="#chatbot" data-translate="heroBtnStart"></a></div></div></section>
+        
+        <section class="section" id="features"><div class="container"><h2 class="section-title" data-translate="featuresTitle"></h2><p class="section-subtitle" data-translate="featuresSubtitle"></p><div class="features-grid"></div></div></section>
+        
+        <section class="section" id="chatbot"><div class="container"><h2 class="section-title" data-translate="chatbotTitle"></h2><p class="section-subtitle" data-translate="chatbotSubtitle"></p><div class="chatbot-container"><div id="chatWindow"></div><form id="chatForm" class="chat-input-area"><input id="chatInput" type="text" data-translate-placeholder="chatPlaceholder" /><button id="sendButton" type="submit" class="btn btn-primary" data-translate="chatSend"></button></form></div></div></section>
+
+        <section class="section" id="insights"><div class="container"><h2 class="section-title" data-translate="insightsTitle"></h2><p class="section-subtitle" data-translate="insightsSubtitle"></p><div class="insights-grid"><div class="insight-card"><span class="insight-icon">🌡️</span><div class="insight-value" id="temp">--°C</div><div class="insight-label" data-translate="insightTemp"></div></div><div class="insight-card"><span class="insight-icon">👥</span><div class="insight-value" id="crowd">--</div><div class="insight-label" data-translate="insightCrowd"></div></div><div class="insight-card"><span class="insight-icon">💧</span><div class="insight-value" id="humidity">--%</div><div class="insight-label" data-translate="insightHumidity"></div></div><div class="insight-card"><span class="insight-icon">🌬️</span><div class="insight-value" id="air-quality">--</div><div class="insight-label" data-translate="insightAir"></div></div></div></div></section>
+        
+        <section class="section" id="map-section"><div class="container"><h2 class="section-title" data-translate="mapTitle"></h2><p class="section-subtitle" data-translate="mapSubtitle"></p><div class="map-container"><div id="map"></div></div></div></section>
+        
+        <section class="section" id="categories"><div class="container"><h2 class="section-title" data-translate="categoriesTitle"></h2><p class="section-subtitle" data-translate="categoriesSubtitle"></p><div class="categories-grid"></div><div style="text-align: center; margin-top: 3rem;"><a href="ar.html" class="btn btn-primary" data-translate="arBtn"></a></div></div></section>
+    </main>
+
+    <footer class="section" style="background: #0a0a0a; padding-top: 0; padding-bottom: 2rem;"><div class="container" style="text-align: center;"><p style="color: #6b7280; margin-top: 2rem; font-size: 0.9rem;" data-translate="footerRights"></p></div></footer>
+    
+    <div id="natureModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 class="modal-title" data-translate="modalNatureTitle"></h2><p class="modal-text" data-translate="modalNatureText"></p></div></div><div id="cultureModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 class="modal-title" data-translate="modalCultureTitle"></h2><p class="modal-text" data-translate="modalCultureText"></p></div></div><div id="religiousModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 class="modal-title" data-translate="modalReligiousTitle"></h2><p class="modal-text" data-translate="modalReligiousText"></p></div></div><div id="adventureModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 class="modal-title" data-translate="modalAdventureTitle"></h2><p class="modal-text" data-translate="modalAdventureText"></p></div></div>
+    
+    <button class="back-to-top" id="backToTop">↑</button>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // ======== DATA OBJECTS ========
+            const translations = {
+                en: { siteTitle: "SmartTour.JO", navHome: "Home", navFeatures: "Features", navAIGuide: "AI Guide", navInsights: "Insights", navMap: "Map", navExplore: "Explore", arBtn: "Launch AR Experience", heroTitle: "Explore Jordan Smarter", heroSubtitle: "Discover hidden treasures with AI recommendations.", heroBtnStart: "Start Your Journey", chatbotTitle: "Ask Our Smart AI Guide", chatbotSubtitle: "Get instant answers about Jordan.", chatPlaceholder: "Request a tour plan...", chatSend: "Send", insightsTitle: "Live Environment Insights", insightsSubtitle: "Real-time data from your location.", insightTemp: "Temperature", insightCrowd: "Crowd Level", insightHumidity: "Humidity", insightAir: "Air Quality", mapTitle: "More interactive with Featured Destinations", mapSubtitle: "Explore Jordan's attractions.", categoriesTitle: "Discover Jordan Your Way", categoriesSubtitle: "Find experiences that match your interests.", footerRights: "© 2024 SmartTour.JO. All rights reserved.", featuresTitle: "Smart Features", featuresSubtitle: "Enhancing your travel experience with modern technology.", yourLocationPopup: "<b>Your Location</b>", petraPopup:"Petra", jerashPopup:"Jerash", wadiRumPopup:"Wadi Rum" },
+                ar: { siteTitle: "SmartTour.JO", navHome: "الرئيسية", navFeatures: "المميزات", navAIGuide: "المرشد الذكي", navInsights: "مؤشرات حيوية", navMap: "الخريطة", navExplore: "اكتشف", arBtn: "شغّل تجربة الواقع المعزز", heroTitle: "اكتشف الأردن بذكاء", heroSubtitle: "اكتشف كنوز الأردن الخفية مع توصيات الذكاء الاصطناعي.", heroBtnStart: "ابدأ رحلتك", chatbotTitle: "اسأل مرشدنا الذكي", chatbotSubtitle: "احصل على إجابات فورية حول معالم الأردن.", chatPlaceholder: "اطلب خطة سياحية...", chatSend: "أرسل", insightsTitle: "مؤشرات بيئية حية", insightsSubtitle: "بيانات لحظية وحقيقية من موقعك الحالي.", insightTemp: "درجة الحرارة", insightCrowd: "مستوى الازدحام", insightHumidity: "الرطوبة", insightAir: "جودة الهواء", mapTitle: "تفاعل أكثر مع الوجهات المميزة", mapSubtitle: "استكشف معالم الأردن وخطط مسارك.", categoriesTitle: "اكتشف كنوز الأردن", categoriesSubtitle: "من العجائب القديمة إلى المناظر الطبيعية الخلابة، الأردن لديه كل شيء.", footerRights: "© 2024 SmartTour.JO. جميع الحقوق محفوظة.", featuresTitle: "مميزات ذكية", featuresSubtitle: "نعزز تجربة سفرك بأحدث التقنيات.", yourLocationPopup: "<b>موقعك الحالي</b>", petraPopup:"البتراء", jerashPopup:"جرش", wadiRumPopup:"وادي رم" }
+            };
+            const categoriesData = {
+                en: [
+                    { title: '🏛️ Petra: The Rose City', description: 'Explore the Treasury, the Monastery, and the ancient tombs of this UNESCO World Heritage wonder.', image: 'https://images.pexels.com/photos/4388167/pexels-photo-4388167.jpeg' },
+                    { title: '🏜️ Wadi Rum: The Martian Desert', description: 'Experience Bedouin culture, stunning sunsets, and Jeep tours in this vast desert landscape.', image: 'https://images.pexels.com/photos/3258242/pexels-photo-3258242.jpeg' },
+                    { title: '🌊 Dead Sea: The Lowest Point on Earth', description: 'Float effortlessly in its hypersaline waters and benefit from its therapeutic mineral-rich mud.', image: 'https://images.pexels.com/photos/30129079/pexels-photo-30129079.png' },
+                    { title: '🧗 Adventure in Canyons', description: 'Experience thrilling adventures like Canyoning in Wadi Mujib and diving in the Red Sea at Aqaba.', image: 'https://images.pexels.com/photos/31159570/pexels-photo-31159570.jpeg' }
+                ],
+                ar: [
+                    { title: '🏛️ البتراء: المدينة الوردية', description: 'استكشف الخزنة والدير والمقابر القديمة في هذه الأعجوبة المدرجة على قائمة اليونسكو للتراث العالمي.', image: 'https://images.pexels.com/photos/4388167/pexels-photo-4388167.jpeg' },
+                    { title: '🏜️ وادي رم: صحراء المريخ', description: 'جرّب الثقافة البدوية، وغروب الشمس المذهل، وجولات الجيب في هذا المشهد الصحراوي الشاسع.', image: 'https://images.pexels.com/photos/3258242/pexels-photo-3258242.jpeg' },
+                    { title: '🌊 البحر الميت: أخفض بقعة على الأرض', description: 'اطفُ بسهولة في مياهه شديدة الملوحة واستفد من طينه الغني بالمعادن العلاجية.', image: 'https://images.pexels.com/photos/30129079/pexels-photo-30129079.png' },
+                    { title: '🧗 مغامرة في الأودية', description: 'جرب مغامرات مثيرة مثل استكشاف الأودية في وادي الموجب والغوص في البحر الأحمر في العقبة.', image: 'https://images.pexels.com/photos/31159570/pexels-photo-31159570.jpeg' }
+                ]
+            };
+             const featuresData = {
+                en: [ { icon: '🤖', title: 'AI Itinerary', description: 'Get personalized travel plans.' }, { icon: '🥽', title: 'AR Views', description: 'Bring historical sites to life.' }, { icon: '📊', title: 'IoT Sensors', description: 'Real-time data on weather and crowds.' } ],
+                ar: [ { icon: '🤖', title: 'خطط ذكية', description: 'احصل على خطط سفر مخصصة.' }, { icon: '🥽', title: 'واقع معزز', description: 'أعد إحياء المواقع التاريخية.' }, { icon: '📊', title: 'مستشعرات حية', description: 'بيانات مباشرة للطقس والازدحام.' } ]
+            };
+
+            // ======== MAIN FUNCTIONS ========
+            const setLanguage = (lang) => {
+                document.documentElement.lang = lang;
+                document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+                localStorage.setItem('language', lang);
+                document.querySelectorAll('[data-translate]').forEach(el => { el.textContent = translations[lang][el.getAttribute('data-translate')] || ''; });
+                document.querySelectorAll('[data-translate-placeholder]').forEach(el => { el.placeholder = translations[lang][el.getAttribute('data-translate-placeholder')] || ''; });
+                document.getElementById('lang-ar').classList.toggle('active', lang === 'ar');
+                document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+                populateCategories(lang);
+                populateFeatures(lang);
+                updateInsights(); 
+            };
+            
+            function populateFeatures(lang) {
+                const featuresGrid = document.querySelector('.features-grid');
+                featuresGrid.innerHTML = '';
+                featuresData[lang].forEach(feat => {
+                    const card = document.createElement('div');
+                    card.className = 'feature-card';
+                    card.innerHTML = `<span class="feature-icon">${feat.icon}</span><h3 class="feature-title">${feat.title}</h3><p class="feature-description">${feat.description}</p>`;
+                    featuresGrid.appendChild(card);
+                });
+            }
+
+            function populateCategories(lang) {
+                const categoriesGrid = document.querySelector('.categories-grid');
+                categoriesGrid.innerHTML = '';
+                categoriesData[lang].forEach(cat => {
+                    const card = document.createElement('div');
+                    card.className = 'category-card';
+                    card.innerHTML = `<div class="category-image" style="background-image: url('${cat.image}')"></div><div class="category-content"><h3 class="category-title">${cat.title}</h3><p class="category-description">${cat.description}</p></div>`;
+                    categoriesGrid.appendChild(card);
+                });
+            }
+
+            async function updateInsights() {
+                const apiKey = '91859b46e4ef01b5415a2f8b1ddbfac1';
+                const updateUI = (data) => {
+                    document.getElementById("temp").innerText = `${Math.round(data.main.temp)}°C`;
+                    document.getElementById("humidity").innerText = `${data.main.humidity}%`;
+                };
+                try {
+                    navigator.geolocation.getCurrentPosition(
+                        async (position) => {
+                            const { latitude, longitude } = position.coords;
+                            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+                            const response = await fetch(apiUrl);
+                            if (!response.ok) throw new Error('Weather API error');
+                            const data = await response.json();
+                            updateUI(data);
+                        },
+                        async () => {
+                            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=Amman&appid=${apiKey}&units=metric`;
+                            const response = await fetch(apiUrl);
+                            if (!response.ok) throw new Error('Default weather API error');
+                            const data = await response.json();
+                            updateUI(data);
+                        }
+                    );
+                } catch (error) { console.error('Fetch weather error:', error); }
+                const lang = document.documentElement.lang || 'ar';
+                const crowdLevels = { en: ["Low", "Medium", "High"], ar: ["منخفض", "متوسط", "مرتفع"] };
+                const airQualityLevels = { en: ["Good", "Moderate"], ar: ["جيدة", "متوسطة"] };
+                document.getElementById("crowd").innerText = crowdLevels[lang][Math.floor(Math.random() * 3)];
+                document.getElementById("air-quality").innerText = airQualityLevels[lang][Math.floor(Math.random() * 2)];
+            }
+            
+            // ======== MAP INITIALIZATION (FIXED) ========
+            const map = L.map('map').setView([31.2, 36.5], 7);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+
+            const touristSites = {
+                petra: { coords: [30.3285, 35.4444], name: "petraPopup" },
+                jerash: { coords: [32.2730, 35.8911], name: "jerashPopup" },
+                wadiRum: { coords: [29.5732, 35.4194], name: "wadiRumPopup" },
+            };
+            
+            Object.values(touristSites).forEach(site => {
+                L.marker(site.coords).addTo(map).bindPopup(translations[document.documentElement.lang || 'ar'][site.name]);
+            });
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    const userLoc = [pos.coords.latitude, pos.coords.longitude];
+                    L.marker(userLoc).addTo(map).bindPopup(translations[document.documentElement.lang || 'ar'].yourLocationPopup).openPopup();
+                });
+            }
+            setTimeout(() => { map.invalidateSize() }, 400);
+
+            // ======== CHATBOT LOGIC (FIXED) ========
+            const chatForm = document.getElementById('chatForm');
+            const inputElement = document.getElementById('chatInput');
+            const sendButton = document.getElementById('sendButton');
+            const chatWindow = document.getElementById('chatWindow');
+            let chatHistory = [];
+            const systemPrompt = "You are 'SmartTour.JO AI Assistant', an expert tour guide for Jordan. Your job is to help tourists. Be friendly and focus on tourism in Jordan ONLY. If asked about something else, politely decline. Use a clear and welcoming Arabic dialect.";
+            
+            function appendMessage(message, type) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `chat-message ${type}-message`;
+                messageDiv.innerText = message;
+                chatWindow.appendChild(messageDiv);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+            
+            async function handleFormSubmit(event) {
+                event.preventDefault(); // <-- The most important fix!
+                const userInput = inputElement.value.trim();
+                if (!userInput) return;
+                appendMessage(userInput, 'user');
+
+                if (chatHistory.length === 0) {
+                     chatHistory.push({ role: 'user', parts: [{ text: systemPrompt }] });
+                }
+                chatHistory.push({ role: 'user', parts: [{ text: userInput }] });
+                
+                inputElement.value = '';
+                sendButton.disabled = true;
+                const lang = document.documentElement.lang || 'ar';
+                const existingThinking = chatWindow.querySelector('.thinking');
+                if(existingThinking) chatWindow.removeChild(existingThinking);
+
+                const thinkingMessage = document.createElement('div');
+                thinkingMessage.className = 'chat-message bot-message thinking';
+                thinkingMessage.innerText = lang === 'ar' ? '... أفكر' : '...thinking';
+                chatWindow.appendChild(thinkingMessage);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+                
+                const workerUrl = "https://white-frost-8014.karam200566.workers.dev/";
+                try {
+                    const response = await fetch(workerUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ history: chatHistory })
+                    });
+                    if (!response.ok) throw new Error(`Network error: ${response.status}`);
+                    
+                    const data = await response.json();
+                    const botResponse = data.response;
+                    
+                    chatWindow.removeChild(chatWindow.lastChild);
+                    appendMessage(botResponse, 'bot');
+                    chatHistory.push({ role: 'model', parts: [{ text: botResponse }] });
+                } catch (error) {
+                    chatWindow.removeChild(chatWindow.lastChild);
+                    appendMessage(`❌ فشل الاتصال. ${error.message}`, 'bot');
+                } finally {
+                    sendButton.disabled = false;
+                    inputElement.focus();
+                }
+            }
+
+            // ======== EVENT LISTENERS ========
+            chatForm.addEventListener('submit', handleFormSubmit);
+
+            const backToTopBtn = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => { backToTopBtn.style.display = (window.scrollY > 300) ? 'flex' : 'none'; });
+            backToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+            document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+            document.getElementById('lang-ar').addEventListener('click', () => setLanguage('ar'));
+            document.querySelectorAll('.modal-close').forEach(btn => { btn.addEventListener('click', e => { e.target.closest('.modal').style.display = 'none'; }); });
+            window.addEventListener('click', e => { if (e.target.classList.contains('modal')) e.target.style.display = 'none'; });
+            
+            // Initial Load
+            setLanguage(localStorage.getItem('language') || 'ar');
+            setInterval(updateInsights, 300000); 
+        });
+    </script>
+</body>
+</html>
