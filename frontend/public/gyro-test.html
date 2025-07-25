@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gyroscope Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.min.js"></script>
+    <style>
+        body { margin: 0; }
+        .info {
+            position: fixed;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            z-index: 1;
+            color: white;
+            background-color: rgba(0,0,0,0.5);
+            padding: 10px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="info">
+        Move your phone left, right, up, and down.<br/>The box should stay fixed in one place.
+    </div>
+    <a-scene vr-mode-ui="enabled: false">
+        <a-camera rotation-reader></a-camera>
+
+        <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+        <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+        <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
+        <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
+
+        <a-sky color="#222"></a-sky>
+    </a-scene>
+</body>
+</html>
