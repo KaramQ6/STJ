@@ -5,6 +5,13 @@ import "./App.css";
 import 'leaflet/dist/leaflet.css';
 import ARGuide from './ARGuide';
 
+// --- الحل لمشكلة الشاشة البيضاء ---
+// استيراد الصور مباشرة بدلاً من استخدام require()
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
+// --- دالة التحقق من دعم الحساسات ---
 const checkSensorSupport = () => {
     return new Promise((resolve, reject) => {
         if (!window.DeviceOrientationEvent) {
@@ -31,6 +38,7 @@ const checkSensorSupport = () => {
         }
     });
 };
+
 
 const translations = {
   en: {
@@ -123,6 +131,7 @@ const translations = {
   }
 };
 
+
 const GalleryModal = ({ isOpen, onClose, images, lang }) => {
     if (!isOpen) return null;
     return (
@@ -152,6 +161,7 @@ const App = () => {
     const [showAR, setShowAR] = useState(false);
     const [language, setLanguage] = useState('en');
     const t = (key) => translations[language][key] || key;
+
     const [sensorData, setSensorData] = useState({ temperature: 28, humidity: 45, crowdLevel: 'Medium', airQuality: 'Good' });
     const [previousSensorData, setPreviousSensorData] = useState({ temperature: 28, humidity: 45, crowdLevel: 'Medium', airQuality: 'Good' });
     const [isDataUpdating, setIsDataUpdating] = useState(false);
@@ -179,11 +189,12 @@ const App = () => {
     }, [language]);
 
     useEffect(() => {
+        // --- الحل لمشكلة الشاشة البيضاء ---
         delete L.Icon.Default.prototype._getIconUrl;
         L.Icon.Default.mergeOptions({
-            iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-            iconUrl: require('leaflet/dist/images/marker-icon.png'),
-            shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+            iconRetinaUrl: iconRetinaUrl,
+            iconUrl: iconUrl,
+            shadowUrl: shadowUrl,
         });
     }, []);
 
