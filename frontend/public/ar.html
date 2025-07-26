@@ -1,15 +1,27 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Professional GPS AR v3 - SmartTour</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 
+    <script src="script.js"></script>
+
     <style>
-        body { margin: 0; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
         .ui-panel {
             position: fixed;
             left: 50%;
@@ -26,8 +38,18 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
-        .info-panel { bottom: 20px; display: none; }
-        #location-list { top: 20px; padding: 8px; display: none; }
+
+        .info-panel {
+            bottom: 20px;
+            display: none;
+        }
+
+        #location-list {
+            top: 20px;
+            padding: 8px;
+            display: none;
+        }
+
         .location-button {
             background-color: #8B5CF6;
             color: white;
@@ -40,20 +62,43 @@
             margin-top: 8px;
             cursor: pointer;
         }
-        .location-button:first-child { margin-top: 0; }
-        #splash-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #111827; color: white;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 10000; text-align: center; padding: 20px; box-sizing: border-box;
+
+        .location-button:first-child {
+            margin-top: 0;
         }
+
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #111827;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
         #start-button {
-            background-color: #8B5CF6; color: white; border: none;
-            padding: 15px 30px; font-size: 18px; font-weight: bold;
-            border-radius: 50px; cursor: pointer; margin-top: 20px;
+            background-color: #8B5CF6;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
         }
     </style>
 </head>
+
 <body style="margin: 0; overflow: hidden;">
     <div id="splash-screen">
         <h2>SmartTour AR Guide</h2>
@@ -61,29 +106,29 @@
         <button id="start-button">Start Experience</button>
         <p id="status-message" style="margin-top: 20px; color: #9CA3AF;"></p>
     </div>
-    
+
     <div id="location-list" class="ui-panel">
         <h4>Choose a destination:</h4>
         <div id="buttons-container"></div>
     </div>
 
-    <a-scene 
-        id="ar-scene"
-        vr-mode-ui="enabled: false"
+    <a-scene id="ar-scene" vr-mode-ui="enabled: false"
         arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false; trackingMethod: best;"
-        renderer="antialias: true; alpha: true"
-        style="display: none;"
-        ar-handler>
+        renderer="antialias: true; alpha: true" style="display: none;" ar-handler>
 
         <a-camera gps-new-camera="gpsMinDistance: 5" rotation-reader>
             <a-entity id="info-card" position="0 -0.8 -2.5" visible="false">
-                <a-plane width="1.8" height="0.8" color="#8B5CF6" material="transparent: true; opacity: 0.9" rounded="radius: 0.05"></a-plane>
-                <a-text id="card-title" value="" color="#FFFFFF" align="center" width="3" position="0 0.2 0.01"></a-text>
-                <a-text id="card-description" value="" color="#E0E0E0" align="center" width="1.7" position="0 -0.1 0.01"></a-text>
+                <a-plane width="1.8" height="0.8" color="#8B5CF6" material="transparent: true; opacity: 0.9"
+                    rounded="radius: 0.05"></a-plane>
+                <a-text id="card-title" value="" color="#FFFFFF" align="center" width="3"
+                    position="0 0.2 0.01"></a-text>
+                <a-text id="card-description" value="" color="#E0E0E0" align="center" width="1.7"
+                    position="0 -0.1 0.01"></a-text>
             </a-entity>
-            
+
             <a-entity id="arrow-container" position="0 0 -4" visible="false">
-                <a-cone id="arrow-cone" color="yellow" radius-bottom="0.3" radius-top="0" height="0.5" rotation="-90 0 0"></a-cone>
+                <a-cone id="arrow-cone" color="yellow" radius-bottom="0.3" radius-top="0" height="0.5"
+                    rotation="-90 0 0"></a-cone>
                 <a-text id="arrow-distance" value="" color="white" align="center" position="0 0.8 0" width="8"></a-text>
             </a-entity>
         </a-camera>
@@ -150,9 +195,9 @@
                     const distance = this.getDistance(this.userLat, this.userLon, this.activeTarget.lat, this.activeTarget.lon);
                     this.updateUIVisibility(distance);
                     this.updateBottomPanel(this.activeTarget.name, distance);
-                    
+
                     const arrowContainer = document.getElementById('arrow-container');
-                    if(arrowContainer.getAttribute('visible')) {
+                    if (arrowContainer.getAttribute('visible')) {
                         const targetPoi = document.getElementById('target-poi');
                         targetPoi.setAttribute('gps-new-entity-place', `latitude: ${this.activeTarget.lat}; longitude: ${this.activeTarget.lon};`);
                         document.getElementById('arrow-distance').setAttribute('value', `${distance.toFixed(0)}m`);
@@ -161,15 +206,15 @@
                 }
             },
 
-            updateLocationList: function(places) {
+            updateLocationList: function (places) {
                 const listContainer = document.getElementById('location-list');
                 const buttonsContainer = document.getElementById('buttons-container');
-                
+
                 if (this.activeTarget) {
                     listContainer.style.display = 'none';
                     return;
                 }
-                
+
                 if (places.length === 0) {
                     listContainer.style.display = 'none';
                     if (!this.noPlaceMessage) {
@@ -192,12 +237,12 @@
                 }
             },
 
-            setActiveTarget: function(place) {
+            setActiveTarget: function (place) {
                 this.activeTarget = place;
                 document.getElementById('location-list').style.display = 'none';
             },
 
-            updateUIVisibility: function(distance) {
+            updateUIVisibility: function (distance) {
                 const distanceThreshold = 75;
                 const infoCard = document.getElementById('info-card');
                 const arrowContainer = document.getElementById('arrow-container');
@@ -212,14 +257,14 @@
                     arrowContainer.setAttribute('visible', true);
                 }
             },
-            
-            hideAllUI: function() {
+
+            hideAllUI: function () {
                 document.getElementById('info-card').setAttribute('visible', false);
                 document.getElementById('arrow-container').setAttribute('visible', false);
                 document.getElementById('info-panel').style.display = 'none';
             },
 
-            findNearbyPlaces: function(radius) {
+            findNearbyPlaces: function (radius) {
                 return this.locations.filter(place => this.getDistance(this.userLat, this.userLon, place.lat, place.lon) < radius);
             },
 
@@ -252,7 +297,7 @@
             try {
                 await checkSensorSupport();
                 statusMessage.innerText = 'Sensors OK. Requesting location...';
-                
+
                 navigator.geolocation.getCurrentPosition(
                     () => {
                         statusMessage.innerText = 'Permissions granted. Starting AR...';
@@ -269,4 +314,5 @@
         });
     </script>
 </body>
+
 </html>
