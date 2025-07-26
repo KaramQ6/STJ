@@ -17,65 +17,6 @@ body {
   font-weight: 400;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.025em;
-}
-
-/* --- أكواد CSS الجديدة لدليل الـ AR --- */
-.ar-container {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999;
-}
-.exit-ar-button {
-    position: fixed; top: 20px; right: 20px; z-index: 10001;
-    background-color: rgba(17, 24, 39, 0.85); color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50px;
-    padding: 10px 20px; font-size: 16px; font-weight: bold; cursor: pointer;
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-}
-.ui-panel {
-    position: fixed; left: 50%; transform: translateX(-50%);
-    background-color: rgba(17, 24, 39, 0.85); padding: 12px 16px;
-    border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);
-    text-align: center; z-index: 10000; color: white; width: 90%;
-    max-width: 400px; backdrop-filter: blur(10px);
-}
-.info-panel { bottom: 20px; }
-#location-list { top: 20px; padding: 8px; display: none; }
-.location-button {
-    background-color: #8B5CF6; color: white; border: none; padding: 12px;
-    width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold;
-    margin-top: 8px; cursor: pointer;
-}
-.location-button:first-child { margin-top: 0; }
-
-/* --- باقي أكواد CSS الأصلية الخاصة بك --- */
-/* Global Styles */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #0f0f10;
-  color: #ffffff;
-  line-height: 1.6;
-  font-weight: 400;
-}
-
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
@@ -1071,34 +1012,6 @@ img {
 }
 
 /* Counter-rotate the emoji inside so it appears upright */
-.custom-styled-marker .marker-emoji {
-  display: block;
-  transform: rotate(45deg);
-  font-size: 18px;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
-}
-
-.leaflet-div-icon {
-  background: none;
-  border: none;
-}
-
-.custom-styled-marker {
-  background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
-  border: 3px solid white;
-  border-radius: 50% 50% 50% 0;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
-  transform: rotate(-45deg);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: transform 0.2s ease-in-out;
-}
-
-.custom-styled-marker:hover {
-  transform: rotate(-45deg) scale(1.1);
-}
-
 .custom-styled-marker .marker-emoji {
   display: block;
   transform: rotate(45deg);
