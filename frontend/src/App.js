@@ -3,7 +3,6 @@ import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import "./App.css";
 import 'leaflet/dist/leaflet.css';
-import ARGuide from './ARGuide'; // --- استيراد المكون الجديد
 
 // --- دالة التحقق من دعم الحساسات ---
 const checkSensorSupport = () => {
