@@ -1,5 +1,4 @@
 /* Global Styles */
-/* Global Styles */
 * {
   margin: 0;
   padding: 0;
@@ -32,170 +31,64 @@ h1, h2, h3, h4, h5, h6 {
 
 /* --- أكواد CSS الجديدة لدليل الـ AR --- */
 .ar-container {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
 }
+
 .exit-ar-button {
-    position: fixed; top: 20px; right: 20px; z-index: 10001;
-    background-color: rgba(17, 24, 39, 0.85); color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50px;
-    padding: 10px 20px; font-size: 16px; font-weight: bold; cursor: pointer;
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+    background-color: rgba(17, 24, 39, 0.85);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
+
 .ui-panel {
-    position: fixed; left: 50%; transform: translateX(-50%);
-    background-color: rgba(17, 24, 39, 0.85); padding: 12px 16px;
-    border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);
-    text-align: center; z-index: 10000; color: white; width: 90%;
-    max-width: 400px; backdrop-filter: blur(10px);
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(17, 24, 39, 0.85);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    z-index: 10000;
+    color: white;
+    width: 90%;
+    max-width: 400px;
+    backdrop-filter: blur(10px);
 }
+
 .info-panel { bottom: 20px; }
 #location-list { top: 20px; padding: 8px; display: none; }
 .location-button {
-    background-color: #8B5CF6; color: white; border: none; padding: 12px;
-    width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold;
-    margin-top: 8px; cursor: pointer;
+    background-color: #8B5CF6;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 8px;
+    cursor: pointer;
 }
-.location-button:first-child { margin-top: 0; }
 
 /* --- باقي أكواد CSS الأصلية الخاصة بك --- */
-
-.leaflet-div-icon {
-  background: none;
-  border: none;
-}
-
-.custom-styled-marker {
-  background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
-  border: 3px solid white;
-  border-radius: 50% 50% 50% 0;
-  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
-  transform: rotate(-45deg);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: transform 0.2s ease-in-out;
-}
-
-.custom-styled-marker:hover {
-  transform: rotate(-45deg) scale(1.1);
-}
-
-.custom-styled-marker .marker-emoji {
-  display: block;
-  transform: rotate(45deg);
-  font-size: 18px;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
-}
-
 /* (هنا يمكنك لصق باقي محتوى ملف App.css الأصلي إذا كان هناك المزيد) */
-/* ... */
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #0f0f10;
-  color: #ffffff;
-  line-height: 1.6;
-  font-weight: 400;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.025em;
-}
-
-/* --- أكواد CSS الجديدة لدليل الـ AR --- */
-.ar-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-}
-
-.exit-ar-button {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 10001;
-  background-color: rgba(17, 24, 39, 0.85);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50px;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.ui-panel {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(17, 24, 39, 0.85);
-  padding: 12px 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  text-align: center;
-  z-index: 10000;
-  color: white;
-  width: 90%;
-  max-width: 400px;
-  backdrop-filter: blur(10px);
-}
-
-.info-panel {
-  bottom: 20px;
-}
-
-#location-list {
-  top: 20px;
-  padding: 8px;
-  display: none;
-}
-
-.location-button {
-  background-color: #8B5CF6;
-  color: white;
-  border: none;
-  padding: 12px;
-  width: 100%;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 8px;
-  cursor: pointer;
-}
-
-.location-button:first-child {
-  margin-top: 0;
-}
-
-/* --- باقي أكواد CSS الأصلية الخاصة بك --- */
 /* Global Styles */
 * {
   margin: 0;
@@ -221,12 +114,7 @@ html {
 }
 
 /* Typography System */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 700;
   line-height: 1.2;
@@ -263,17 +151,17 @@ p {
     font-size: 2.5rem;
     line-height: 1.1;
   }
-
+  
   h2 {
     font-size: 2rem;
     line-height: 1.2;
   }
-
+  
   h3 {
     font-size: 1.5rem;
     line-height: 1.3;
   }
-
+  
   p {
     font-size: 1rem;
     line-height: 1.6;
@@ -286,7 +174,6 @@ p {
     opacity: 0;
     transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -297,7 +184,6 @@ p {
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
@@ -308,7 +194,6 @@ p {
     opacity: 0;
     transform: translateX(-30px);
   }
-
   to {
     opacity: 1;
     transform: translateX(0);
@@ -320,7 +205,6 @@ p {
     opacity: 0;
     transform: translateX(30px);
   }
-
   to {
     opacity: 1;
     transform: translateX(0);
@@ -328,24 +212,18 @@ p {
 }
 
 @keyframes pulse-glow {
-
-  0%,
-  100% {
+  0%, 100% {
     box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
   }
-
   50% {
     box-shadow: 0 0 30px rgba(168, 85, 247, 0.6);
   }
 }
 
 @keyframes float {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0px);
   }
-
   50% {
     transform: translateY(-10px);
   }
@@ -356,7 +234,6 @@ p {
     opacity: 0;
     transform: translateY(50px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -367,7 +244,6 @@ p {
   0% {
     background-position: -1000px 0;
   }
-
   100% {
     background-position: 1000px 0;
   }
@@ -378,16 +254,13 @@ p {
     opacity: 0;
     transform: scale(0.3);
   }
-
   50% {
     opacity: 1;
     transform: scale(1.05);
   }
-
   70% {
     transform: scale(0.9);
   }
-
   100% {
     opacity: 1;
     transform: scale(1);
@@ -399,7 +272,6 @@ p {
     opacity: 0;
     transform: translateY(-50px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -407,12 +279,9 @@ p {
 }
 
 @keyframes glow {
-
-  0%,
-  100% {
+  0%, 100% {
     text-shadow: 0 0 10px rgba(139, 92, 246, 0.5), 0 0 20px rgba(139, 92, 246, 0.3);
   }
-
   50% {
     text-shadow: 0 0 20px rgba(139, 92, 246, 0.8), 0 0 30px rgba(139, 92, 246, 0.5);
   }
@@ -423,12 +292,10 @@ p {
     transform: scale(1);
     opacity: 1;
   }
-
   50% {
     transform: scale(1.1);
     opacity: 0.8;
   }
-
   100% {
     transform: scale(1);
     opacity: 1;
@@ -439,7 +306,6 @@ p {
   from {
     width: 0%;
   }
-
   to {
     width: 100%;
   }
@@ -450,7 +316,6 @@ p {
     opacity: 0;
     transform: translateY(30px) scale(0.95);
   }
-
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -462,11 +327,9 @@ p {
     opacity: 0;
     transform: scale(0.8) translateY(10px);
   }
-
   50% {
     transform: scale(1.05) translateY(-2px);
   }
-
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -474,25 +337,18 @@ p {
 }
 
 @keyframes typing {
-
-  0%,
-  60%,
-  100% {
+  0%, 60%, 100% {
     transform: translateY(0);
   }
-
   30% {
     transform: translateY(-10px);
   }
 }
 
 @keyframes floatUpDown {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0px);
   }
-
   50% {
     transform: translateY(-20px);
   }
@@ -503,20 +359,16 @@ p {
     transform: rotate(0deg);
     box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
   }
-
   25% {
     box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
   }
-
   50% {
     transform: rotate(180deg);
     box-shadow: 0 0 25px rgba(167, 139, 250, 0.35);
   }
-
   75% {
     box-shadow: 0 0 35px rgba(139, 92, 246, 0.45);
   }
-
   100% {
     transform: rotate(360deg);
     box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
@@ -614,29 +466,18 @@ p {
 }
 
 /* Staggered scroll animations */
-.scroll-stagger>* {
+.scroll-stagger > * {
   opacity: 0;
   transform: translateY(30px);
   transition: all 0.8s ease-out;
 }
 
-.scroll-stagger.animate>*:nth-child(1) {
-  transition-delay: 0.1s;
-}
+.scroll-stagger.animate > *:nth-child(1) { transition-delay: 0.1s; }
+.scroll-stagger.animate > *:nth-child(2) { transition-delay: 0.2s; }
+.scroll-stagger.animate > *:nth-child(3) { transition-delay: 0.3s; }
+.scroll-stagger.animate > *:nth-child(4) { transition-delay: 0.4s; }
 
-.scroll-stagger.animate>*:nth-child(2) {
-  transition-delay: 0.2s;
-}
-
-.scroll-stagger.animate>*:nth-child(3) {
-  transition-delay: 0.3s;
-}
-
-.scroll-stagger.animate>*:nth-child(4) {
-  transition-delay: 0.4s;
-}
-
-.scroll-stagger.animate>* {
+.scroll-stagger.animate > * {
   opacity: 1;
   transform: translateY(0);
 }
@@ -787,13 +628,8 @@ p {
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Enhanced mobile layout */
@@ -801,28 +637,28 @@ p {
   .container {
     padding: 0 16px;
   }
-
+  
   .section-padding {
     padding: 60px 0;
   }
-
+  
   .grid-mobile {
     grid-template-columns: 1fr;
     gap: 16px;
   }
-
+  
   .text-mobile-center {
     text-align: center;
   }
-
+  
   .btn-mobile-full {
     width: 100%;
   }
-
+  
   .card-mobile {
     margin-bottom: 16px;
   }
-
+  
   .spacing-mobile {
     margin-bottom: 24px;
   }
@@ -833,11 +669,11 @@ p {
   .container {
     padding: 0 24px;
   }
-
+  
   .section-padding {
     padding: 80px 0;
   }
-
+  
   .grid-tablet {
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
@@ -849,11 +685,11 @@ p {
   .container {
     padding: 0 32px;
   }
-
+  
   .section-padding {
     padding: 100px 0;
   }
-
+  
   .grid-desktop {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 32px;
@@ -874,11 +710,11 @@ select:focus {
   .bg-gray-800 {
     background-color: #000000;
   }
-
+  
   .text-gray-300 {
     color: #ffffff;
   }
-
+  
   .border-gray-700 {
     border-color: #ffffff;
   }
@@ -891,7 +727,7 @@ select:focus {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-
+  
   html {
     scroll-behavior: auto;
   }
@@ -902,74 +738,43 @@ select:focus {
   .no-print {
     display: none !important;
   }
-
+  
   body {
     background: white !important;
     color: black !important;
   }
-
+  
   .fixed {
     position: relative !important;
   }
 }
 
 /* Enhanced grid animations */
-.grid-fade-in>* {
+.grid-fade-in > * {
   opacity: 0;
   transform: translateY(20px);
   animation: fade-in-up 0.6s ease-out forwards;
 }
 
-.grid-fade-in>*:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-.grid-fade-in>*:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.grid-fade-in>*:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.grid-fade-in>*:nth-child(4) {
-  animation-delay: 0.4s;
-}
-
-.grid-fade-in>*:nth-child(5) {
-  animation-delay: 0.5s;
-}
-
-.grid-fade-in>*:nth-child(6) {
-  animation-delay: 0.6s;
-}
+.grid-fade-in > *:nth-child(1) { animation-delay: 0.1s; }
+.grid-fade-in > *:nth-child(2) { animation-delay: 0.2s; }
+.grid-fade-in > *:nth-child(3) { animation-delay: 0.3s; }
+.grid-fade-in > *:nth-child(4) { animation-delay: 0.4s; }
+.grid-fade-in > *:nth-child(5) { animation-delay: 0.5s; }
+.grid-fade-in > *:nth-child(6) { animation-delay: 0.6s; }
 
 /* Staggered animations */
-.stagger-animation>* {
+.stagger-animation > * {
   opacity: 0;
   transform: translateY(30px);
   animation: fade-in-up 0.8s ease-out forwards;
 }
 
-.stagger-animation>*:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-.stagger-animation>*:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.stagger-animation>*:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.stagger-animation>*:nth-child(4) {
-  animation-delay: 0.4s;
-}
-
-.stagger-animation>*:nth-child(5) {
-  animation-delay: 0.5s;
-}
+.stagger-animation > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-animation > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-animation > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-animation > *:nth-child(4) { animation-delay: 0.4s; }
+.stagger-animation > *:nth-child(5) { animation-delay: 0.5s; }
 
 /* Parallax effect */
 .parallax {
@@ -992,7 +797,12 @@ img {
 
 /* Image preloading */
 .preload-images {
-  content: url('https://images.unsplash.com/photo-1712323028707-6e59c3d2271a') url('https://images.pexels.com/photos/3214958/pexels-photo-3214958.jpeg') url('https://images.pexels.com/photos/17645580/pexels-photo-17645580.jpeg') url('https://images.unsplash.com/photo-1750357437870-5b4ef7f03df8') url('https://images.unsplash.com/photo-1750357445390-264bfe3b6db2') url('https://images.pexels.com/photos/3250591/pexels-photo-3250591.jpeg');
+  content: url('https://images.unsplash.com/photo-1712323028707-6e59c3d2271a')
+           url('https://images.pexels.com/photos/3214958/pexels-photo-3214958.jpeg')
+           url('https://images.pexels.com/photos/17645580/pexels-photo-17645580.jpeg')
+           url('https://images.unsplash.com/photo-1750357437870-5b4ef7f03df8')
+           url('https://images.unsplash.com/photo-1750357445390-264bfe3b6db2')
+           url('https://images.pexels.com/photos/3250591/pexels-photo-3250591.jpeg');
   position: absolute;
   left: -9999px;
   top: -9999px;
@@ -1052,7 +862,7 @@ img {
     border-top: 1px solid rgba(75, 85, 99, 0.3);
     z-index: 50;
   }
-
+  
   .mobile-nav-item {
     flex: 1;
     text-align: center;
@@ -1061,11 +871,11 @@ img {
     color: #9ca3af;
     transition: color 0.3s ease;
   }
-
+  
   .mobile-nav-item.active {
     color: #8b5cf6;
   }
-
+  
   .mobile-nav-item:hover {
     color: #ffffff;
   }
@@ -1082,7 +892,6 @@ img {
   0% {
     background-position: -200% 0;
   }
-
   100% {
     background-position: 200% 0;
   }
@@ -1157,11 +966,9 @@ img {
   0% {
     transform: scale(1);
   }
-
   50% {
     transform: scale(1.1);
   }
-
   100% {
     transform: scale(1);
   }
@@ -1172,18 +979,12 @@ img {
 }
 
 @keyframes markerBounce {
-
-  0%,
-  20%,
-  60%,
-  100% {
+  0%, 20%, 60%, 100% {
     transform: scale(1);
   }
-
   40% {
     transform: scale(1.2);
   }
-
   80% {
     transform: scale(1.1);
   }
@@ -1287,8 +1088,7 @@ img {
 .custom-styled-marker {
   background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
   border: 3px solid white;
-  border-radius: 50% 50% 50% 0;
-  /* Creates the teardrop shape */
+  border-radius: 50% 50% 50% 0; /* Creates the teardrop shape */
   box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
   transform: rotate(-45deg);
   display: flex;
@@ -1307,7 +1107,7 @@ img {
   display: block;
   transform: rotate(45deg);
   font-size: 18px;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
 
 .leaflet-div-icon {
@@ -1335,5 +1135,5 @@ img {
   display: block;
   transform: rotate(45deg);
   font-size: 18px;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
