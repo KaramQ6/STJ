@@ -218,7 +218,7 @@ const App = () => {
     inputElement.value = '';
     setIsTyping(true);
 
-    const webhookUrl = "https://karamq5.app.n8n.cloud/webhook/68e2a48a-2919-46f3-b0e2-532dd8189d9c/chat";
+    const webhookUrl = "https://karamq5.app.n8n.cloud/webhook/gemini-tour-chat";
 
     try {
         const response = await fetch(webhookUrl, {
