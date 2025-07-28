@@ -11,9 +11,9 @@ const translations = {
     smartTourJo: "SmartTour.jo",
     navHome: "Home",
     navFeatures: "Features",
+    navExplore: "Explore",
     navAR: "AR Guide",
     navMap: "Map",
-    navExplore: "Explore",
     navInsights: "Insights",
     heroTitle: "Explore Jordan Smarter",
     heroSubtitle: "Unlock Jordan's hidden treasures with AI-powered recommendations, AR experiences, and real-time insights that transform your journey into an unforgettable adventure.",
@@ -55,9 +55,9 @@ const translations = {
     smartTourJo: "سمارت تور.جو",
     navHome: "الرئيسية",
     navFeatures: "الميزات",
+    navExplore: "استكشف",
     navAR: "دليل الواقع المعزز",
     navMap: "الخريطة",
-    navExplore: "استكشف",
     navInsights: "بيانات حية",
     heroTitle: "استكشف الأردن بذكاء",
     heroSubtitle: "اكتشف كنوز الأردن الخفية مع توصيات الذكاء الاصطناعي، تجارب الواقع المعزز، والبيانات الحية التي تحول رحلتك إلى مغامرة لا تُنسى.",
@@ -343,9 +343,9 @@ const App = () => {
                                 {[
                                     { id: 'home', label: t('navHome'), icon: '🏠' },
                                     { id: 'features', label: t('navFeatures'), icon: '⚡' },
+                                    { id: 'explore', label: t('navExplore'), icon: '🗺️' },
                                     { id: 'ar', label: t('navAR'), icon: '🥽' },
                                     { id: 'map', label: t('navMap'), icon: '📍' },
-                                    { id: 'explore', label: t('navExplore'), icon: '🗺️' },
                                     { id: 'insights', label: t('navInsights'), icon: '📊' }
                                 ].map((item) => (
                                     <button key={item.id} onClick={() => { scrollToSection(item.id); setIsMenuOpen(false); }}
