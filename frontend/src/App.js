@@ -207,42 +207,47 @@ const App = () => {
         });
     };
 
-    const sendMessage = async (e) => {
-        e.preventDefault();
-        const inputElement = e.target.elements.message;
-        const userInput = inputElement.value.trim();
-        if (!userInput) return;
-        const newMessages = [...messages, { sender: 'user', text: userInput }];
-        setMessages(newMessages);
-        inputElement.value = '';
-        setIsTyping(true);
-        const workerUrl = "https://white-frost-8014.karam200566.workers.dev/";
-        try {
-            const response = await fetch(workerUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    history: newMessages.map(msg => ({
-                        role: msg.sender === 'user' ? 'user' : 'model',
-                        parts: [{ text: msg.text }]
-                    }))
-                })
-            });
-            if (!response.ok) throw new Error(`Network error: ${response.status}`);
-            const data = await response.json();
-            const botResponse = data.response || "Sorry, I couldn't get a response.";
-            setMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
-        } catch (error) {
-            console.error("Chat API Error:", error);
-            setMessages(prev => [...prev, { sender: 'bot', text: `❌ Sorry, connection failed. Please check the worker URL.` }]);
-        } finally {
-            setIsTyping(false);
-        }
-    };
+   const sendMessage = async (e) => {
+    e.preventDefault();
+    const inputElement = e.target.elements.message;
+    const userInput = inputElement.value.trim();
+    if (!userInput) return;
 
-    useEffect(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
+    const newMessages = [...messages, { sender: 'user', text: userInput }];
+    setMessages(newMessages);
+    inputElement.value = '';
+    setIsTyping(true);
+
+    const webhookUrl = "https://karamq5.app.n8n.cloud/webhook-test/gemini-tour-chat";
+
+    try {
+        const response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userInput })
+        });
+
+        if (!response.ok) throw new Error(`Network error: ${response.status}`);
+        
+        const data = await response.json();
+        const botResponse = data.reply || "عذرًا، لم أتمكن من الحصول على رد.";
+
+        setMessages(prev => [...prev, { sender: 'bot', text: botResponse }]);
+    } catch (error) {
+        console.error("Chat API Error:", error);
+        setMessages(prev => [
+            ...prev,
+            { sender: 'bot', text: "❌ فشل الاتصال بالخادم، تأكد من رابط الـ Webhook." }
+        ]);
+    } finally {
+        setIsTyping(false);
+    }
+};
+
+useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+}, [messages]);
+
 
     const updateInsights = async () => {
         const apiKey = '91859b46e4ef01b5415a2f8b1ddbfac1';
