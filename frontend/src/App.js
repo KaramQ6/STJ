@@ -220,11 +220,29 @@ const App = () => {
 
     const webhookUrl = "https://karamq5.app.n8n.cloud/webhook/gemini-tour-chat";
 
+    // --- START: التعديلات المطلوبة لإضافة Session ID ---
+
+    // 1. احصل على sessionId من localStorage أو أنشئ واحداً جديداً
+    let sessionId = localStorage.getItem('chatSessionId');
+    if (!sessionId) {
+        sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+        localStorage.setItem('chatSessionId', sessionId);
+    }
+
+    // 2. جهّز البيانات لإرسالها (الرسالة + sessionId)
+    const dataToSend = {
+        message: userInput,
+        sessionId: sessionId 
+    };
+
+    // --- END: التعديلات المطلوبة ---
+
     try {
         const response = await fetch(webhookUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: userInput })
+            // 3. أرسل كائن البيانات الجديد
+            body: JSON.stringify(dataToSend) 
         });
 
         if (!response.ok) throw new Error(`Network error: ${response.status}`);
@@ -243,11 +261,6 @@ const App = () => {
         setIsTyping(false);
     }
 };
-
-useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-}, [messages]);
-
 
     const updateInsights = async () => {
         const apiKey = '91859b46e4ef01b5415a2f8b1ddbfac1';
